@@ -6,25 +6,50 @@
 
 /* You can override the default Infima variables here. */
 :root {
-  --ifm-color-primary: #2e8555;
-  --ifm-color-primary-dark: #29784c;
-  --ifm-color-primary-darker: #277148;
-  --ifm-color-primary-darkest: #205d3b;
-  --ifm-color-primary-light: #33925d;
-  --ifm-color-primary-lighter: #359962;
-  --ifm-color-primary-lightest: #3cad6e;
+  --ifm-color-primary: #2c2d3c;
+  --ifm-color-primary-dark: #27282f;
+  --ifm-color-primary-darker: #24252b;
+  --ifm-color-primary-darkest: #1d1e23;
+  --ifm-color-primary-light: #313249;
+  --ifm-color-primary-lighter: #34354d;
+  --ifm-color-primary-lightest: #3e3f59;
   --ifm-code-font-size: 95%;
   --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.1);
+  --ifm-navbar-background-color: #ffffff;
+  --ifm-navbar-link-color: #2c2d3c;
+  --ifm-navbar-link-hover-color: #67ea94;
+  --ifm-footer-background-color: #2c2d3c;
 }
 
 /* For readability concerns, you should choose a lighter palette in dark mode. */
 [data-theme='dark'] {
-  --ifm-color-primary: #25c2a0;
-  --ifm-color-primary-dark: #21af90;
-  --ifm-color-primary-darker: #1fa588;
-  --ifm-color-primary-darkest: #1a8870;
-  --ifm-color-primary-light: #29d5b0;
-  --ifm-color-primary-lighter: #32d8b4;
-  --ifm-color-primary-lightest: #4fddbf;
+  --ifm-color-primary: #67ea94;
+  --ifm-color-primary-dark: #4de67e;
+  --ifm-color-primary-darker: #3de372;
+  --ifm-color-primary-darkest: #2ed862;
+  --ifm-color-primary-light: #81edaa;
+  --ifm-color-primary-lighter: #91f0b6;
+  --ifm-color-primary-lightest: #b1f4ce;
   --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.3);
+  --ifm-navbar-background-color: #2c2d3c;
+  --ifm-navbar-link-color: #ffffff;
+  --ifm-navbar-link-hover-color: #67ea94;
+}
+
+/* Custom hero section styling */
+.hero--primary {
+  --ifm-hero-background-color: #2c2d3c;
+  --ifm-hero-text-color: #ffffff;
+}
+
+.hero--primary .button--secondary {
+  --ifm-button-background-color: #67ea94;
+  --ifm-button-border-color: #67ea94;
+  --ifm-button-color: #2c2d3c;
+  font-weight: 600;
+}
+
+.hero--primary .button--secondary:hover {
+  --ifm-button-background-color: #4de67e;
+  --ifm-button-border-color: #4de67e;
 }

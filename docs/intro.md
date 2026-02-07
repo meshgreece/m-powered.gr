@@ -2,46 +2,107 @@
 sidebar_position: 1
 ---
 
-# Tutorial Intro
+# Ξεκινώντας
 
-Let's discover **Docusaurus in less than 5 minutes**.
+Από το μηδέν στην πρώτη σου μετάδοση σε περίπου 30 λεπτά.
 
-## Getting Started
+## Βήμα 1: Επίλεξε το Hardware σου
 
-Get started by **creating a new site**.
+Ξεκίνησε με μία συσκευή. Μπορείς πάντα να προσθέσεις περισσότερες αργότερα.
 
-Or **try Docusaurus immediately** with **[docusaurus.new](https://docusaurus.new)**.
+### Heltec V3 ή V4 — €35-40
 
-### What you'll need
+Η πιο δημοφιλής συσκευή εκκίνησης. Μικρή OLED οθόνη και ενσωματωμένη κεραία. Βασισμένη σε ESP32-S3 με χαμηλή κατανάλωση ενέργειας και αξιόπιστο LoRa chip SX1262.
 
-- [Node.js](https://nodejs.org/en/download/) version 20.0 or above:
-  - When installing Node.js, you are recommended to check all checkboxes related to dependencies.
+### LILYGO T-Beam — €50-70
 
-## Generate a new site
+Ολοκληρωμένη συσκευή με ενσωματωμένο GPS και θήκη μπαταρίας 18650. Ιδανική για κινητούς κόμβους και εξωτερική χρήση χάρη στην ισχυρή μπαταρία και την επιλογή εξωτερικής οθόνης.
 
-Generate a new Docusaurus site using the **classic template**.
+### LILYGO T1000-E — €50-60
 
-The classic template will automatically be added to your project after you run the command:
+Πολύ μικρό GPS tracker σε μέγεθος μπρελόκ. Μεγάλη διάρκεια μπαταρίας (εβδομάδες με μία φόρτιση) και ιδανικό για παρακολούθηση σακιδίου, κατοικίδιου ή οχήματος.
 
-```bash
-npm init docusaurus@latest my-website classic
-```
+### LILYGO T-LoRa-T3-S3 — €30-35
 
-You can type this command into Command Prompt, Powershell, Terminal, or any other integrated terminal of your code editor.
+Η πιο οικονομική επιλογή. Βασική πλακέτα ESP32-S3 χωρίς οθόνη ή GPS. Ιδανική για σταθερούς κόμβους ή DIY projects. **Προσοχή**: Παράγγειλε την έκδοση 868MHz (SX1262 ή SX1276), όχι 2.4GHz!
 
-The command also installs all necessary dependencies you need to run Docusaurus.
+---
 
-## Start your site
+**Συχνότητα**: Όλες οι παραπάνω συσκευές είναι διαθέσιμες σε έκδοση 868MHz που χρησιμοποιούμε στην Ελλάδα.
 
-Run the development server:
+**Καλή αρχή**: Heltec V3 ή V4 — οικονομικό, έχει οθόνη, και μπορείς να δοκιμάσεις το mesh πριν αγοράσεις πιο ακριβό εξοπλισμό.
 
-```bash
-cd my-website
-npm run start
-```
+## Βήμα 2: Προμηθεύσου τη Συσκευή σου
 
-The `cd` command changes the directory you're working with. In order to work with your newly created Docusaurus site, you'll need to navigate the terminal there.
+### AliExpress
+Οικονομικές τιμές, 2-3 εβδομάδες αποστολή. Αναζήτησε "Heltec V3 LoRa 868MHz", "LILYGO T-Beam" ή "LILYGO T1000-E".
 
-The `npm run start` command builds your website locally and serves it through a development server, ready for you to view at http://localhost:3000/.
+### Ελληνικά καταστήματα
+Για άμεση παράδοση, μπορείς να δεις στο [grobotronics.com](https://grobotronics.com). Αν το χρειάζεσαι γρήγορα, είναι καλή επιλογή.
 
-Open `docs/intro.md` (this page) and edit some lines: the site **reloads automatically** and displays your changes.
+### Μεταχειρισμένα
+Ρώτα στο [Telegram group](https://t.me/+_5Z0q7DWM6UwMDJk) αν κάποιο μέλος έχει κάτι να πουλήσει. Συχνά βρίσκονται καλές ευκαιρίες!
+
+## Βήμα 3: Εγκατάστησε το Firmware
+
+Διαρκεί περίπου 5 λεπτά:
+
+**1. Πήγαινε στο [flasher.meshtastic.org](https://flasher.meshtastic.org)**
+
+Λειτουργεί σε Google Chrome ή Microsoft Edge.
+
+**2. Σύνδεσε τη συσκευή σου με καλώδιο USB-C**
+
+Το web flasher θα την εντοπίσει αυτόματα.
+
+**3. Επίλεξε το μοντέλο συσκευής σου και κάνε κλικ στο "Flash"**
+
+Διαρκεί 2-3 λεπτά. Η συσκευή θα επανεκκινήσει όταν ολοκληρωθεί.
+
+## Βήμα 4: Διαμόρφωσε τον Κόμβο σου
+
+Κατέβασε την εφαρμογή Meshtastic για iOS ή Android (ή χρησιμοποίησε το [web client](https://client.meshtastic.org/)), συνδέσου μέσω Bluetooth και διαμόρφωσε:
+
+### Περιοχή: Europe (868 MHz)
+Η σωστή ρύθμιση για την Ελλάδα.
+
+### Όρισε το όνομα του κόμβου σου
+Κάτι αναγνωρίσιμο, καλύτερο από το default 'Meshtastic abcd'.
+
+### Ρόλος κόμβου (Role)
+Χρησιμοποίησε **Client** ή **Client Mute**.
+
+### Όρισε τοποθεσία (προαιρετικό, βοηθά στον χάρτη)
+Η τοποθεσία δεν είναι ακριβής - προστίθεται αυτόματα θόρυβος για ιδιωτικότητα.
+
+- **Αν η συσκευή έχει GPS**: Η τοποθεσία ενημερώνεται αυτόματα
+- **Αν η συσκευή ΔΕΝ έχει GPS**: Μπορείς να ορίσεις Fixed Position χειροκίνητα
+
+**Σημαντικό**: Αν ορίσεις Fixed Position, άλλαξε το **Position Broadcast Interval** (από **Settings > Position**) από 2 λεπτά σε **3-6 ώρες** για να μην επιβαρύνεις το δίκτυο!
+
+## Βήμα 5: Πες Γεια σου
+
+Άνοιξε την εφαρμογή Meshtastic, πήγαινε στα Messages, και στείλε ένα μήνυμα. Θα πάρεις απαντήσεις από άλλους κόμβους στην περιοχή σου (ανάλογα με την ώρα και την κάλυψη).
+
+Δεν βλέπεις άλλους κόμβους; Έλεγξε τον χάρτη κάλυψης για να δεις αν βρίσκεσαι σε εμβέλεια. Το δίκτυο αναπτύσσεται αλλά ακόμα έχει κενά.
+
+## Βήμα 6: Ενεργοποίησε το MQTT
+
+Για να συνδεθείς στο κοινό MQTT δίκτυο και να επικοινωνήσεις με κόμβους σε όλη την Ελλάδα, ενεργοποίησε το MQTT από **Settings > LoRa**:
+
+**OK to MQTT**: Enabled
+
+**Ignore MQTT**: Disabled
+
+Με αυτές τις ρυθμίσεις, ο κόμβος σου θα μοιράζεται μηνύματα μέσω του διαδικτύου όταν έχει σύνδεση, επεκτείνοντας την εμβέλεια του mesh δικτύου. Επιπλέον, ο κόμβος σου θα εμφανίζεται στα δικτυακά εργαλεία της κοινότητας όπως το [Meshview](https://meshview.m-powered.gr/) και το [Malla](https://malla.m-powered.gr/), όπου μπορείς να παρακολουθείς το δίκτυο σε πραγματικό χρόνο.
+
+**Αυτό είναι. Είσαι στο mesh.**
+
+## Επόμενα Βήματα
+
+Ελα στην [κοινότητα μας στο Telegram](https://t.me/+_5Z0q7DWM6UwMDJk) για:
+- Βοήθεια με τη ρύθμιση ή αντιμετώπιση προβλημάτων
+- Συμβουλές για κεραίες και βελτιστοποίηση εμβέλειας
+- Ενημέρωση για τοπικά meetups και νέους κόμβους
+
+Παρακολούθησε το δίκτυο στο [Meshview](https://meshview.m-powered.gr/) και το [Malla](https://malla.m-powered.gr/).

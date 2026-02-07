@@ -1,19 +1,14 @@
-facebook:
-  label: Facebook
-  permalink: /facebook
-  description: Facebook tag description
+meshtastic:
+  label: Meshtastic
+  permalink: /meshtastic
+  description: Meshtastic mesh δίκτυο
 
-hello:
-  label: Hello
-  permalink: /hello
-  description: Hello tag description
+ελλάδα:
+  label: Ελλάδα
+  permalink: /ellada
+  description: Ελληνική κοινότητα
 
-docusaurus:
-  label: Docusaurus
-  permalink: /docusaurus
-  description: Docusaurus tag description
-
-hola:
-  label: Hola
-  permalink: /hola
-  description: Hola tag description
+κοινότητα:
+  label: Κοινότητα
+  permalink: /koinotita
+  description: Η κοινότητα μας

@@ -11,32 +11,32 @@ type FeatureItem = {
 
 const FeatureList: FeatureItem[] = [
   {
-    title: 'Easy to Use',
-    Svg: require('@site/static/img/undraw_docusaurus_mountain.svg').default,
+    title: 'Επικοινωνία Χωρίς Internet',
+    Svg: require('@site/static/img/undraw_going-offline_v4oo.svg').default,
     description: (
       <>
-        Docusaurus was designed from the ground up to be easily installed and
-        used to get your website up and running quickly.
+        Στείλε μηνύματα χωρίς δίκτυο κινητής ή WiFi. Το Meshtastic χρησιμοποιεί 
+        LoRa τεχνολογία για επικοινωνία σε απόσταση χιλιομέτρων.
       </>
     ),
   },
   {
-    title: 'Focus on What Matters',
-    Svg: require('@site/static/img/undraw_docusaurus_tree.svg').default,
+    title: 'Αποκεντρωμένο Δίκτυο',
+    Svg: require('@site/static/img/undraw_connection_ts3f.svg').default,
     description: (
       <>
-        Docusaurus lets you focus on your docs, and we&apos;ll do the chores. Go
-        ahead and move your docs into the <code>docs</code> directory.
+        Κάθε συσκευή είναι κόμβος που επεκτείνει το mesh δίκτυο. Όσο περισσότεροι 
+        κόμβοι, τόσο μεγαλύτερη η κάλυψη και η αξιοπιστία.
       </>
     ),
   },
   {
-    title: 'Powered by React',
-    Svg: require('@site/static/img/undraw_docusaurus_react.svg').default,
+    title: 'Ανοιχτού Κώδικα',
+    Svg: require('@site/static/img/undraw_open-source_g069.svg').default,
     description: (
       <>
-        Extend or customize your website layout by reusing React. Docusaurus can
-        be extended while reusing the same header and footer.
+        Πλήρως open source και με οικονομικό hardware. Ξεκίνα με €35 και γίνε 
+        μέρος της ελληνικής mesh κοινότητας.
       </>
     ),
   },
