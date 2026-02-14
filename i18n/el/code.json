@@ -325,5 +325,29 @@
   "theme.tags.tagsPageTitle": {
     "message": "Ετικέτες",
     "description": "The title of the tag list page"
+  },
+  "statusWidget.title.unavailable": {
+    "message": "Η κατάσταση του Meshview δεν είναι διαθέσιμη",
+    "description": "Tooltip shown when packet status fetch fails."
+  },
+  "statusWidget.title.loading": {
+    "message": "Φόρτωση κατάστασης πακέτων Meshview",
+    "description": "Tooltip shown while waiting for packet data."
+  },
+  "statusWidget.title.lastPacket": {
+    "message": "Τελ. πακέτο πριν από {seconds}δ",
+    "description": "Tooltip showing elapsed time since latest packet."
+  },
+  "statusWidget.text.unavailable": {
+    "message": "Μη διαθέσιμο",
+    "description": "Widget text when packet status fetch fails."
+  },
+  "statusWidget.text.loading": {
+    "message": "Φόρτωση...",
+    "description": "Widget text while waiting for first packet data."
+  },
+  "statusWidget.text.lastPacket": {
+    "message": "Τελ. πακέτο {seconds}δ πριν",
+    "description": "Widget text showing elapsed time since latest packet."
   }
 }
