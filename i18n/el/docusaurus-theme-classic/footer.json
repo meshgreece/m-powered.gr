@@ -1,0 +1,38 @@
+{
+  "link.title.Οδηγοί": {
+    "message": "Οδηγοί",
+    "description": "The title of the footer links column with title=Οδηγοί in the footer"
+  },
+  "link.title.Κοινότητα": {
+    "message": "Κοινότητα",
+    "description": "The title of the footer links column with title=Κοινότητα in the footer"
+  },
+  "link.title.Περισσότερα": {
+    "message": "Περισσότερα",
+    "description": "The title of the footer links column with title=Περισσότερα in the footer"
+  },
+  "link.item.label.Ξεκινώντας": {
+    "message": "Ξεκινώντας",
+    "description": "The label of footer link with label=Ξεκινώντας linking to /docs/intro"
+  },
+  "link.item.label.Telegram": {
+    "message": "Telegram",
+    "description": "The label of footer link with label=Telegram linking to https://t.me/+_5Z0q7DWM6UwMDJk"
+  },
+  "link.item.label.Map": {
+    "message": "Map",
+    "description": "The label of footer link with label=Map linking to https://map.m-powered.gr/"
+  },
+  "link.item.label.Meshview": {
+    "message": "Meshview",
+    "description": "The label of footer link with label=Meshview linking to https://meshview.m-powered.gr/"
+  },
+  "link.item.label.Malla": {
+    "message": "Malla",
+    "description": "The label of footer link with label=Malla linking to https://malla.m-powered.gr/"
+  },
+  "copyright": {
+    "message": "Copyright © 2026 m-powered.gr. Built with Docusaurus.",
+    "description": "The footer copyright"
+  }
+}
