@@ -42,9 +42,13 @@ const config: Config = {
       {
         docs: {
           sidebarPath: './sidebars.ts',
+          editUrl:
+            'https://github.com/meshgreece/m-powered.gr/tree/master/',
         },
         blog: {
           showReadingTime: true,
+          editUrl:
+            'https://github.com/meshgreece/m-powered.gr/tree/master/',
           feedOptions: {
             type: ['rss', 'atom'],
             xslt: true,
