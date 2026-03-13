@@ -13,7 +13,7 @@
   },
   "link.item.label.Ξεκινώντας": {
     "message": "Ξεκινώντας",
-    "description": "The label of footer link with label=Ξεκινώντας linking to /docs/intro"
+    "description": "The label of footer link with label=Ξεκινώντας linking to /docs/get-started"
   },
   "link.item.label.Telegram": {
     "message": "Telegram",

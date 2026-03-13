@@ -95,7 +95,7 @@ const config: Config = {
           items: [
             {
               label: 'Ξεκινώντας',
-              to: '/docs/intro',
+              to: '/docs/get-started',
             },
           ],
         },
