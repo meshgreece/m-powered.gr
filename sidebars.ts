@@ -22,13 +22,13 @@ const sidebars: SidebarsConfig = {
     },
     {
       type: 'doc',
-      id: 'basic-configuration',
-      label: 'Βασική Διαμόρφωση',
+      id: 'personal-node',
+      label: 'Προσωπικός Κόμβος',
     },
     {
       type: 'doc',
-      id: 'advanced-configuration',
-      label: 'Προχωρημένη Διαμόρφωση',
+      id: 'fixed-nodes-backbone',
+      label: 'Σταθεροί Κόμβοι & Backbone',
     },
   ],
 };
