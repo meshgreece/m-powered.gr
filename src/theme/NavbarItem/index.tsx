@@ -6,16 +6,16 @@ import StatusWidget from '@site/src/components/StatusWidget';
 
 type Props = WrapperProps<typeof NavbarItemType> & {
   readonly items?: readonly any[];
+  readonly mobile?: boolean;
   readonly position?: 'left' | 'right';
   readonly label?: string;
   readonly href?: string;
 };
 
 export default function NavbarItemWrapper(props: Props) {
-  const {position, href} = props;
-  
-  // Insert the StatusWidget before the GitHub link
-  if (position === 'right' && href && href.includes('github.com')) {
+  const {mobile, position, href} = props;
+
+  if (!mobile && position === 'right' && href?.includes('github.com')) {
     return (
       <>
         <StatusWidget />
@@ -23,6 +23,6 @@ export default function NavbarItemWrapper(props: Props) {
       </>
     );
   }
-  
+
   return <NavbarItem {...props} />;
 }
