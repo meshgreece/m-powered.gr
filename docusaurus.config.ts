@@ -5,8 +5,8 @@ import type * as Preset from '@docusaurus/preset-classic';
 // This runs in Node.js - Don't use client-side code here (browser APIs, JSX...)
 
 const config: Config = {
-  title: 'Η Ελλάδα έχει Mesh Δίκτυο',
-  tagline: '(Και θέλουμε να πούμε, "Γεια!")',
+  title: 'Meshtastic Greece',
+  tagline: 'Η ελληνική κοινότητα Meshtastic με οδηγούς, χάρτη κόμβων και βοήθεια για να μπεις στο δίκτυο.',
   favicon: 'img/favicon.ico',
 
   // Future flags, see https://docusaurus.io/docs/api/docusaurus-config#future
@@ -46,6 +46,9 @@ const config: Config = {
             'https://github.com/meshgreece/m-powered.gr/tree/master/',
         },
         blog: {
+          blogTitle: 'Νέα του Meshtastic Greece',
+          blogDescription:
+            'Νέα, οδηγοί και ενημερώσεις για το Meshtastic στην Ελλάδα.',
           showReadingTime: true,
           editUrl:
             'https://github.com/meshgreece/m-powered.gr/tree/master/',
@@ -67,9 +70,9 @@ const config: Config = {
       respectPrefersColorScheme: true,
     },
     navbar: {
-      title: 'm-powered',
+      title: 'Meshtastic Greece',
       logo: {
-        alt: 'm-powered Logo',
+        alt: 'Meshtastic Greece m-powered logo',
         src: 'img/logo.svg',
       },
       items: [
@@ -77,9 +80,9 @@ const config: Config = {
           type: 'docSidebar',
           sidebarId: 'tutorialSidebar',
           position: 'left',
-          label: 'Οδηγός',
+          label: 'Οδηγός Meshtastic',
         },
-        {to: '/blog', label: 'Blog', position: 'left'},
+        {to: '/blog', label: 'Νέα', position: 'left'},
         {
           href: 'https://github.com/meshgreece/m-powered.gr',
           label: 'GitHub',
@@ -97,6 +100,14 @@ const config: Config = {
               label: 'Ξεκινώντας',
               to: '/docs/get-started',
             },
+            {
+              label: 'Προσωπικός Κόμβος',
+              to: '/docs/personal-node',
+            },
+            {
+              label: 'Σταθεροί Κόμβοι & Backbone',
+              to: '/docs/fixed-nodes-backbone',
+            },
           ],
         },
         {
@@ -112,7 +123,7 @@ const config: Config = {
           title: 'Περισσότερα',
           items: [
             {
-              label: 'Map',
+              label: 'Χάρτης Κόμβων Ελλάδας',
               href: 'https://map.m-powered.gr/',
             },
             {

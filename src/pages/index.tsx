@@ -21,7 +21,7 @@ function HomepageHeader() {
           <Link
             className="button button--secondary button--lg"
             to="/docs/get-started">
-            Ξεκίνησε τώρα 📡
+            Δες τον οδηγό εκκίνησης 📡
           </Link>
         </div>
       </div>
@@ -33,8 +33,8 @@ export default function Home(): ReactNode {
   const {siteConfig} = useDocusaurusContext();
   return (
     <Layout
-      title={`Αρχική`}
-      description="Meshtastic Greece - Το ελληνικό mesh δίκτυο">
+      title="Η ελληνική κοινότητα Meshtastic"
+      description="Meshtastic Greece: οδηγοί, χάρτης κόμβων και βοήθεια για την ελληνική κοινότητα Meshtastic.">
       <HomepageHeader />
       <main>
         <HomepageFeatures />
