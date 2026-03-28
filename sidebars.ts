@@ -16,19 +16,55 @@ const sidebars: SidebarsConfig = {
   // Automatically generated sidebar from docs folder with proper ordering
   tutorialSidebar: [
     {
-      type: 'doc',
-      id: 'get-started',
-      label: 'Ξεκινώντας',
+      type: 'category',
+      label: 'Ξεκίνα',
+      collapsed: false,
+      items: [
+        {
+          type: 'doc',
+          id: 'get-started',
+          label: 'Ξεκινώντας',
+        },
+        {
+          type: 'doc',
+          id: 'recommended-hardware',
+          label: 'Προτεινόμενο Υλικό',
+        },
+      ],
     },
     {
-      type: 'doc',
-      id: 'personal-node',
-      label: 'Προσωπικός Κόμβος',
+      type: 'category',
+      label: 'Οδηγοί Κόμβων',
+      collapsed: false,
+      items: [
+        {
+          type: 'doc',
+          id: 'personal-node',
+          label: 'Προσωπικός Κόμβος',
+        },
+        {
+          type: 'doc',
+          id: 'fixed-nodes-backbone',
+          label: 'Σταθεροί Κόμβοι & Backbone',
+        },
+      ],
     },
     {
-      type: 'doc',
-      id: 'fixed-nodes-backbone',
-      label: 'Σταθεροί Κόμβοι & Backbone',
+      type: 'category',
+      label: 'Κοινότητα',
+      collapsed: false,
+      items: [
+        {
+          type: 'doc',
+          id: 'community-tools',
+          label: 'Εργαλεία Κοινότητας',
+        },
+        {
+          type: 'doc',
+          id: 'faq',
+          label: 'Συχνές Ερωτήσεις',
+        },
+      ],
     },
   ],
 };

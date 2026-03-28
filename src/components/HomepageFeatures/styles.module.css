@@ -1,11 +1,317 @@
-.features {
-  display: flex;
-  align-items: center;
-  padding: 2rem 0;
+.hub {
   width: 100%;
+  padding: 2.5rem 0 4.5rem;
+  background: #f5f7f8;
 }
 
-.featureSvg {
-  height: 200px;
-  width: 200px;
+.section {
+  margin-top: 1.5rem;
+  padding: 1.75rem;
+  border: 1px solid rgba(44, 45, 60, 0.08);
+  border-radius: 12px;
+  background: #ffffff;
+  box-shadow: 0 2px 8px rgba(28, 36, 52, 0.05);
+}
+
+.sectionHeader {
+  display: flex;
+  justify-content: space-between;
+  gap: 1.5rem;
+  align-items: flex-start;
+  margin-bottom: 1.25rem;
+}
+
+.sectionTitle {
+  margin: 0;
+  font-size: clamp(1.55rem, 3vw, 2rem);
+  line-height: 1.15;
+}
+
+.sectionDescription {
+  max-width: 44rem;
+  margin: 0.65rem 0 0;
+  color: rgba(44, 45, 60, 0.8);
+  font-size: 1rem;
+  line-height: 1.7;
+}
+
+.sectionLink {
+  display: inline-block;
+  margin-top: 0.9rem;
+  color: #145f43;
+  font-weight: 700;
+  white-space: nowrap;
+  text-decoration: none;
+}
+
+.sectionLink:hover {
+  color: #168758;
+  text-decoration: none;
+}
+
+.stack {
+  display: grid;
+  gap: 0.85rem;
+}
+
+.guideGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.guideCard {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+  padding: 1.35rem;
+  border: 1px solid rgba(44, 45, 60, 0.08);
+  border-radius: 10px;
+  background: #fbfbfc;
+  color: inherit;
+  text-decoration: none;
+  transition: border-color 160ms ease, background-color 160ms ease;
+}
+
+.guideCard:hover {
+  border-color: rgba(103, 234, 148, 0.52);
+  background: #ffffff;
+  color: inherit;
+  text-decoration: none;
+}
+
+.guideAudience {
+  margin: 0;
+  color: rgba(44, 45, 60, 0.62);
+  font-size: 0.94rem;
+  line-height: 1.5;
+}
+
+.guideTitle {
+  margin: 0.55rem 0 0;
+  font-size: 1.35rem;
+  line-height: 1.2;
+  text-wrap: balance;
+}
+
+.guideDescription {
+  margin: 0.7rem 0 0;
+  color: rgba(44, 45, 60, 0.82);
+  line-height: 1.7;
+}
+
+.guideList {
+  margin: 1rem 0 0;
+  padding-left: 1rem;
+  color: rgba(44, 45, 60, 0.7);
+  line-height: 1.75;
+}
+
+.guideCta {
+  margin-top: auto;
+  padding-top: 1rem;
+  color: #145f43;
+  font-weight: 700;
+}
+
+.actionLink {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 1rem;
+  align-items: center;
+  padding: 1rem 1.1rem;
+  border-radius: 10px;
+  border: 1px solid rgba(44, 45, 60, 0.08);
+  background: #fbfbfc;
+  color: inherit;
+  text-decoration: none;
+  transition: border-color 160ms ease, background-color 160ms ease;
+}
+
+.actionLink:hover {
+  border-color: rgba(103, 234, 148, 0.52);
+  background: #ffffff;
+  color: inherit;
+  text-decoration: none;
+}
+
+.actionCopy {
+  min-width: 0;
+}
+
+.actionTitle {
+  margin: 0;
+  font-size: 1.08rem;
+  line-height: 1.3;
+}
+
+.actionDescription {
+  margin: 0.35rem 0 0;
+  color: rgba(44, 45, 60, 0.82);
+  line-height: 1.65;
+}
+
+.actionMeta {
+  margin: 0.45rem 0 0;
+  color: rgba(44, 45, 60, 0.62);
+  font-size: 0.92rem;
+  line-height: 1.6;
+}
+
+.actionCta {
+  color: #145f43;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.toolTable {
+  display: grid;
+  border-top: 1px solid rgba(44, 45, 60, 0.08);
+}
+
+.toolRow {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 1rem;
+  align-items: start;
+  padding: 1.1rem 0;
+  border-bottom: 1px solid rgba(44, 45, 60, 0.08);
+}
+
+.toolCopy {
+  min-width: 0;
+}
+
+.toolTitle {
+  margin: 0;
+  font-size: 1.03rem;
+}
+
+.toolSummary {
+  margin: 0.35rem 0 0;
+  color: rgba(44, 45, 60, 0.78);
+  line-height: 1.65;
+}
+
+.toolCaution {
+  margin: 0.5rem 0 0;
+  color: rgba(44, 45, 60, 0.6);
+  line-height: 1.6;
+}
+
+.toolLink {
+  color: #145f43;
+  font-weight: 700;
+  white-space: nowrap;
+  text-decoration: none;
+}
+
+.toolLink:hover {
+  color: #168758;
+  text-decoration: none;
+}
+
+[data-theme='dark'] .hub {
+  background: #181b22;
+}
+
+[data-theme='dark'] .section {
+  border-color: rgba(255, 255, 255, 0.08);
+  background: #1f232d;
+  box-shadow: none;
+}
+
+[data-theme='dark'] .sectionDescription,
+[data-theme='dark'] .actionDescription,
+[data-theme='dark'] .actionMeta,
+[data-theme='dark'] .toolSummary,
+[data-theme='dark'] .toolCaution {
+  color: rgba(255, 255, 255, 0.78);
+}
+
+[data-theme='dark'] .actionLink {
+  border-color: rgba(255, 255, 255, 0.08);
+  background: #232833;
+}
+
+[data-theme='dark'] .guideCard {
+  border-color: rgba(255, 255, 255, 0.08);
+  background: #232833;
+}
+
+[data-theme='dark'] .actionLink:hover {
+  border-color: rgba(103, 234, 148, 0.42);
+}
+
+[data-theme='dark'] .guideCard:hover {
+  border-color: rgba(103, 234, 148, 0.42);
+}
+
+[data-theme='dark'] .sectionLink,
+[data-theme='dark'] .actionCta,
+[data-theme='dark'] .toolLink,
+[data-theme='dark'] .guideCta {
+  color: #9bf5bc;
+}
+
+[data-theme='dark'] .guideAudience,
+[data-theme='dark'] .guideDescription,
+[data-theme='dark'] .guideList {
+  color: rgba(255, 255, 255, 0.76);
+}
+
+[data-theme='dark'] .toolTable {
+  border-top-color: rgba(255, 255, 255, 0.08);
+}
+
+[data-theme='dark'] .toolRow {
+  border-bottom-color: rgba(255, 255, 255, 0.08);
+}
+
+@media screen and (max-width: 996px) {
+  .hub {
+    padding: 2rem 0 4rem;
+  }
+
+  .section {
+    padding: 1.5rem;
+  }
+
+  .guideGrid,
+  .toolRow,
+  .actionLink {
+    grid-template-columns: 1fr;
+  }
+
+  .sectionHeader {
+    display: block;
+  }
+
+  .sectionLink {
+    margin-top: 0.85rem;
+  }
+
+  .actionCta,
+  .toolLink {
+    white-space: normal;
+  }
+}
+
+@media screen and (max-width: 640px) {
+  .section {
+    padding: 1.25rem;
+    border-radius: 10px;
+  }
+
+  .actionLink {
+    padding: 0.95rem 1rem;
+  }
+
+  .sectionTitle {
+    font-size: 1.6rem;
+  }
+
+  .guideCard {
+    padding: 1.1rem;
+  }
 }

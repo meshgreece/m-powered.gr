@@ -6,7 +6,8 @@ import type * as Preset from '@docusaurus/preset-classic';
 
 const config: Config = {
   title: 'Meshtastic Greece',
-  tagline: 'Η ελληνική κοινότητα Meshtastic με οδηγούς, χάρτη κόμβων και βοήθεια για να μπεις στο δίκτυο.',
+  tagline:
+    'Οδηγοί, χάρτης κόμβων και τα βασικά για να μπεις στο ελληνικό mesh χωρίς πολύ ψάξιμο.',
   favicon: 'img/favicon.ico',
 
   // Future flags, see https://docusaurus.io/docs/api/docusaurus-config#future
@@ -35,7 +36,6 @@ const config: Config = {
     defaultLocale: 'el',
     locales: ['el'],
   },
-
   presets: [
     [
       'classic',
@@ -80,9 +80,27 @@ const config: Config = {
           type: 'docSidebar',
           sidebarId: 'tutorialSidebar',
           position: 'left',
-          label: 'Οδηγός Meshtastic',
+          label: 'Οδηγοί',
         },
         {to: '/blog', label: 'Νέα', position: 'left'},
+        {
+          label: 'Εργαλεία',
+          position: 'left',
+          items: [
+            {
+              label: 'Χάρτης Κόμβων',
+              href: 'https://map.m-powered.gr/',
+            },
+            {
+              label: 'Meshview',
+              href: 'https://meshview.m-powered.gr/',
+            },
+            {
+              label: 'Malla',
+              href: 'https://malla.m-powered.gr/',
+            },
+          ],
+        },
         {
           href: 'https://github.com/meshgreece/m-powered.gr',
           label: 'GitHub',
@@ -101,12 +119,20 @@ const config: Config = {
               to: '/docs/get-started',
             },
             {
+              label: 'Προτεινόμενο Υλικό',
+              to: '/docs/recommended-hardware',
+            },
+            {
               label: 'Προσωπικός Κόμβος',
               to: '/docs/personal-node',
             },
             {
               label: 'Σταθεροί Κόμβοι & Backbone',
               to: '/docs/fixed-nodes-backbone',
+            },
+            {
+              label: 'Συχνές Ερωτήσεις',
+              to: '/docs/faq',
             },
           ],
         },
@@ -117,10 +143,18 @@ const config: Config = {
               label: 'Telegram',
               href: 'https://t.me/+_5Z0q7DWM6UwMDJk',
             },
+            {
+              label: 'GitHub',
+              href: 'https://github.com/meshgreece/m-powered.gr',
+            },
+            {
+              label: 'Εργαλεία Κοινότητας',
+              to: '/docs/community-tools',
+            },
           ],
         },
         {
-          title: 'Περισσότερα',
+          title: 'Εργαλεία',
           items: [
             {
               label: 'Χάρτης Κόμβων Ελλάδας',
