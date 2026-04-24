@@ -5,7 +5,7 @@ import type * as Preset from '@docusaurus/preset-classic';
 // This runs in Node.js - Don't use client-side code here (browser APIs, JSX...)
 
 const config: Config = {
-  title: 'Meshtastic Greece',
+  title: 'Meshtastic Greece Community',
   tagline:
     'Οδηγοί, χάρτης κόμβων και τα βασικά για να μπεις στο ελληνικό mesh χωρίς πολύ ψάξιμο.',
   favicon: 'img/favicon.ico',
@@ -46,9 +46,9 @@ const config: Config = {
             'https://github.com/meshgreece/m-powered.gr/tree/master/',
         },
         blog: {
-          blogTitle: 'Νέα του Meshtastic Greece',
+          blogTitle: 'Νέα του Meshtastic Greece Community',
           blogDescription:
-            'Νέα, οδηγοί και ενημερώσεις για το Meshtastic στην Ελλάδα.',
+            'Νέα, οδηγοί και ενημερώσεις για την κοινότητα Meshtastic στην Ελλάδα.',
           showReadingTime: true,
           editUrl:
             'https://github.com/meshgreece/m-powered.gr/tree/master/',
@@ -70,9 +70,9 @@ const config: Config = {
       respectPrefersColorScheme: true,
     },
     navbar: {
-      title: 'Meshtastic Greece',
+      title: 'Meshtastic Greece Community',
       logo: {
-        alt: 'Meshtastic Greece m-powered logo',
+        alt: 'Meshtastic Greece Community m-powered logo',
         src: 'img/logo.svg',
       },
       items: [

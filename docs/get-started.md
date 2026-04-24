@@ -1,9 +1,9 @@
 ---
 sidebar_position: 1
-description: Ο βασικός οδηγός του Meshtastic Greece για το πρώτο setup και το ελληνικό mesh δίκτυο.
+description: Ο βασικός οδηγός του Meshtastic Greece Community για το πρώτο setup και το ελληνικό mesh δίκτυο.
 ---
 
-# Ξεκινώντας με το Meshtastic Greece
+# Ξεκινώντας με το Meshtastic Greece Community
 
 Αυτός είναι ο σύντομος οδηγός για το πρώτο στήσιμο. Κρατάμε μόνο τα βασικά, για να μπεις σωστά στο ελληνικό mesh χωρίς να χαθείς από την πρώτη μέρα μέσα στα settings.
 

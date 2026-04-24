@@ -3,7 +3,7 @@ sidebar_position: 3
 description: Οδηγός για σταθερούς κόμβους, CLIENT_BASE, ROUTER_LATE και backbone λογική στο ελληνικό mesh δίκτυο.
 ---
 
-# Σταθεροί Κόμβοι & Backbone στο Meshtastic Greece
+# Σταθεροί Κόμβοι & Backbone στο Meshtastic Greece Community
 
 Αυτή η σελίδα απευθύνεται κυρίως σε μέλη που θέλουν να βοηθήσουν την κάλυψη και τη συνολική ποιότητα του ελληνικού mesh δικτύου, όχι απλώς να έχουν έναν προσωπικό κόμβο.
 

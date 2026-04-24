@@ -87,8 +87,8 @@ function HomepageHeader() {
 export default function Home(): ReactNode {
   return (
     <Layout
-      title="Η ελληνική κοινότητα Meshtastic"
-      description="Οδηγοί, εργαλεία και πρακτική βοήθεια για Meshtastic στην Ελλάδα.">
+      title="Meshtastic Greece Community"
+      description="Οδηγοί, εργαλεία και πρακτική βοήθεια για την κοινότητα Meshtastic στην Ελλάδα.">
       <HomepageHeader />
       <main>
         <HomepageFeatures />
