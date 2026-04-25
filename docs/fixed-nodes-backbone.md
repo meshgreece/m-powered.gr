@@ -107,7 +107,7 @@ description: Οδηγός για σταθερούς κόμβους, CLIENT_BASE,
 | Κόμβος | Hex ID | Ρόλος | Meshview |
 | --- | --- | --- | --- |
 | Parnitha ☀️ | `!ce51114b` | ROUTER | [🔗](https://meshview.m-powered.gr/node/3461419339) |
-| Ypato ☀️ | `!909652e0` | ROUTER | [🔗](https://meshview.m-powered.gr/node/2425770720) |
+| Ypato ☀️ | `!75f15c34` | ROUTER | [🔗](https://meshview.m-powered.gr/node/1978752052) |
 | Eretria ☀️ | `!2cab220e` | ROUTER_LATE | [🔗](https://meshview.m-powered.gr/node/749412878) |
 | Kitheronas ☀️ | `!7534b015` | ROUTER_LATE | [🔗](https://meshview.m-powered.gr/node/1966387221) |
 | Chalkida ☀️ | `!8e66c621` | ROUTER_LATE | [🔗](https://meshview.m-powered.gr/node/2389100065) |
