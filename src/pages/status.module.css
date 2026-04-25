@@ -1,0 +1,637 @@
+.page {
+  --status-text: #202431;
+  --status-text-muted: rgba(44, 45, 60, 0.66);
+  --status-border: rgba(44, 45, 60, 0.12);
+  --status-border-soft: rgba(44, 45, 60, 0.08);
+  --status-surface: #ffffff;
+  --status-surface-alt: #f4f6fa;
+  --status-accent: #67ea94;
+  --status-map-gradient: linear-gradient(180deg, #2c2d3c 0%, #202431 100%);
+  --status-map-ring-fill: rgba(103, 234, 148, 0.18);
+  --status-map-ring-stroke: rgba(255, 255, 255, 0.26);
+  --status-map-marker-fill: #67ea94;
+  --status-map-marker-stroke: #202431;
+  --status-label-bg: rgba(255, 255, 255, 0.94);
+  --status-label-text: #202431;
+  --status-activity: rgba(44, 45, 60, 0.26);
+  --status-battery: #67ea94;
+  --status-voltage: #2c2d3c;
+  --status-point-stroke: #f4f6fa;
+  --status-skeleton-base: rgba(44, 45, 60, 0.1);
+  --status-skeleton-highlight: rgba(255, 255, 255, 0.8);
+  padding: 2rem 0 3rem;
+}
+
+.shell {
+  display: grid;
+  gap: 1rem;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: end;
+  gap: 1rem;
+}
+
+.refreshCard {
+  display: grid;
+  gap: 0.38rem;
+  min-width: 16rem;
+  padding: 0.75rem 0.9rem;
+  border: 1px solid var(--status-border);
+  border-radius: 8px;
+  background: var(--status-surface-alt);
+}
+
+.refreshRow {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.refreshLabel {
+  color: var(--status-text-muted);
+  font-size: 0.74rem;
+  font-weight: 700;
+}
+
+.refreshValue,
+.refreshStatus {
+  color: var(--status-text);
+  font-size: 0.78rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.refreshStatus {
+  color: var(--status-battery);
+}
+
+.pageTitle {
+  margin: 0;
+  color: var(--status-text);
+  font-size: clamp(2rem, 4vw, 2.7rem);
+  line-height: 1;
+}
+
+.pageSubtitle {
+  margin: 0.35rem 0 0;
+  color: var(--status-text-muted);
+  font-size: 0.92rem;
+  line-height: 1.5;
+}
+
+.cardGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, 22rem);
+  gap: 1rem;
+  justify-content: start;
+}
+
+.prefectureSection {
+  display: grid;
+  gap: 0.85rem;
+}
+
+.prefectureSection + .prefectureSection {
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--status-border-soft);
+}
+
+.prefectureTitle {
+  margin: 0;
+  color: var(--status-text);
+  font-size: 1rem;
+  letter-spacing: -0.01em;
+}
+
+.nodeCard {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--status-border);
+  border-radius: 8px;
+  background: var(--status-surface);
+}
+
+.nodeCardRefreshing::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--status-battery), transparent);
+  animation: statusRefreshSweep 1.25s linear infinite;
+}
+
+.mapPanel {
+  position: relative;
+  display: block;
+  height: 8.5rem;
+  overflow: hidden;
+  border-bottom: 1px solid var(--status-border);
+  background: var(--status-map-gradient);
+}
+
+.mapTiles,
+.mapShade,
+.mapSvg {
+  position: absolute;
+  inset: 0;
+}
+
+.mapTiles {
+  overflow: hidden;
+  background: #d8dde7;
+}
+
+.mapPanelUnavailable {
+  display: grid;
+  place-items: center;
+  background:
+    linear-gradient(rgba(32, 36, 49, 0.1), rgba(32, 36, 49, 0.1)),
+    var(--status-map-gradient);
+}
+
+.mapUnavailableLabel {
+  color: rgba(255, 255, 255, 0.78);
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.mapTile {
+  position: absolute;
+  width: 256px;
+  height: 256px;
+  object-fit: cover;
+  filter: saturate(0.82) contrast(0.94) brightness(0.92);
+}
+
+.mapShade {
+  background:
+    linear-gradient(rgba(32, 36, 49, 0.08), rgba(32, 36, 49, 0.08)),
+    linear-gradient(rgba(255, 255, 255, 0.22) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.22) 1px, transparent 1px);
+  background-size: auto, 2rem 2rem, 2rem 2rem;
+  pointer-events: none;
+}
+
+.mapSvg {
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.mapGhostMarker {
+  fill: rgba(255, 255, 255, 0.82);
+  stroke: rgba(32, 36, 49, 0.28);
+  stroke-width: 1;
+}
+
+.mapMarkerRing {
+  fill: var(--status-map-ring-fill);
+  stroke: rgba(255, 255, 255, 0.7);
+  stroke-width: 1.8;
+}
+
+.mapMarker {
+  fill: var(--status-map-marker-fill);
+  stroke: var(--status-map-marker-stroke);
+  stroke-width: 2;
+}
+
+.mapLabel {
+  position: absolute;
+  top: 0.7rem;
+  left: 0.75rem;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  min-height: 1.9rem;
+  padding: 0.22rem 0.5rem;
+  border: 1px solid var(--status-border);
+  border-radius: 6px;
+  background: var(--status-label-bg);
+  color: var(--status-label-text);
+  font-size: 0.76rem;
+  font-weight: 700;
+  backdrop-filter: blur(6px);
+}
+
+.mapAttribution {
+  position: absolute;
+  right: 0.65rem;
+  bottom: 0.55rem;
+  z-index: 1;
+  color: rgba(255, 255, 255, 0.82);
+  font-size: 0.62rem;
+  font-weight: 700;
+  text-shadow: 0 1px 2px rgba(32, 36, 49, 0.7);
+  pointer-events: none;
+}
+
+.cardBody {
+  display: grid;
+  gap: 0.75rem;
+  padding: 1rem;
+}
+
+.loadingLine {
+  display: inline-flex;
+  width: 100%;
+  border-radius: 999px;
+  background: linear-gradient(
+    90deg,
+    var(--status-skeleton-base) 0%,
+    var(--status-skeleton-highlight) 50%,
+    var(--status-skeleton-base) 100%
+  );
+  background-size: 220% 100%;
+  animation: statusShimmer 1.4s linear infinite;
+}
+
+.cardHeader,
+.plotHeader {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+  align-items: start;
+}
+
+.cardHeading {
+  min-width: 0;
+}
+
+.cardTitle {
+  margin: 0;
+  color: var(--status-text);
+  font-size: 1.2rem;
+}
+
+.cardTitleLink {
+  color: inherit;
+  text-decoration: none;
+}
+
+.cardTitleLink:hover {
+  text-decoration: underline;
+  text-underline-offset: 0.12em;
+}
+
+.cardTitleLink:focus-visible {
+  outline: 2px solid var(--status-accent);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+.cardMeta,
+.vitalLabel,
+.plotTitle,
+.legendItem,
+.pageSubtitle {
+  color: var(--status-text-muted);
+}
+
+.pageSubtitleLink {
+  color: inherit;
+  text-decoration: none;
+}
+
+.pageSubtitleLink:hover {
+  text-decoration: underline;
+  text-underline-offset: 0.12em;
+}
+
+.pageSubtitleLink:focus-visible {
+  outline: 2px solid var(--status-accent);
+  outline-offset: 2px;
+  border-radius: 3px;
+}
+
+.cardMeta {
+  margin: 0.3rem 0 0;
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+.nodeCardLoading .cardMeta {
+  opacity: 0.72;
+}
+
+.cardIdentifier {
+  display: grid;
+  justify-items: end;
+  gap: 0.18rem;
+  min-width: 7.2rem;
+  padding-top: 0.12rem;
+}
+
+.cardIdentifierLabel {
+  margin: 0;
+  color: var(--status-text-muted);
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+.cardIdentifierValue {
+  margin: 0;
+  color: var(--status-text);
+  font-size: 0.82rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.25;
+}
+
+.vitalsGrid {
+  display: grid;
+  grid-template-columns: 1.25fr 0.85fr 1fr;
+  gap: 0.8rem;
+}
+
+.vitalCell {
+  display: grid;
+  align-content: start;
+  gap: 0.28rem;
+  min-height: 3.7rem;
+  padding-top: 0.65rem;
+  border-top: 1px solid var(--status-border-soft);
+}
+
+.vitalLabel,
+.plotTitle {
+  margin: 0;
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.vitalValue {
+  margin: 0;
+  color: var(--status-text);
+  font-size: 0.86rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+}
+
+.loadingVitalValue {
+  height: 1.25rem;
+  max-width: 78%;
+}
+
+.plotPanel {
+  display: grid;
+  gap: 0.55rem;
+}
+
+.plotLegend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem 0.75rem;
+}
+
+.loadingLegendRow {
+  height: 0.95rem;
+  width: 11rem;
+}
+
+.legendItem {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.78rem;
+}
+
+.legendSwatch {
+  width: 0.7rem;
+  height: 0.7rem;
+  border-radius: 4px;
+  background: var(--status-battery);
+}
+
+.legendSwatch[data-series='activity'] {
+  background: var(--status-activity);
+}
+
+.legendSwatch[data-series='battery'] {
+  background: var(--status-battery);
+}
+
+.legendSwatch[data-series='voltage'] {
+  background: var(--status-voltage);
+}
+
+.plotFrame {
+  padding: 0.42rem 0.55rem;
+  border: 1px solid var(--status-border-soft);
+  border-radius: 8px;
+  background: var(--status-surface-alt);
+}
+
+.loadingPlot {
+  display: grid;
+  align-content: end;
+  gap: 0.55rem;
+  min-height: 118px;
+}
+
+.loadingPlotLinePrimary {
+  width: 72%;
+  height: 0.9rem;
+}
+
+.loadingPlotLineSecondary {
+  width: 58%;
+  height: 0.85rem;
+}
+
+.loadingPlotBars {
+  display: flex;
+  align-items: end;
+  gap: 0.4rem;
+  min-height: 4rem;
+  padding-top: 0.5rem;
+}
+
+.loadingPlotBar {
+  flex: 1;
+  min-width: 0;
+  border-radius: 4px 4px 2px 2px;
+  background: linear-gradient(
+    180deg,
+    rgba(44, 45, 60, 0.16),
+    rgba(44, 45, 60, 0.28)
+  );
+}
+
+.combinedPlot {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.emptyPlotText {
+  fill: var(--status-text-muted);
+  font-size: 10px;
+  font-weight: 700;
+  text-anchor: middle;
+}
+
+.plotDivider {
+  stroke: var(--status-border);
+  stroke-width: 1;
+}
+
+.activityBar {
+  fill: var(--status-activity);
+}
+
+.line {
+  fill: none;
+  stroke-width: 2.25;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.line[data-series='battery'] {
+  stroke: var(--status-battery);
+}
+
+.line[data-series='voltage'] {
+  stroke: var(--status-voltage);
+}
+
+.point {
+  stroke: var(--status-point-stroke);
+  stroke-width: 2;
+}
+
+.point[data-series='battery'] {
+  fill: var(--status-battery);
+}
+
+.point[data-series='voltage'] {
+  fill: var(--status-voltage);
+}
+
+[data-theme='dark'] .page {
+  --status-text: #f5f7fb;
+  --status-text-muted: rgba(245, 247, 251, 0.7);
+  --status-border: rgba(255, 255, 255, 0.12);
+  --status-border-soft: rgba(255, 255, 255, 0.08);
+  --status-surface: rgba(32, 36, 49, 0.94);
+  --status-surface-alt: rgba(25, 29, 39, 0.94);
+  --status-accent: #81edaa;
+  --status-map-gradient: linear-gradient(180deg, #2c2d3c 0%, #202431 100%);
+  --status-map-ring-fill: rgba(103, 234, 148, 0.12);
+  --status-map-ring-stroke: rgba(255, 255, 255, 0.24);
+  --status-map-marker-fill: #91f0b6;
+  --status-map-marker-stroke: #202431;
+  --status-label-bg: rgba(23, 27, 35, 0.88);
+  --status-label-text: #f5f7fb;
+  --status-activity: rgba(255, 255, 255, 0.18);
+  --status-battery: #81edaa;
+  --status-voltage: #f5f7fb;
+  --status-point-stroke: rgba(25, 29, 39, 0.94);
+  --status-skeleton-base: rgba(255, 255, 255, 0.12);
+  --status-skeleton-highlight: rgba(255, 255, 255, 0.24);
+}
+
+[data-theme='dark'] .mapTiles {
+  background: #11151c;
+}
+
+[data-theme='dark'] .mapTile {
+  filter: saturate(0.72) contrast(0.95) brightness(0.74);
+}
+
+[data-theme='dark'] .mapShade {
+  background:
+    linear-gradient(rgba(32, 36, 49, 0.32), rgba(32, 36, 49, 0.32)),
+    linear-gradient(rgba(255, 255, 255, 0.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.08) 1px, transparent 1px);
+  background-size: auto, 2rem 2rem, 2rem 2rem;
+}
+
+[data-theme='dark'] .mapGhostMarker {
+  fill: rgba(255, 255, 255, 0.74);
+  stroke: rgba(32, 36, 49, 0.5);
+}
+
+@media screen and (max-width: 996px) {
+  .header {
+    align-items: start;
+  }
+
+  .refreshCard {
+    min-width: 0;
+  }
+
+  .cardGrid {
+    grid-template-columns: repeat(auto-fit, 19rem);
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .cardHeader {
+    flex-direction: column;
+  }
+
+  .header {
+    flex-direction: column;
+  }
+
+  .refreshCard {
+    width: 100%;
+  }
+
+  .cardIdentifier {
+    justify-items: start;
+    min-width: 0;
+  }
+
+  .vitalsGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@keyframes statusShimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -20% 0;
+  }
+}
+
+@keyframes statusRefreshSweep {
+  0% {
+    opacity: 0.25;
+    transform: translateX(-35%);
+  }
+  50% {
+    opacity: 0.8;
+  }
+  100% {
+    opacity: 0.25;
+    transform: translateX(35%);
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .page {
+    padding-top: 1.75rem;
+  }
+
+  .cardGrid,
+  .vitalsGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .cardHeader,
+  .plotHeader {
+    flex-direction: column;
+  }
+}

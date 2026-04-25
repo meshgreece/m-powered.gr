@@ -83,6 +83,7 @@ const config: Config = {
           label: 'Οδηγοί',
         },
         {to: '/blog', label: 'Νέα', position: 'left'},
+        {to: '/status', label: 'Κατάσταση', position: 'left'},
         {
           label: 'Εργαλεία',
           position: 'left',
