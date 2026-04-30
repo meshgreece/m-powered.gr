@@ -38,14 +38,14 @@
 .sectionLink {
   display: inline-block;
   margin-top: 0.9rem;
-  color: #145f43;
+  color: #0d5eaf;
   font-weight: 700;
   white-space: nowrap;
   text-decoration: none;
 }
 
 .sectionLink:hover {
-  color: #168758;
+  color: #0a4f95;
   text-decoration: none;
 }
 
@@ -74,7 +74,7 @@
 }
 
 .guideCard:hover {
-  border-color: rgba(103, 234, 148, 0.52);
+  border-color: rgba(47, 128, 237, 0.46);
   background: #ffffff;
   color: inherit;
   text-decoration: none;
@@ -110,7 +110,7 @@
 .guideCta {
   margin-top: auto;
   padding-top: 1rem;
-  color: #145f43;
+  color: #0d5eaf;
   font-weight: 700;
 }
 
@@ -129,7 +129,7 @@
 }
 
 .actionLink:hover {
-  border-color: rgba(103, 234, 148, 0.52);
+  border-color: rgba(47, 128, 237, 0.46);
   background: #ffffff;
   color: inherit;
   text-decoration: none;
@@ -159,7 +159,7 @@
 }
 
 .actionCta {
-  color: #145f43;
+  color: #0d5eaf;
   font-weight: 700;
   white-space: nowrap;
 }
@@ -200,14 +200,14 @@
 }
 
 .toolLink {
-  color: #145f43;
+  color: #0d5eaf;
   font-weight: 700;
   white-space: nowrap;
   text-decoration: none;
 }
 
 .toolLink:hover {
-  color: #168758;
+  color: #0a4f95;
   text-decoration: none;
 }
 
@@ -240,18 +240,18 @@
 }
 
 [data-theme='dark'] .actionLink:hover {
-  border-color: rgba(103, 234, 148, 0.42);
+  border-color: rgba(88, 166, 255, 0.38);
 }
 
 [data-theme='dark'] .guideCard:hover {
-  border-color: rgba(103, 234, 148, 0.42);
+  border-color: rgba(88, 166, 255, 0.38);
 }
 
 [data-theme='dark'] .sectionLink,
 [data-theme='dark'] .actionCta,
 [data-theme='dark'] .toolLink,
 [data-theme='dark'] .guideCta {
-  color: #9bf5bc;
+  color: #9ecbff;
 }
 
 [data-theme='dark'] .guideAudience,

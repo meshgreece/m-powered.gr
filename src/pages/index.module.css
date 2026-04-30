@@ -52,15 +52,15 @@
 }
 
 .primaryButton {
-  --ifm-button-background-color: #67ea94;
-  --ifm-button-border-color: #67ea94;
+  --ifm-button-background-color: #58a6ff;
+  --ifm-button-border-color: #58a6ff;
   --ifm-button-color: #202431;
   font-weight: 700;
 }
 
 .primaryButton:hover {
-  --ifm-button-background-color: #91f0b6;
-  --ifm-button-border-color: #91f0b6;
+  --ifm-button-background-color: #9ecbff;
+  --ifm-button-border-color: #9ecbff;
   color: #202431;
 }
 
@@ -125,13 +125,13 @@
 
 .heroStepLink {
   width: fit-content;
-  color: #67ea94;
+  color: #58a6ff;
   font-weight: 700;
   text-decoration: none;
 }
 
 .heroStepLink:hover {
-  color: #91f0b6;
+  color: #9ecbff;
   text-decoration: none;
 }
 
