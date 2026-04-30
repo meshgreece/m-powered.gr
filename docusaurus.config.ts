@@ -103,6 +103,11 @@ const config: Config = {
           ],
         },
         {
+          href: 'https://meshtastic.org/',
+          label: 'Meshtastic Project',
+          position: 'left',
+        },
+        {
           href: 'https://github.com/meshgreece/m-powered.gr',
           label: 'GitHub',
           position: 'right',
@@ -172,7 +177,7 @@ const config: Config = {
           ],
         },
       ],
-      copyright: `Copyright © ${new Date().getFullYear()} m-powered.gr. Built with Docusaurus.`,
+      copyright: `Το m-powered.gr είναι ανεξάρτητος ιστότοπος κοινότητας και δεν ανήκει στο Meshtastic project.<br />Copyright © ${new Date().getFullYear()} m-powered.gr. Built with Docusaurus.`,
     },
     prism: {
       theme: prismThemes.github,
