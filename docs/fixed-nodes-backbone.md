@@ -108,8 +108,10 @@ description: Οδηγός για σταθερούς κόμβους, CLIENT_BASE,
 | --- | --- | --- | --- |
 | Parnitha ☀️ | `!ce51114b` | ROUTER | [🔗](https://meshview.m-powered.gr/node/3461419339) |
 | Ypato ☀️ | `!75f15c34` | ROUTER | [🔗](https://meshview.m-powered.gr/node/1978752052) |
+| Ymittos ☀️ | `!d9906dc1` | ROUTER | [🔗](https://meshview.m-powered.gr/node/3650121153) |
 | Eretria ☀️ | `!2cab220e` | ROUTER_LATE | [🔗](https://meshview.m-powered.gr/node/749412878) |
 | Kitheronas ☀️ | `!7534b015` | ROUTER_LATE | [🔗](https://meshview.m-powered.gr/node/1966387221) |
+| Kandili ☀️ | `!ce78669b` | ROUTER_LATE | [🔗](https://meshview.m-powered.gr/node/3463997083) |
 | Chalkida ☀️ | `!8e66c621` | ROUTER_LATE | [🔗](https://meshview.m-powered.gr/node/2389100065) |
 
 ## Πρακτικός κανόνας για τα `favorites`
