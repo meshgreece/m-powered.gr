@@ -16,6 +16,8 @@
   --status-activity: rgba(44, 45, 60, 0.26);
   --status-battery: #67ea94;
   --status-voltage: #2c2d3c;
+  --status-air-util-tx: #7cff68;
+  --status-channel-utilization: #ff5fc7;
   --status-point-stroke: #f4f6fa;
   --status-skeleton-base: rgba(44, 45, 60, 0.1);
   --status-skeleton-highlight: rgba(255, 255, 255, 0.8);
@@ -423,6 +425,14 @@
   background: var(--status-voltage);
 }
 
+.legendSwatch[data-series='air-util-tx'] {
+  background: var(--status-air-util-tx);
+}
+
+.legendSwatch[data-series='channel-utilization'] {
+  background: var(--status-channel-utilization);
+}
+
 .plotFrame {
   padding: 0.42rem 0.55rem;
   border: 1px solid var(--status-border-soft);
@@ -503,6 +513,14 @@
   stroke: var(--status-voltage);
 }
 
+.line[data-series='air-util-tx'] {
+  stroke: var(--status-air-util-tx);
+}
+
+.line[data-series='channel-utilization'] {
+  stroke: var(--status-channel-utilization);
+}
+
 .point {
   stroke: var(--status-point-stroke);
   stroke-width: 2;
@@ -514,6 +532,14 @@
 
 .point[data-series='voltage'] {
   fill: var(--status-voltage);
+}
+
+.point[data-series='air-util-tx'] {
+  fill: var(--status-air-util-tx);
+}
+
+.point[data-series='channel-utilization'] {
+  fill: var(--status-channel-utilization);
 }
 
 [data-theme='dark'] .page {
@@ -534,6 +560,8 @@
   --status-activity: rgba(255, 255, 255, 0.18);
   --status-battery: #81edaa;
   --status-voltage: #f5f7fb;
+  --status-air-util-tx: #8cff72;
+  --status-channel-utilization: #ff66cf;
   --status-point-stroke: rgba(25, 29, 39, 0.94);
   --status-skeleton-base: rgba(255, 255, 255, 0.12);
   --status-skeleton-highlight: rgba(255, 255, 255, 0.24);

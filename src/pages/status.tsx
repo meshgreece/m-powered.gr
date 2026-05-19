@@ -36,6 +36,8 @@ type NodeCardData = CoreNodeReference & {
   activity24h: number[];
   batterySeries: number[];
   voltageSeries: number[];
+  airUtilTxSeries: number[];
+  channelUtilizationSeries: number[];
   isLoading: boolean;
 };
 
@@ -76,6 +78,8 @@ type TelemetryData = {
   voltage: number | null;
   batterySeries: number[];
   voltageSeries: number[];
+  airUtilTxSeries: number[];
+  channelUtilizationSeries: number[];
 };
 
 type PositionedNode = NodeCardData & {
@@ -88,6 +92,8 @@ const EMPTY_TELEMETRY: TelemetryData = {
   voltage: null,
   batterySeries: [],
   voltageSeries: [],
+  airUtilTxSeries: [],
+  channelUtilizationSeries: [],
 };
 
 const CORE_NODE_REFERENCES: CoreNodeReference[] = [
@@ -229,6 +235,23 @@ function getPointsInBand(
       padding +
       (index / Math.max(values.length - 1, 1)) * (width - padding * 2);
     const normalized = (value - minimum) / range;
+    const y = bottom - normalized * (bottom - top);
+    return [Number(x.toFixed(2)), Number(y.toFixed(2))];
+  });
+}
+
+function getPercentPointsInBand(
+  values: number[],
+  width: number,
+  padding: number,
+  top: number,
+  bottom: number,
+): Array<[number, number]> {
+  return values.map((value, index) => {
+    const x =
+      padding +
+      (index / Math.max(values.length - 1, 1)) * (width - padding * 2);
+    const normalized = clamp(value, 0, 100) / 100;
     const y = bottom - normalized * (bottom - top);
     return [Number(x.toFixed(2)), Number(y.toFixed(2))];
   });
@@ -390,10 +413,14 @@ function parseTelemetry(packets: Packet[] | undefined): TelemetryData {
 
   const batterySeries: number[] = [];
   const voltageSeries: number[] = [];
+  const airUtilTxSeries: number[] = [];
+  const channelUtilizationSeries: number[] = [];
 
   for (const packet of orderedPackets) {
     const battery = parseMetric(packet.payload, 'battery_level');
     const voltage = parseMetric(packet.payload, 'voltage');
+    const airUtilTx = parseMetric(packet.payload, 'air_util_tx');
+    const channelUtilization = parseMetric(packet.payload, 'channel_utilization');
 
     if (battery !== null) {
       batterySeries.push(battery);
@@ -401,6 +428,14 @@ function parseTelemetry(packets: Packet[] | undefined): TelemetryData {
 
     if (voltage !== null) {
       voltageSeries.push(voltage);
+    }
+
+    if (airUtilTx !== null) {
+      airUtilTxSeries.push(airUtilTx);
+    }
+
+    if (channelUtilization !== null) {
+      channelUtilizationSeries.push(channelUtilization);
     }
   }
 
@@ -428,6 +463,8 @@ function parseTelemetry(packets: Packet[] | undefined): TelemetryData {
     voltage: latestVoltage,
     batterySeries,
     voltageSeries,
+    airUtilTxSeries,
+    channelUtilizationSeries,
   };
 }
 
@@ -473,6 +510,8 @@ function createInitialNodeCardData(reference: CoreNodeReference): NodeCardData {
     activity24h: [...EMPTY_ACTIVITY_SERIES],
     batterySeries: [],
     voltageSeries: [],
+    airUtilTxSeries: [],
+    channelUtilizationSeries: [],
     isLoading: true,
   };
 }
@@ -558,6 +597,8 @@ async function fetchNodeCardData(reference: CoreNodeReference): Promise<NodeCard
     activity24h,
     batterySeries: telemetry.batterySeries,
     voltageSeries: telemetry.voltageSeries,
+    airUtilTxSeries: telemetry.airUtilTxSeries,
+    channelUtilizationSeries: telemetry.channelUtilizationSeries,
     isLoading: false,
   };
 }
@@ -708,24 +749,32 @@ function Combined24hPlot({
   activity,
   battery,
   voltage,
+  airUtilTx,
+  channelUtilization,
 }: {
   activity: number[];
   battery: number[];
   voltage: number[];
+  airUtilTx: number[];
+  channelUtilization: number[];
 }) {
   const width = 248;
   const height = 118;
   const padding = 10;
   const powerTop = 10;
-  const powerBottom = 62;
-  const activityTop = 74;
+  const rfTop = 50;
+  const rfBottom = 78;
   const activityBottom = 108;
   const hasBattery = battery.length > 0;
   const hasVoltage = voltage.length > 0;
+  const hasAirUtilTx = airUtilTx.length > 0;
+  const hasChannelUtilization = channelUtilization.length > 0;
   const hasPower = hasBattery || hasVoltage;
+  const hasRfUtilization = hasAirUtilTx || hasChannelUtilization;
   const hasActivity = activity.some((value) => value > 0);
-  const activityBandTop = hasPower ? activityTop : 18;
-  const activityBandBottom = hasPower ? activityBottom : 108;
+  const powerBottom = hasRfUtilization ? 42 : 62;
+  const activityBandTop = hasRfUtilization ? 88 : hasPower ? 74 : 18;
+  const powerDividerY = hasRfUtilization ? 46 : 69;
   const batteryPoints = hasBattery
     ? getPointsInBand(
         resampleSeries(battery, activity.length),
@@ -744,11 +793,32 @@ function Combined24hPlot({
         powerBottom,
       )
     : [];
+  const airUtilTxPoints = hasAirUtilTx
+    ? getPercentPointsInBand(
+        resampleSeries(airUtilTx, activity.length),
+        width,
+        padding,
+        rfTop,
+        rfBottom,
+      )
+    : [];
+  const channelUtilizationPoints = hasChannelUtilization
+    ? getPercentPointsInBand(
+        resampleSeries(channelUtilization, activity.length),
+        width,
+        padding,
+        rfTop,
+        rfBottom,
+      )
+    : [];
   const peakActivity = Math.max(...activity, 1);
   const usableWidth = width - padding * 2;
   const barWidth = usableWidth / activity.length - 1.5;
   const batteryLastPoint = batteryPoints[batteryPoints.length - 1];
   const voltageLastPoint = voltagePoints[voltagePoints.length - 1];
+  const airUtilTxLastPoint = airUtilTxPoints[airUtilTxPoints.length - 1];
+  const channelUtilizationLastPoint =
+    channelUtilizationPoints[channelUtilizationPoints.length - 1];
 
   return (
     <svg className={styles.combinedPlot} viewBox={`0 0 ${width} ${height}`} aria-hidden="true">
@@ -756,9 +826,18 @@ function Combined24hPlot({
         <line
           className={styles.plotDivider}
           x1={padding}
-          y1={69}
+          y1={powerDividerY}
           x2={width - padding}
-          y2={69}
+          y2={powerDividerY}
+        />
+      ) : null}
+      {hasRfUtilization ? (
+        <line
+          className={styles.plotDivider}
+          x1={padding}
+          y1={83}
+          x2={width - padding}
+          y2={83}
         />
       ) : null}
       {activity.map((value, index) => {
@@ -770,7 +849,7 @@ function Combined24hPlot({
         const barHeight =
           Math.max(
             6,
-            (value / peakActivity) * (activityBandBottom - activityBandTop),
+            (value / peakActivity) * (activityBottom - activityBandTop),
           );
 
         return (
@@ -778,7 +857,7 @@ function Combined24hPlot({
             key={`${index}-${value}`}
             className={styles.activityBar}
             x={x}
-            y={activityBandBottom - barHeight}
+            y={activityBottom - barHeight}
             width={barWidth}
             height={barHeight}
             rx="2.5"
@@ -799,6 +878,20 @@ function Combined24hPlot({
           data-series="voltage"
         />
       ) : null}
+      {hasAirUtilTx ? (
+        <path
+          className={styles.line}
+          d={getLinePath(airUtilTxPoints)}
+          data-series="air-util-tx"
+        />
+      ) : null}
+      {hasChannelUtilization ? (
+        <path
+          className={styles.line}
+          d={getLinePath(channelUtilizationPoints)}
+          data-series="channel-utilization"
+        />
+      ) : null}
       {hasBattery && batteryLastPoint ? (
         <circle
           className={styles.point}
@@ -817,7 +910,25 @@ function Combined24hPlot({
           data-series="voltage"
         />
       ) : null}
-      {!hasPower && !hasActivity ? (
+      {hasAirUtilTx && airUtilTxLastPoint ? (
+        <circle
+          className={styles.point}
+          cx={airUtilTxLastPoint[0]}
+          cy={airUtilTxLastPoint[1]}
+          r="3.5"
+          data-series="air-util-tx"
+        />
+      ) : null}
+      {hasChannelUtilization && channelUtilizationLastPoint ? (
+        <circle
+          className={styles.point}
+          cx={channelUtilizationLastPoint[0]}
+          cy={channelUtilizationLastPoint[1]}
+          r="3.5"
+          data-series="channel-utilization"
+        />
+      ) : null}
+      {!hasPower && !hasRfUtilization && !hasActivity ? (
         <text className={styles.emptyPlotText} x={width / 2} y={height / 2}>
           Χωρίς δεδομένα 24ώρου
         </text>
@@ -871,6 +982,18 @@ function PlotLegend({node}: {node: NodeCardData}) {
         <span className={styles.legendItem}>
           <span className={styles.legendSwatch} data-series="voltage" />
           Τάση
+        </span>
+      ) : null}
+      {node.airUtilTxSeries.length > 0 ? (
+        <span className={styles.legendItem}>
+          <span className={styles.legendSwatch} data-series="air-util-tx" />
+          Air TX
+        </span>
+      ) : null}
+      {node.channelUtilizationSeries.length > 0 ? (
+        <span className={styles.legendItem}>
+          <span className={styles.legendSwatch} data-series="channel-utilization" />
+          Channel Busy
         </span>
       ) : null}
     </div>
@@ -934,8 +1057,9 @@ function NodeCard({
         <section className={styles.plotPanel}>
           <div className={styles.plotHeader}>
             <p className={styles.plotTitle}>
-              {node.batterySeries.length > 0 || node.voltageSeries.length > 0
-                ? 'Δραστηριότητα 24ώρου + τροφοδοσία'
+              {node.batterySeries.length > 0 || node.voltageSeries.length > 0 ||
+              node.airUtilTxSeries.length > 0 || node.channelUtilizationSeries.length > 0
+                ? 'Δραστηριότητα 24ώρου + τηλεμετρία'
                 : 'Δραστηριότητα 24ώρου'}
             </p>
           </div>
@@ -952,6 +1076,8 @@ function NodeCard({
                 activity={node.activity24h}
                 battery={node.batterySeries}
                 voltage={node.voltageSeries}
+                airUtilTx={node.airUtilTxSeries}
+                channelUtilization={node.channelUtilizationSeries}
               />
             )}
           </div>
