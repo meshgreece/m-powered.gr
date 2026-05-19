@@ -823,6 +823,21 @@ function Combined24hPlot({
   return (
     <svg className={styles.combinedPlot} viewBox={`0 0 ${width} ${height}`} aria-hidden="true">
       {hasPower ? (
+        <text className={styles.plotBandLabel} x={width - padding} y={powerTop + 8}>
+          Τροφοδοσία
+        </text>
+      ) : null}
+      {hasRfUtilization ? (
+        <text className={styles.plotBandLabel} x={width - padding} y={rfTop + 8}>
+          RF
+        </text>
+      ) : null}
+      {hasActivity ? (
+        <text className={styles.plotBandLabel} x={width - padding} y={activityBandTop + 8}>
+          Πακέτα
+        </text>
+      ) : null}
+      {hasPower ? (
         <line
           className={styles.plotDivider}
           x1={padding}
@@ -937,6 +952,24 @@ function Combined24hPlot({
   );
 }
 
+function getLatestSeriesValue(series: number[]): number | null {
+  return series.length > 0 ? series[series.length - 1] : null;
+}
+
+function formatTelemetryPercent(value: number | null, precision = 0): string {
+  if (value === null) {
+    return '—';
+  }
+
+  const multiplier = 10 ** precision;
+  const roundedValue = Math.round(value * multiplier) / multiplier;
+  return `${roundedValue}%`;
+}
+
+function formatTelemetryVoltage(value: number | null): string {
+  return value === null ? '—' : `${value.toFixed(2)}V`;
+}
+
 function formatPowerValue(node: NodeCardData): string {
   if (node.battery === null && node.voltage === null) {
     return 'Χωρίς δεδομένα';
@@ -965,37 +998,89 @@ function PlotLoadingState() {
   );
 }
 
-function PlotLegend({node}: {node: NodeCardData}) {
+function HeaderTelemetryItem({
+  series,
+  label,
+  value,
+}: {
+  series: string;
+  label: string;
+  value: string;
+}) {
   return (
-    <div className={styles.plotLegend}>
-      <span className={styles.legendItem}>
-        <span className={styles.legendSwatch} data-series="activity" />
-        Δραστηριότητα
-      </span>
-      {node.batterySeries.length > 0 ? (
-        <span className={styles.legendItem}>
-          <span className={styles.legendSwatch} data-series="battery" />
-          Μπαταρία
-        </span>
-      ) : null}
-      {node.voltageSeries.length > 0 ? (
-        <span className={styles.legendItem}>
-          <span className={styles.legendSwatch} data-series="voltage" />
-          Τάση
-        </span>
-      ) : null}
-      {node.airUtilTxSeries.length > 0 ? (
-        <span className={styles.legendItem}>
-          <span className={styles.legendSwatch} data-series="air-util-tx" />
-          Air TX
-        </span>
-      ) : null}
-      {node.channelUtilizationSeries.length > 0 ? (
-        <span className={styles.legendItem}>
-          <span className={styles.legendSwatch} data-series="channel-utilization" />
-          Channel Busy
-        </span>
-      ) : null}
+    <div className={styles.headerTelemetryItem}>
+      <span className={styles.headerTelemetryIcon} data-series={series} />
+      <span className={styles.headerTelemetryLabel}>{label}</span>
+      <span className={styles.headerTelemetryValue}>{value}</span>
+    </div>
+  );
+}
+
+function HeaderTelemetryTable({node}: {node: NodeCardData}) {
+  const latestAirUtilTx = getLatestSeriesValue(node.airUtilTxSeries);
+  const latestChannelUtilization = getLatestSeriesValue(
+    node.channelUtilizationSeries,
+  );
+  const telemetryItems = [
+    node.batterySeries.length > 0
+      ? {
+          series: "battery",
+          label: "Μπαταρία",
+          value: formatTelemetryPercent(node.battery),
+        }
+      : null,
+    node.voltageSeries.length > 0
+      ? {
+          series: "voltage",
+          label: "Τάση",
+          value: formatTelemetryVoltage(node.voltage),
+        }
+      : null,
+    node.airUtilTxSeries.length > 0
+      ? {
+          series: "air-util-tx",
+          label: "Air TX",
+          value: formatTelemetryPercent(latestAirUtilTx),
+        }
+      : null,
+    node.channelUtilizationSeries.length > 0
+      ? {
+          series: "channel-utilization",
+          label: "Κανάλι",
+          value: formatTelemetryPercent(latestChannelUtilization),
+        }
+      : null,
+  ].filter(
+    (item): item is {series: string; label: string; value: string} =>
+      item !== null,
+  );
+
+  if (node.isLoading) {
+    return (
+      <div className={styles.headerTelemetryTable} aria-hidden="true">
+        {Array.from({length: 4}, (_, index) => (
+          <div key={index} className={styles.headerTelemetryItem}>
+            <LoadingLine className={styles.loadingTelemetryLine} />
+          </div>
+        ))}
+      </div>
+    );
+  }
+
+  if (!telemetryItems.length) {
+    return null;
+  }
+
+  return (
+    <div className={styles.headerTelemetryTable} aria-label="Τρέχουσα τηλεμετρία">
+      {telemetryItems.map((item) => (
+        <HeaderTelemetryItem
+          key={item.series}
+          series={item.series}
+          label={item.label}
+          value={item.value}
+        />
+      ))}
     </div>
   );
 }
@@ -1028,12 +1113,12 @@ function NodeCard({
                 {node.name}
               </a>
             </Heading>
-            <p className={styles.cardMeta}>{node.role}</p>
+            <p className={styles.cardMeta}>
+              <span className={styles.cardMetaHex}>{node.hexId}</span>
+              <span className={styles.cardMetaRole}>{node.role}</span>
+            </p>
           </div>
-          <div className={styles.cardIdentifier}>
-            <p className={styles.cardIdentifierLabel}>Hex ID</p>
-            <p className={styles.cardIdentifierValue}>{node.hexId}</p>
-          </div>
+          <HeaderTelemetryTable node={node} />
         </header>
 
         <section className={styles.vitalsGrid}>
@@ -1043,7 +1128,7 @@ function NodeCard({
             isLoading={node.isLoading}
           />
           <VitalsCell
-            label="Πακέτα 24ώρου"
+            label="Πακέτα 24ω"
             value={String(node.packets24h)}
             isLoading={node.isLoading}
           />
@@ -1059,15 +1144,10 @@ function NodeCard({
             <p className={styles.plotTitle}>
               {node.batterySeries.length > 0 || node.voltageSeries.length > 0 ||
               node.airUtilTxSeries.length > 0 || node.channelUtilizationSeries.length > 0
-                ? 'Δραστηριότητα 24ώρου + τηλεμετρία'
+                ? 'Τηλεμετρία 24ώρου'
                 : 'Δραστηριότητα 24ώρου'}
             </p>
           </div>
-          {node.isLoading ? (
-            <LoadingLine className={styles.loadingLegendRow} />
-          ) : (
-            <PlotLegend node={node} />
-          )}
           <div className={styles.plotFrame}>
             {node.isLoading ? (
               <PlotLoadingState />

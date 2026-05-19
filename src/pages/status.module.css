@@ -291,7 +291,6 @@
 .cardMeta,
 .vitalLabel,
 .plotTitle,
-.legendItem,
 .pageSubtitle {
   color: var(--status-text-muted);
 }
@@ -309,41 +308,103 @@
 .pageSubtitleLink:focus-visible {
   outline: 2px solid var(--status-accent);
   outline-offset: 2px;
-  border-radius: 3px;
+  border-radius: 2px;
 }
 
 .cardMeta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.38rem;
   margin: 0.3rem 0 0;
-  font-size: 0.9rem;
   line-height: 1.5;
+}
+
+.cardMetaHex {
+  color: var(--status-text);
+  font-size: 0.86rem;
+  font-weight: 750;
+  font-variant-numeric: tabular-nums;
+}
+
+.cardMetaRole {
+  color: var(--status-text-muted);
+  font-size: 0.76rem;
+  font-weight: 650;
 }
 
 .nodeCardLoading .cardMeta {
   opacity: 0.72;
 }
 
-.cardIdentifier {
+.headerTelemetryTable {
   display: grid;
-  justify-items: end;
-  gap: 0.18rem;
-  min-width: 7.2rem;
-  padding-top: 0.12rem;
+  grid-template-columns: repeat(2, minmax(3.9rem, max-content));
+  gap: 0.34rem 0.5rem;
+  align-self: start;
+  justify-self: end;
+  margin-left: auto;
+  min-width: 8.8rem;
+  justify-content: end;
+  padding-top: 0.1rem;
 }
 
-.cardIdentifierLabel {
-  margin: 0;
+.headerTelemetryItem {
+  display: grid;
+  grid-template-columns: 0.42rem minmax(0, 1fr);
+  grid-template-areas:
+    "icon label"
+    "icon value";
+  column-gap: 0.25rem;
+  row-gap: 0.08rem;
+  align-items: center;
+  min-width: 0;
+}
+
+.headerTelemetryIcon {
+  grid-area: icon;
+  width: 0.38rem;
+  height: 0.38rem;
+  border-radius: 2px;
+  background: var(--status-battery);
+}
+
+.headerTelemetryIcon[data-series=battery] {
+  background: var(--status-battery);
+}
+
+.headerTelemetryIcon[data-series=voltage] {
+  background: var(--status-voltage);
+}
+
+.headerTelemetryIcon[data-series=air-util-tx] {
+  background: var(--status-air-util-tx);
+}
+
+.headerTelemetryIcon[data-series=channel-utilization] {
+  background: var(--status-channel-utilization);
+}
+
+.headerTelemetryLabel {
+  grid-area: label;
   color: var(--status-text-muted);
-  font-size: 0.72rem;
+  font-size: 0.61rem;
   font-weight: 700;
+  line-height: 1;
 }
 
-.cardIdentifierValue {
-  margin: 0;
+.headerTelemetryValue {
+  grid-area: value;
   color: var(--status-text);
-  font-size: 0.82rem;
-  font-weight: 700;
+  font-size: 0.74rem;
+  font-weight: 750;
   font-variant-numeric: tabular-nums;
-  line-height: 1.25;
+  line-height: 1.05;
+}
+
+.loadingTelemetryLine {
+  grid-column: 1 / -1;
+  height: 0.95rem;
 }
 
 .vitalsGrid {
@@ -388,56 +449,11 @@
   gap: 0.55rem;
 }
 
-.plotLegend {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.6rem 0.75rem;
-}
-
-.loadingLegendRow {
-  height: 0.95rem;
-  width: 11rem;
-}
-
-.legendItem {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.4rem;
-  font-size: 0.78rem;
-}
-
-.legendSwatch {
-  width: 0.7rem;
-  height: 0.7rem;
-  border-radius: 4px;
-  background: var(--status-battery);
-}
-
-.legendSwatch[data-series='activity'] {
-  background: var(--status-activity);
-}
-
-.legendSwatch[data-series='battery'] {
-  background: var(--status-battery);
-}
-
-.legendSwatch[data-series='voltage'] {
-  background: var(--status-voltage);
-}
-
-.legendSwatch[data-series='air-util-tx'] {
-  background: var(--status-air-util-tx);
-}
-
-.legendSwatch[data-series='channel-utilization'] {
-  background: var(--status-channel-utilization);
-}
-
 .plotFrame {
   padding: 0.42rem 0.55rem;
   border: 1px solid var(--status-border-soft);
   border-radius: 8px;
-  background: var(--status-surface-alt);
+  background: color-mix(in srgb, var(--status-surface-alt) 78%, transparent);
 }
 
 .loadingPlot {
@@ -492,6 +508,15 @@
 .plotDivider {
   stroke: var(--status-border);
   stroke-width: 1;
+}
+
+.plotBandLabel {
+  fill: var(--status-text-muted);
+  font-size: 7.5px;
+  font-weight: 700;
+  opacity: 0.5;
+  pointer-events: none;
+  text-anchor: end;
 }
 
 .activityBar {
@@ -615,8 +640,10 @@
     width: 100%;
   }
 
-  .cardIdentifier {
-    justify-items: start;
+  .headerTelemetryTable {
+    justify-self: stretch;
+    margin-left: 0;
+    width: 100%;
     min-width: 0;
   }
 
