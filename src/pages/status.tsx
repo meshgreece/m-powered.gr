@@ -119,7 +119,7 @@ const CORE_NODE_REFERENCES: CoreNodeReference[] = [
   },
   {
     nodeId: '3463997083',
-    prefecture: 'Νομός Αττικής',
+    prefecture: 'Νομός Ευβοίας',
   },
   {
     nodeId: '2389100065',
