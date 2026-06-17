@@ -26,6 +26,7 @@ type NodeCardData = CoreNodeReference & {
   name: string;
   shortName: string;
   role: string;
+  preset: string;
   hexId: string;
   latitude: number | null;
   longitude: number | null;
@@ -46,6 +47,7 @@ type MeshviewNode = {
   long_name?: string | null;
   short_name?: string | null;
   role?: string | null;
+  channel?: string | null;
   last_lat?: number | null;
   last_long?: number | null;
   last_seen_us?: number | string | null;
@@ -500,6 +502,7 @@ function createInitialNodeCardData(reference: CoreNodeReference): NodeCardData {
     name: `Κόμβος ${reference.nodeId}`,
     shortName: reference.nodeId.slice(-4),
     role: '—',
+    preset: '—',
     hexId: '—',
     latitude: null,
     longitude: null,
@@ -587,6 +590,7 @@ async function fetchNodeCardData(reference: CoreNodeReference): Promise<NodeCard
     name: node?.long_name ?? `Κόμβος ${reference.nodeId}`,
     shortName: node?.short_name ?? reference.nodeId.slice(-4),
     role: node?.role ?? '—',
+    preset: node?.channel ?? '—',
     hexId: node?.id ?? '—',
     latitude: typeof node?.last_lat === 'number' ? node.last_lat / 1e7 : null,
     longitude: typeof node?.last_long === 'number' ? node.last_long / 1e7 : null,
@@ -738,6 +742,10 @@ function MiniMap({
 
       <div className={styles.mapLabel}>
         <span>{node.shortName}</span>
+      </div>
+
+      <div className={styles.mapLabel + ' ' + styles.mapPresetLabel}>
+        <span>{node.preset}</span>
       </div>
 
       <div className={styles.mapAttribution}>© OpenStreetMap</div>
