@@ -87,7 +87,7 @@
 
 .cardGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, 22rem);
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 26.75rem), 26.75rem));
   gap: 1rem;
   justify-content: start;
 }
@@ -131,7 +131,7 @@
 .mapPanel {
   position: relative;
   display: block;
-  height: 8.5rem;
+  height: 9.25rem;
   overflow: hidden;
   border-bottom: 1px solid var(--status-border);
   background: var(--status-map-gradient);
@@ -350,72 +350,71 @@
   opacity: 0.72;
 }
 
-.headerTelemetryTable {
+.chartLegend {
   display: grid;
-  grid-template-columns: repeat(2, minmax(3.9rem, max-content));
-  gap: 0.34rem 0.5rem;
-  align-self: start;
-  justify-self: end;
-  margin-left: auto;
-  min-width: 8.8rem;
-  justify-content: end;
-  padding-top: 0.1rem;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.75rem;
+  padding-top: 0.7rem;
+  border-top: 1px solid var(--status-border-soft);
 }
 
-.headerTelemetryItem {
+.chartLegendItem {
   display: grid;
-  grid-template-columns: 0.42rem minmax(0, 1fr);
+  grid-template-columns: 0.5rem minmax(0, 1fr);
   grid-template-areas:
     "icon label"
     "icon value";
-  column-gap: 0.25rem;
+  column-gap: 0.36rem;
   row-gap: 0.08rem;
   align-items: center;
   min-width: 0;
 }
 
-.headerTelemetryIcon {
+.chartLegendIcon {
   grid-area: icon;
-  width: 0.38rem;
-  height: 0.38rem;
+  width: 0.42rem;
+  height: 0.42rem;
   border-radius: 2px;
   background: var(--status-battery);
 }
 
-.headerTelemetryIcon[data-series=battery] {
+.chartLegendIcon[data-series=battery] {
   background: var(--status-battery);
 }
 
-.headerTelemetryIcon[data-series=voltage] {
+.chartLegendIcon[data-series=voltage] {
   background: var(--status-voltage);
 }
 
-.headerTelemetryIcon[data-series=air-util-tx] {
+.chartLegendIcon[data-series=air-util-tx] {
   background: var(--status-air-util-tx);
 }
 
-.headerTelemetryIcon[data-series=channel-utilization] {
+.chartLegendIcon[data-series=channel-utilization] {
   background: var(--status-channel-utilization);
 }
 
-.headerTelemetryLabel {
+.chartLegendLabel {
   grid-area: label;
   color: var(--status-text-muted);
-  font-size: 0.61rem;
+  font-size: 0.67rem;
   font-weight: 700;
   line-height: 1;
 }
 
-.headerTelemetryValue {
+.chartLegendValue {
   grid-area: value;
   color: var(--status-text);
-  font-size: 0.74rem;
+  font-size: 0.84rem;
   font-weight: 750;
   font-variant-numeric: tabular-nums;
-  line-height: 1.05;
+  line-height: 1.08;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
-.loadingTelemetryLine {
+.loadingLegendLine {
   grid-column: 1 / -1;
   height: 0.95rem;
 }
@@ -459,11 +458,11 @@
 
 .plotPanel {
   display: grid;
-  gap: 0.55rem;
+  gap: 0.75rem;
 }
 
 .plotFrame {
-  padding: 0.42rem 0.55rem;
+  padding: 0.18rem 0.2rem 0.12rem;
   border: 1px solid var(--status-border-soft);
   border-radius: 8px;
   background: color-mix(in srgb, var(--status-surface-alt) 78%, transparent);
@@ -473,7 +472,7 @@
   display: grid;
   align-content: end;
   gap: 0.55rem;
-  min-height: 118px;
+  min-height: 178px;
 }
 
 .loadingPlotLinePrimary {
@@ -518,18 +517,40 @@
   text-anchor: middle;
 }
 
-.plotDivider {
+.plotBandFill {
+  fill: color-mix(in srgb, var(--status-surface-alt) 42%, transparent);
+  opacity: 0.42;
+}
+
+.plotXAxisLabel {
+  fill: var(--status-text-muted);
+  font-size: 7px;
+  font-weight: 700;
+  opacity: 0.64;
+  pointer-events: none;
+}
+
+.plotDivider,
+.plotTimeline {
   stroke: var(--status-border);
   stroke-width: 1;
+}
+
+.plotDivider {
+  opacity: 0.58;
+}
+
+.plotTimeline {
+  opacity: 0.76;
 }
 
 .plotBandLabel {
   fill: var(--status-text-muted);
   font-size: 7.5px;
-  font-weight: 700;
-  opacity: 0.5;
+  font-weight: 750;
+  opacity: 0.58;
   pointer-events: none;
-  text-anchor: end;
+  text-anchor: start;
 }
 
 .activityBar {
@@ -538,7 +559,7 @@
 
 .line {
   fill: none;
-  stroke-width: 2.25;
+  stroke-width: 2.45;
   stroke-linecap: round;
   stroke-linejoin: round;
 }
@@ -636,7 +657,7 @@
   }
 
   .cardGrid {
-    grid-template-columns: repeat(auto-fit, 19rem);
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 22rem), 22rem));
   }
 }
 
@@ -653,11 +674,8 @@
     width: 100%;
   }
 
-  .headerTelemetryTable {
-    justify-self: stretch;
-    margin-left: 0;
-    width: 100%;
-    min-width: 0;
+  .chartLegend {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .vitalsGrid {

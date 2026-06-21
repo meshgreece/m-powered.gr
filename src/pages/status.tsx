@@ -224,8 +224,8 @@ function getBounds(values: number[]): [number, number] {
 
 function getPointsInBand(
   values: number[],
-  width: number,
-  padding: number,
+  left: number,
+  right: number,
   top: number,
   bottom: number,
 ): Array<[number, number]> {
@@ -234,8 +234,7 @@ function getPointsInBand(
 
   return values.map((value, index) => {
     const x =
-      padding +
-      (index / Math.max(values.length - 1, 1)) * (width - padding * 2);
+      left + (index / Math.max(values.length - 1, 1)) * (right - left);
     const normalized = (value - minimum) / range;
     const y = bottom - normalized * (bottom - top);
     return [Number(x.toFixed(2)), Number(y.toFixed(2))];
@@ -244,15 +243,14 @@ function getPointsInBand(
 
 function getPercentPointsInBand(
   values: number[],
-  width: number,
-  padding: number,
+  left: number,
+  right: number,
   top: number,
   bottom: number,
 ): Array<[number, number]> {
   return values.map((value, index) => {
     const x =
-      padding +
-      (index / Math.max(values.length - 1, 1)) * (width - padding * 2);
+      left + (index / Math.max(values.length - 1, 1)) * (right - left);
     const normalized = clamp(value, 0, 100) / 100;
     const y = bottom - normalized * (bottom - top);
     return [Number(x.toFixed(2)), Number(y.toFixed(2))];
@@ -766,13 +764,22 @@ function Combined24hPlot({
   airUtilTx: number[];
   channelUtilization: number[];
 }) {
-  const width = 248;
-  const height = 118;
-  const padding = 10;
-  const powerTop = 10;
-  const rfTop = 50;
-  const rfBottom = 78;
-  const activityBottom = 108;
+  const width = 360;
+  const height = 184;
+  const plotLeft = 10;
+  const plotRight = width - 10;
+  const powerLabelY = 16;
+  const powerTop = 24;
+  const powerBottom = 62;
+  const rfLabelY = 82;
+  const rfTop = 90;
+  const rfBottom = 116;
+  const activityLabelY = 136;
+  const activityBandTop = 144;
+  const activityBottom = 166;
+  const xAxisY = 174;
+  const powerSeparatorY = 72;
+  const rfSeparatorY = 126;
   const hasBattery = battery.length > 0;
   const hasVoltage = voltage.length > 0;
   const hasAirUtilTx = airUtilTx.length > 0;
@@ -780,14 +787,11 @@ function Combined24hPlot({
   const hasPower = hasBattery || hasVoltage;
   const hasRfUtilization = hasAirUtilTx || hasChannelUtilization;
   const hasActivity = activity.some((value) => value > 0);
-  const powerBottom = hasRfUtilization ? 42 : 62;
-  const activityBandTop = hasRfUtilization ? 88 : hasPower ? 74 : 18;
-  const powerDividerY = hasRfUtilization ? 46 : 69;
   const batteryPoints = hasBattery
     ? getPointsInBand(
         resampleSeries(battery, activity.length),
-        width,
-        padding,
+        plotLeft,
+        plotRight,
         powerTop,
         powerBottom,
       )
@@ -795,8 +799,8 @@ function Combined24hPlot({
   const voltagePoints = hasVoltage
     ? getPointsInBand(
         resampleSeries(voltage, activity.length),
-        width,
-        padding,
+        plotLeft,
+        plotRight,
         powerTop,
         powerBottom,
       )
@@ -804,8 +808,8 @@ function Combined24hPlot({
   const airUtilTxPoints = hasAirUtilTx
     ? getPercentPointsInBand(
         resampleSeries(airUtilTx, activity.length),
-        width,
-        padding,
+        plotLeft,
+        plotRight,
         rfTop,
         rfBottom,
       )
@@ -813,15 +817,15 @@ function Combined24hPlot({
   const channelUtilizationPoints = hasChannelUtilization
     ? getPercentPointsInBand(
         resampleSeries(channelUtilization, activity.length),
-        width,
-        padding,
+        plotLeft,
+        plotRight,
         rfTop,
         rfBottom,
       )
     : [];
   const peakActivity = Math.max(...activity, 1);
-  const usableWidth = width - padding * 2;
-  const barWidth = usableWidth / activity.length - 1.5;
+  const usableWidth = plotRight - plotLeft;
+  const barWidth = usableWidth / activity.length - 1.8;
   const batteryLastPoint = batteryPoints[batteryPoints.length - 1];
   const voltageLastPoint = voltagePoints[voltagePoints.length - 1];
   const airUtilTxLastPoint = airUtilTxPoints[airUtilTxPoints.length - 1];
@@ -829,55 +833,60 @@ function Combined24hPlot({
     channelUtilizationPoints[channelUtilizationPoints.length - 1];
 
   return (
-    <svg className={styles.combinedPlot} viewBox={`0 0 ${width} ${height}`} aria-hidden="true">
+    <svg className={styles.combinedPlot} viewBox={"0 0 " + width + " " + height} aria-hidden="true">
+      <rect
+        className={styles.plotBandFill}
+        x="0"
+        y={powerLabelY - 10}
+        width={width}
+        height={powerSeparatorY - powerLabelY + 4}
+      />
+      <rect
+        className={styles.plotBandFill}
+        x="0"
+        y={rfLabelY - 10}
+        width={width}
+        height={rfSeparatorY - rfLabelY + 4}
+      />
+      <rect
+        className={styles.plotBandFill}
+        x="0"
+        y={activityLabelY - 10}
+        width={width}
+        height={xAxisY - activityLabelY + 4}
+      />
       {hasPower ? (
-        <text className={styles.plotBandLabel} x={width - padding} y={powerTop + 8}>
+        <text className={styles.plotBandLabel} x={plotLeft} y={powerLabelY}>
           Τροφοδοσία
         </text>
       ) : null}
       {hasRfUtilization ? (
-        <text className={styles.plotBandLabel} x={width - padding} y={rfTop + 8}>
+        <text className={styles.plotBandLabel} x={plotLeft} y={rfLabelY}>
           RF
         </text>
       ) : null}
       {hasActivity ? (
-        <text className={styles.plotBandLabel} x={width - padding} y={activityBandTop + 8}>
+        <text className={styles.plotBandLabel} x={plotLeft} y={activityLabelY}>
           Πακέτα
         </text>
       ) : null}
-      {hasPower ? (
-        <line
-          className={styles.plotDivider}
-          x1={padding}
-          y1={powerDividerY}
-          x2={width - padding}
-          y2={powerDividerY}
-        />
-      ) : null}
-      {hasRfUtilization ? (
-        <line
-          className={styles.plotDivider}
-          x1={padding}
-          y1={83}
-          x2={width - padding}
-          y2={83}
-        />
-      ) : null}
+      <line className={styles.plotDivider} x1={plotLeft} y1={powerSeparatorY} x2={plotRight} y2={powerSeparatorY} />
+      <line className={styles.plotDivider} x1={plotLeft} y1={rfSeparatorY} x2={plotRight} y2={rfSeparatorY} />
+      <line className={styles.plotTimeline} x1={plotLeft} y1={xAxisY} x2={plotRight} y2={xAxisY} />
       {activity.map((value, index) => {
         if (value <= 0) {
           return null;
         }
 
-        const x = padding + index * (usableWidth / activity.length) + 0.75;
-        const barHeight =
-          Math.max(
-            6,
-            (value / peakActivity) * (activityBottom - activityBandTop),
-          );
+        const x = plotLeft + index * (usableWidth / activity.length) + 0.9;
+        const barHeight = Math.max(
+          6,
+          (value / peakActivity) * (activityBottom - activityBandTop),
+        );
 
         return (
           <rect
-            key={`${index}-${value}`}
+            key={index + "-" + value}
             className={styles.activityBar}
             x={x}
             y={activityBottom - barHeight}
@@ -951,6 +960,12 @@ function Combined24hPlot({
           data-series="channel-utilization"
         />
       ) : null}
+      <text className={styles.plotXAxisLabel} x={plotLeft} y={height - 3}>
+        24ω πριν
+      </text>
+      <text className={styles.plotXAxisLabel} x={plotRight} y={height - 3} textAnchor="end">
+        Τώρα
+      </text>
       {!hasPower && !hasRfUtilization && !hasActivity ? (
         <text className={styles.emptyPlotText} x={width / 2} y={height / 2}>
           Χωρίς δεδομένα 24ώρου
@@ -1006,7 +1021,7 @@ function PlotLoadingState() {
   );
 }
 
-function HeaderTelemetryItem({
+function ChartTelemetryItem({
   series,
   label,
   value,
@@ -1016,15 +1031,15 @@ function HeaderTelemetryItem({
   value: string;
 }) {
   return (
-    <div className={styles.headerTelemetryItem}>
-      <span className={styles.headerTelemetryIcon} data-series={series} />
-      <span className={styles.headerTelemetryLabel}>{label}</span>
-      <span className={styles.headerTelemetryValue}>{value}</span>
+    <div className={styles.chartLegendItem}>
+      <span className={styles.chartLegendIcon} data-series={series} />
+      <span className={styles.chartLegendLabel}>{label}</span>
+      <span className={styles.chartLegendValue}>{value}</span>
     </div>
   );
 }
 
-function HeaderTelemetryTable({node}: {node: NodeCardData}) {
+function ChartTelemetryLegend({node}: {node: NodeCardData}) {
   const latestAirUtilTx = getLatestSeriesValue(node.airUtilTxSeries);
   const latestChannelUtilization = getLatestSeriesValue(
     node.channelUtilizationSeries,
@@ -1065,10 +1080,10 @@ function HeaderTelemetryTable({node}: {node: NodeCardData}) {
 
   if (node.isLoading) {
     return (
-      <div className={styles.headerTelemetryTable} aria-hidden="true">
+      <div className={styles.chartLegend} aria-hidden="true">
         {Array.from({length: 4}, (_, index) => (
-          <div key={index} className={styles.headerTelemetryItem}>
-            <LoadingLine className={styles.loadingTelemetryLine} />
+          <div key={index} className={styles.chartLegendItem}>
+            <LoadingLine className={styles.loadingLegendLine} />
           </div>
         ))}
       </div>
@@ -1080,9 +1095,9 @@ function HeaderTelemetryTable({node}: {node: NodeCardData}) {
   }
 
   return (
-    <div className={styles.headerTelemetryTable} aria-label="Τρέχουσα τηλεμετρία">
+    <div className={styles.chartLegend} aria-label="Τρέχουσα τηλεμετρία">
       {telemetryItems.map((item) => (
-        <HeaderTelemetryItem
+        <ChartTelemetryItem
           key={item.series}
           series={item.series}
           label={item.label}
@@ -1126,7 +1141,6 @@ function NodeCard({
               <span className={styles.cardMetaRole}>{node.role}</span>
             </p>
           </div>
-          <HeaderTelemetryTable node={node} />
         </header>
 
         <section className={styles.vitalsGrid}>
@@ -1169,6 +1183,7 @@ function NodeCard({
               />
             )}
           </div>
+          <ChartTelemetryLegend node={node} />
         </section>
       </div>
     </article>
