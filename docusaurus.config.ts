@@ -89,6 +89,10 @@ const config: Config = {
           position: 'left',
           items: [
             {
+              label: 'Προφίλ Ρυθμίσεων',
+              to: '/docs/configuration-generator',
+            },
+            {
               label: 'Χάρτης Κόμβων',
               href: 'https://map.m-powered.gr/',
             },

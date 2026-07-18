@@ -30,6 +30,11 @@ const sidebars: SidebarsConfig = {
           id: 'recommended-hardware',
           label: 'Προτεινόμενο Υλικό',
         },
+        {
+          type: 'doc',
+          id: 'configuration-generator',
+          label: 'Προφίλ Ρυθμίσεων',
+        },
       ],
     },
     {
