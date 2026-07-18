@@ -100,6 +100,10 @@ const EMPTY_TELEMETRY: TelemetryData = {
 
 const CORE_NODE_REFERENCES: CoreNodeReference[] = [
   {
+    nodeId: '2854973388',
+    prefecture: 'Νομός Ευβοίας',
+  },
+  {
     nodeId: '3461419339',
     prefecture: 'Νομός Αττικής',
   },
@@ -112,20 +116,8 @@ const CORE_NODE_REFERENCES: CoreNodeReference[] = [
     prefecture: 'Νομός Βοιωτίας',
   },
   {
-    nodeId: '749412878',
-    prefecture: 'Νομός Ευβοίας',
-  },
-  {
     nodeId: '1966387221',
     prefecture: 'Νομός Αττικής',
-  },
-  {
-    nodeId: '3463997083',
-    prefecture: 'Νομός Ευβοίας',
-  },
-  {
-    nodeId: '2389100065',
-    prefecture: 'Νομός Ευβοίας',
   },
 ];
 
