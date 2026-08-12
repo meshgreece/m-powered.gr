@@ -86,6 +86,14 @@ description: 'Συχνές ερωτήσεις για το Meshtastic Greece Comm
 
 Άνοιξε τον [Χάρτη Κόμβων](https://map.m-powered.gr/) και μετά κοίτα στο [Meshview](https://meshview.m-powered.gr/) ή στο [Malla](https://malla.m-powered.gr/) αν το packet σου έφτασε σε κάποιο MQTT gateway. Αν θέλεις βοήθεια, γράψε στο [Telegram](https://t.me/+_5Z0q7DWM6UwMDJk) με όσο πιο συγκεκριμένα στοιχεία γίνεται.
 
+## Πρέπει να αλλάξω από LongFast σε NarrowSlow;
+
+Για νέο setup, ναι. Η κοινότητα χρησιμοποιεί πλέον το channel `NarrowSlow` με `EU_N_868 / NARROW_SLOW`. Οι βασικοί κόμβοι υποδομής έχουν ήδη μεταφερθεί εκεί.
+
+Προς το παρόν, βάλε το έτοιμο προφίλ από τη Γεννήτρια Ρυθμίσεων. Λειτουργεί ακόμη κι αν η εφαρμογή σου δεν εμφανίζει το `EU_N_868`, επειδή περιλαμβάνει τις custom παραμέτρους LoRa. Το channel `LongFast` με `EU_868 / LONG_FAST` μπορεί να παραμείνει ενεργό όσο διαρκεί η μετάβαση.
+
+Η σελίδα [Μετάβαση σε EU_N_868 / NARROW_SLOW](./eu-n-868-narrow-slow) έχει τα βήματα σύνδεσης. Αν ο κόμβος σου είναι `ROUTER` ή `ROUTER_LATE`, διάβασε οπωσδήποτε και τις σχετικές οδηγίες πριν τον μεταφέρεις.
+
 ## Συνέχισε από εδώ
 
 - [Ξεκινώντας](./get-started)
@@ -93,4 +101,5 @@ description: 'Συχνές ερωτήσεις για το Meshtastic Greece Comm
 - [Προσωπικός Κόμβος](./personal-node)
 - [Σταθεροί Κόμβοι & Backbone](./fixed-nodes-backbone)
 - [Εργαλεία Κοινότητας](./community-tools)
+- [Μετάβαση σε EU_N_868 / NARROW_SLOW](./eu-n-868-narrow-slow)
 - [Telegram](https://t.me/+_5Z0q7DWM6UwMDJk)

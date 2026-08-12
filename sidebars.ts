@@ -66,6 +66,11 @@ const sidebars: SidebarsConfig = {
         },
         {
           type: 'doc',
+          id: 'eu-n-868-narrow-slow',
+          label: 'Μετάβαση σε EU_N_868',
+        },
+        {
+          type: 'doc',
           id: 'faq',
           label: 'Συχνές Ερωτήσεις',
         },
