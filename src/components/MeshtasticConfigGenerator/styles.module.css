@@ -39,6 +39,44 @@
   color: var(--ifm-color-emphasis-700);
 }
 
+.preview {
+  margin-top: 1rem;
+  border: 1px solid var(--ifm-color-emphasis-300);
+  border-radius: 8px;
+  background: var(--ifm-background-surface-color);
+}
+
+.preview summary {
+  padding: 0.9rem 1rem;
+  color: var(--ifm-heading-color);
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.preview summary:focus-visible {
+  outline: 3px solid var(--ifm-color-primary-light);
+  outline-offset: 2px;
+}
+
+.json {
+  max-height: 24rem;
+  margin: 0;
+  padding: 1rem;
+  border-top: 1px solid var(--ifm-color-emphasis-300);
+  border-radius: 0 0 8px 8px;
+  overflow: auto;
+  background: var(--ifm-code-background);
+  font-size: 0.85rem;
+  line-height: 1.55;
+}
+
+.json code {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  white-space: pre;
+}
+
 .output {
   display: grid;
   grid-template-columns: minmax(13rem, 16rem) minmax(0, 1fr);
