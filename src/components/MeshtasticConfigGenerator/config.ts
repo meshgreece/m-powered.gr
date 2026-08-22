@@ -1,8 +1,24 @@
 import {Config} from '@meshtastic/protobufs';
 
-import type {ConfigurationProfile, ProfileId} from './types';
+import type {
+  ConfigurationProfile,
+  GeneratorSelection,
+  HopLimit,
+  PositionPrecision,
+  ProfileId,
+} from './types';
+import {HOP_LIMITS, POSITION_PRECISION_VALUES} from './types';
 
 export const DEFAULT_PROFILE: ProfileId = 'LongFast';
+export const DEFAULT_HOP_LIMIT: HopLimit = 4;
+export const DEFAULT_POSITION_PRECISION: PositionPrecision = 15;
+export const POSITION_PRIVACY_WARNING_THRESHOLD = 17;
+
+export const DEFAULT_SELECTION: GeneratorSelection = {
+  profileId: DEFAULT_PROFILE,
+  hopLimit: DEFAULT_HOP_LIMIT,
+  positionPrecision: DEFAULT_POSITION_PRECISION,
+};
 
 export const PROFILES: Record<ProfileId, ConfigurationProfile> = {
   LongFast: {
@@ -59,4 +75,20 @@ export const PROFILES: Record<ProfileId, ConfigurationProfile> = {
 
 export function isProfileId(value: string | null): value is ProfileId {
   return value !== null && value in PROFILES;
+}
+
+export function isHopLimit(value: number): value is HopLimit {
+  return HOP_LIMITS.some((hopLimit) => hopLimit === value);
+}
+
+export function isPositionPrecision(value: number): value is PositionPrecision {
+  return POSITION_PRECISION_VALUES.some(
+    (positionPrecision) => positionPrecision === value,
+  );
+}
+
+export function hasPositionPrivacyWarning(
+  positionPrecision: PositionPrecision,
+) {
+  return positionPrecision >= POSITION_PRIVACY_WARNING_THRESHOLD;
 }

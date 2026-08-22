@@ -8,6 +8,25 @@ type ChannelSetInit = Parameters<
 
 export type ProfileId = 'LongFast' | 'NarrowSlow';
 
+export const HOP_LIMITS = [3, 4, 5] as const;
+
+export type HopLimit = (typeof HOP_LIMITS)[number];
+
+export const POSITION_PRECISION_VALUES = [
+  0, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 32,
+] as const;
+
+export type PositionPrecision = (typeof POSITION_PRECISION_VALUES)[number];
+
+export type GeneratorOptions = {
+  hopLimit: HopLimit;
+  positionPrecision: PositionPrecision;
+};
+
+export type GeneratorSelection = GeneratorOptions & {
+  profileId: ProfileId;
+};
+
 export type ConfigurationProfile = {
   id: ProfileId;
   name: string;

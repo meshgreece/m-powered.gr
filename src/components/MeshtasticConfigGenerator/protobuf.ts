@@ -8,23 +8,71 @@ import {
 import {base64Decode, base64Encode} from '@bufbuild/protobuf/wire';
 import {AppOnly} from '@meshtastic/protobufs';
 
-import type {ConfigurationProfile} from './types';
+import {DEFAULT_HOP_LIMIT, DEFAULT_POSITION_PRECISION} from './config';
+import type {ConfigurationProfile, GeneratorOptions} from './types';
 
 const CONFIG_URL_PREFIX = 'https://meshtastic.org/e/#';
 
-export function createChannelSet(profile: ConfigurationProfile) {
-  return create(AppOnly.ChannelSetSchema, profile.channelSet);
+const DEFAULT_OPTIONS: GeneratorOptions = {
+  hopLimit: DEFAULT_HOP_LIMIT,
+  positionPrecision: DEFAULT_POSITION_PRECISION,
+};
+
+export function createChannelSet(
+  profile: ConfigurationProfile,
+  options: GeneratorOptions = DEFAULT_OPTIONS,
+) {
+  const settings = profile.channelSet.settings?.map((setting, index) => {
+    if (index !== 0) return setting;
+
+    if (
+      options.positionPrecision === 0 &&
+      setting.moduleSettings === undefined
+    ) {
+      return setting;
+    }
+
+    return {
+      ...setting,
+      moduleSettings: {
+        ...setting.moduleSettings,
+        positionPrecision: options.positionPrecision,
+      },
+    };
+  });
+
+  return create(AppOnly.ChannelSetSchema, {
+    ...profile.channelSet,
+    settings,
+    loraConfig: {
+      ...profile.channelSet.loraConfig,
+      hopLimit: options.hopLimit,
+    },
+  });
 }
 
-export function createConfigUrl(profile: ConfigurationProfile): string {
-  const bytes = toBinary(AppOnly.ChannelSetSchema, createChannelSet(profile));
+export function createConfigUrl(
+  profile: ConfigurationProfile,
+  options?: GeneratorOptions,
+): string {
+  const bytes = toBinary(
+    AppOnly.ChannelSetSchema,
+    createChannelSet(profile, options),
+  );
   return `${CONFIG_URL_PREFIX}${base64Encode(bytes, 'url')}`;
 }
 
-export function createConfigJson(profile: ConfigurationProfile): string {
-  return toJsonString(AppOnly.ChannelSetSchema, createChannelSet(profile), {
-    prettySpaces: 2,
-  });
+export function createConfigJson(
+  profile: ConfigurationProfile,
+  options?: GeneratorOptions,
+): string {
+  return toJsonString(
+    AppOnly.ChannelSetSchema,
+    createChannelSet(profile, options),
+    {
+      prettySpaces: 2,
+    },
+  );
 }
 
 export function decodeConfigPayload(payload: string) {
