@@ -98,21 +98,21 @@ description: Οδηγός για σταθερούς κόμβους, CLIENT_BASE,
 
 **ποιοι κόμβοι αξίζει να μπουν σε backbone λογική και ποιοι όχι;**
 
-## Τοπικό παράδειγμα για Αθήνα
+## Κόμβοι κορμού στο NarrowSlow
 
-Αυτό εδώ είναι καθαρά τοπική καθοδήγηση της κοινότητας m-powered.
+Η λίστα παρακάτω είναι η τρέχουσα τοπική καθοδήγηση της κοινότητας m-powered για τους κόμβους κορμού στο channel `NarrowSlow`.
 
-Αν έχεις κόμβο `ROUTER_LATE` ή `CLIENT_BASE` στην Αττική, αυτοί είναι κόμβοι που έχει νόημα να κοιτάξεις σαν `favorites` για backbone λογική:
+Αν έχεις σταθερό κόμβο στην Αττική ή σε γειτονική περιοχή, αυτοί είναι οι κόμβοι που έχει νόημα να εξετάσεις ως `favorites` για backbone λογική. Η σειρά είναι ανά ρόλο:
 
 | Κόμβος | Hex ID | Ρόλος | Meshview |
 | --- | --- | --- | --- |
 | Parnitha ☀️ | `!ce51114b` | ROUTER | [🔗](https://meshview.m-powered.gr/node/3461419339) |
 | Ypato ☀️ | `!75f15c34` | ROUTER | [🔗](https://meshview.m-powered.gr/node/1978752052) |
 | Ymittos ☀️ | `!d9906dc1` | ROUTER | [🔗](https://meshview.m-powered.gr/node/3650121153) |
-| Eretria ☀️ | `!2cab220e` | ROUTER_LATE | [🔗](https://meshview.m-powered.gr/node/749412878) |
+| Dystos ☀️ | `!aa2b6fcc` | ROUTER_LATE | [🔗](https://meshview.m-powered.gr/node/2854973388) |
 | Kitheronas ☀️ | `!7534b015` | ROUTER_LATE | [🔗](https://meshview.m-powered.gr/node/1966387221) |
-| Kandili ☀️ | `!ce78669b` | ROUTER_LATE | [🔗](https://meshview.m-powered.gr/node/3463997083) |
-| Chalkida ☀️ | `!8e66c621` | ROUTER_LATE | [🔗](https://meshview.m-powered.gr/node/2389100065) |
+
+Η ζωντανή κατάσταση και η τηλεμετρία τους εμφανίζονται στη σελίδα [Κατάσταση](/status).
 
 ## Πρακτικός κανόνας για τα `favorites`
 
