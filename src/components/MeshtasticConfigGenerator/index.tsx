@@ -20,8 +20,12 @@ import {
   parseGeneratorSelection,
 } from './selection';
 import styles from './styles.module.css';
-import {HOP_LIMITS, POSITION_PRECISION_VALUES} from './types';
-import type {GeneratorSelection, ProfileId} from './types';
+import {
+  ADDITIONAL_CHANNEL_IDS,
+  HOP_LIMITS,
+  POSITION_PRECISION_VALUES,
+} from './types';
+import type {AdditionalChannelId, GeneratorSelection, ProfileId} from './types';
 
 function SelectChevron() {
   return (
@@ -69,8 +73,13 @@ export default function MeshtasticConfigGenerator() {
     () => ({
       hopLimit: selection.hopLimit,
       positionPrecision: selection.positionPrecision,
+      additionalChannels: selection.additionalChannels,
     }),
-    [selection.hopLimit, selection.positionPrecision],
+    [
+      selection.additionalChannels,
+      selection.hopLimit,
+      selection.positionPrecision,
+    ],
   );
   const configUrl = useMemo(
     () => createConfigUrl(profile, options),
@@ -92,6 +101,21 @@ export default function MeshtasticConfigGenerator() {
 
   function updateSelection(update: Partial<GeneratorSelection>) {
     setSelection((current) => ({...current, ...update}));
+    setCopyStatus('idle');
+  }
+
+  function toggleAdditionalChannel(
+    channelId: AdditionalChannelId,
+    checked: boolean,
+  ) {
+    setSelection((current) => ({
+      ...current,
+      additionalChannels: ADDITIONAL_CHANNEL_IDS.filter((candidate) =>
+        candidate === channelId
+          ? checked
+          : current.additionalChannels.includes(candidate),
+      ),
+    }));
     setCopyStatus('idle');
   }
 
@@ -219,6 +243,37 @@ export default function MeshtasticConfigGenerator() {
           </div>
         </div>
 
+        <fieldset
+          aria-describedby="configuration-additional-channels-hint"
+          className={styles.additionalChannels}
+        >
+          <legend className={styles.additionalChannelsLegend}>
+            Πρόσθετα κανάλια
+          </legend>
+          <div className={styles.channelOptions}>
+            {ADDITIONAL_CHANNEL_IDS.map((channelId) => (
+              <label className={styles.checkboxLabel} key={channelId}>
+                <input
+                  checked={selection.additionalChannels.includes(channelId)}
+                  className={styles.checkbox}
+                  onChange={(event) =>
+                    toggleAdditionalChannel(channelId, event.target.checked)
+                  }
+                  type="checkbox"
+                />
+                <span>{channelId}</span>
+              </label>
+            ))}
+          </div>
+          <p
+            className={styles.fieldHint}
+            id="configuration-additional-channels-hint"
+          >
+            Δημόσια κανάλια κοινότητας με γνωστό κοινόχρηστο κλειδί· δεν
+            προορίζονται για ιδιωτικές συνομιλίες.
+          </p>
+        </fieldset>
+
         {showPrivacyWarning && (
           <div
             aria-live="polite"
@@ -250,7 +305,11 @@ export default function MeshtasticConfigGenerator() {
       <div className={styles.output}>
         <div className={styles.qrPanel}>
           <QRCode
-            aria-label={`QR code για το προφίλ ${profile.name}, hop limit ${selection.hopLimit}, ακρίβεια θέσης ${precisionLabel}`}
+            aria-label={`QR code για το προφίλ ${profile.name}, hop limit ${selection.hopLimit}, ακρίβεια θέσης ${precisionLabel}${
+              selection.additionalChannels.length > 0
+                ? `, πρόσθετα κανάλια ${selection.additionalChannels.join(', ')}`
+                : ''
+            }`}
             bgColor="transparent"
             fgColor="currentColor"
             level="M"

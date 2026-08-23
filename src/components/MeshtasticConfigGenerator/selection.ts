@@ -4,13 +4,20 @@ import {
   isPositionPrecision,
   isProfileId,
 } from './config';
-import type {GeneratorSelection} from './types';
+import {ADDITIONAL_CHANNEL_IDS} from './types';
+import type {AdditionalChannelId, GeneratorSelection} from './types';
 
 const QUERY_PARAMETERS = {
   profileId: 'preset',
   hopLimit: 'hop',
   positionPrecision: 'precision',
 } as const;
+
+const ADDITIONAL_CHANNEL_QUERY_PARAMETERS: Record<AdditionalChannelId, string> =
+  {
+    Test: 'test',
+    Bots: 'bots',
+  };
 
 function parseInteger(value: string | null): number | null {
   if (value === null || !/^\d+$/.test(value)) return null;
@@ -36,15 +43,27 @@ export function parseGeneratorSelection(
       positionPrecision !== null && isPositionPrecision(positionPrecision)
         ? positionPrecision
         : DEFAULT_SELECTION.positionPrecision,
+    additionalChannels: ADDITIONAL_CHANNEL_IDS.filter(
+      (channelId) =>
+        params.get(ADDITIONAL_CHANNEL_QUERY_PARAMETERS[channelId]) === 'true',
+    ),
   };
 }
 
 export function createGeneratorSearchParams(
   selection: GeneratorSelection,
 ): URLSearchParams {
-  return new URLSearchParams({
+  const params = new URLSearchParams({
     [QUERY_PARAMETERS.profileId]: selection.profileId,
     [QUERY_PARAMETERS.hopLimit]: String(selection.hopLimit),
     [QUERY_PARAMETERS.positionPrecision]: String(selection.positionPrecision),
   });
+
+  for (const channelId of ADDITIONAL_CHANNEL_IDS) {
+    if (selection.additionalChannels.includes(channelId)) {
+      params.set(ADDITIONAL_CHANNEL_QUERY_PARAMETERS[channelId], 'true');
+    }
+  }
+
+  return params;
 }

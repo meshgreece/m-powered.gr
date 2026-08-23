@@ -8,6 +8,10 @@ type ChannelSetInit = Parameters<
 
 export type ProfileId = 'LongFast' | 'NarrowSlow';
 
+export const ADDITIONAL_CHANNEL_IDS = ['Test', 'Bots'] as const;
+
+export type AdditionalChannelId = (typeof ADDITIONAL_CHANNEL_IDS)[number];
+
 export const HOP_LIMITS = [3, 4, 5] as const;
 
 export type HopLimit = (typeof HOP_LIMITS)[number];
@@ -21,6 +25,7 @@ export type PositionPrecision = (typeof POSITION_PRECISION_VALUES)[number];
 export type GeneratorOptions = {
   hopLimit: HopLimit;
   positionPrecision: PositionPrecision;
+  additionalChannels: readonly AdditionalChannelId[];
 };
 
 export type GeneratorSelection = GeneratorOptions & {

@@ -25,6 +25,7 @@ const CANONICAL_URLS = {
 const LEGACY_OPTIONS = {
   hopLimit: 3,
   positionPrecision: 0,
+  additionalChannels: [],
 } as const;
 
 describe('Meshtastic configuration profiles', () => {
@@ -77,6 +78,7 @@ describe('Meshtastic configuration profiles', () => {
       const channelSet = createChannelSet(PROFILES.LongFast, {
         hopLimit,
         positionPrecision: 0,
+        additionalChannels: [],
       });
 
       expect(channelSet.loraConfig?.hopLimit).toBe(hopLimit);
@@ -89,6 +91,7 @@ describe('Meshtastic configuration profiles', () => {
       const channelSet = createChannelSet(PROFILES.LongFast, {
         hopLimit: 4,
         positionPrecision,
+        additionalChannels: [],
       });
 
       expect(
@@ -101,10 +104,50 @@ describe('Meshtastic configuration profiles', () => {
     const payload = createConfigUrl(PROFILES.NarrowSlow, {
       hopLimit: 5,
       positionPrecision: 17,
+      additionalChannels: [],
     }).split('#')[1];
     const decoded = decodeConfigPayload(payload);
 
     expect(decoded.loraConfig?.hopLimit).toBe(5);
     expect(decoded.settings[0]?.moduleSettings?.positionPrecision).toBe(17);
+  });
+
+  it.each(['Test', 'Bots'] as const)(
+    'appends the selected %s channel after the primary channel',
+    (additionalChannel) => {
+      const channelSet = createChannelSet(PROFILES.LongFast, {
+        hopLimit: 4,
+        positionPrecision: 15,
+        additionalChannels: [additionalChannel],
+      });
+
+      expect(channelSet.settings.map((setting) => setting.name)).toEqual([
+        'LongFast',
+        additionalChannel,
+      ]);
+      expect(Array.from(channelSet.settings[1]?.psk ?? [])).toEqual([2]);
+      expect(channelSet.settings[1]).toMatchObject({
+        uplinkEnabled: true,
+        downlinkEnabled: true,
+      });
+    },
+  );
+
+  it('serializes both additional channels in deterministic order', () => {
+    const payload = createConfigUrl(PROFILES.NarrowSlow, {
+      hopLimit: 4,
+      positionPrecision: 15,
+      additionalChannels: ['Bots', 'Test'],
+    }).split('#')[1];
+    const decoded = decodeConfigPayload(payload);
+
+    expect(decoded.settings.map((setting) => setting.name)).toEqual([
+      'NarrowSlow',
+      'Test',
+      'Bots',
+    ]);
+    expect(decoded.settings[0]?.moduleSettings?.positionPrecision).toBe(15);
+    expect(decoded.settings[1]?.moduleSettings).toBeUndefined();
+    expect(decoded.settings[2]?.moduleSettings).toBeUndefined();
   });
 });

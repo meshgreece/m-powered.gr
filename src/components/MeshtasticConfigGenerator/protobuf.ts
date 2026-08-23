@@ -8,7 +8,12 @@ import {
 import {base64Decode, base64Encode} from '@bufbuild/protobuf/wire';
 import {AppOnly} from '@meshtastic/protobufs';
 
-import {DEFAULT_HOP_LIMIT, DEFAULT_POSITION_PRECISION} from './config';
+import {
+  ADDITIONAL_CHANNELS,
+  DEFAULT_HOP_LIMIT,
+  DEFAULT_POSITION_PRECISION,
+} from './config';
+import {ADDITIONAL_CHANNEL_IDS} from './types';
 import type {ConfigurationProfile, GeneratorOptions} from './types';
 
 const CONFIG_URL_PREFIX = 'https://meshtastic.org/e/#';
@@ -16,13 +21,14 @@ const CONFIG_URL_PREFIX = 'https://meshtastic.org/e/#';
 const DEFAULT_OPTIONS: GeneratorOptions = {
   hopLimit: DEFAULT_HOP_LIMIT,
   positionPrecision: DEFAULT_POSITION_PRECISION,
+  additionalChannels: [],
 };
 
 export function createChannelSet(
   profile: ConfigurationProfile,
   options: GeneratorOptions = DEFAULT_OPTIONS,
 ) {
-  const settings = profile.channelSet.settings?.map((setting, index) => {
+  const profileSettings = profile.channelSet.settings?.map((setting, index) => {
     if (index !== 0) return setting;
 
     if (
@@ -40,10 +46,13 @@ export function createChannelSet(
       },
     };
   });
+  const additionalSettings = ADDITIONAL_CHANNEL_IDS.filter((channelId) =>
+    options.additionalChannels.includes(channelId),
+  ).map((channelId) => ({...ADDITIONAL_CHANNELS[channelId]}));
 
   return create(AppOnly.ChannelSetSchema, {
     ...profile.channelSet,
-    settings,
+    settings: [...(profileSettings ?? []), ...additionalSettings],
     loraConfig: {
       ...profile.channelSet.loraConfig,
       hopLimit: options.hopLimit,

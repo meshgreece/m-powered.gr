@@ -1,6 +1,7 @@
 import {Config} from '@meshtastic/protobufs';
 
 import type {
+  AdditionalChannelId,
   ConfigurationProfile,
   GeneratorSelection,
   HopLimit,
@@ -18,6 +19,25 @@ export const DEFAULT_SELECTION: GeneratorSelection = {
   profileId: DEFAULT_PROFILE,
   hopLimit: DEFAULT_HOP_LIMIT,
   positionPrecision: DEFAULT_POSITION_PRECISION,
+  additionalChannels: [],
+};
+
+export const ADDITIONAL_CHANNELS: Record<
+  AdditionalChannelId,
+  NonNullable<ConfigurationProfile['channelSet']['settings']>[number]
+> = {
+  Test: {
+    psk: new Uint8Array([2]),
+    name: 'Test',
+    uplinkEnabled: true,
+    downlinkEnabled: true,
+  },
+  Bots: {
+    psk: new Uint8Array([2]),
+    name: 'Bots',
+    uplinkEnabled: true,
+    downlinkEnabled: true,
+  },
 };
 
 export const PROFILES: Record<ProfileId, ConfigurationProfile> = {

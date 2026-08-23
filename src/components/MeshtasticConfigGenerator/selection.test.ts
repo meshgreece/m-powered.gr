@@ -14,25 +14,31 @@ describe('configuration generator URL selection', () => {
       profileId: 'NarrowSlow',
       hopLimit: 4,
       positionPrecision: 15,
+      additionalChannels: [],
     });
   });
 
   it('parses all supported generator parameters', () => {
     expect(
       parseGeneratorSelection(
-        new URLSearchParams('preset=NarrowSlow&hop=5&precision=32'),
+        new URLSearchParams(
+          'preset=NarrowSlow&hop=5&precision=32&test=true&bots=true',
+        ),
       ),
     ).toEqual({
       profileId: 'NarrowSlow',
       hopLimit: 5,
       positionPrecision: 32,
+      additionalChannels: ['Test', 'Bots'],
     });
   });
 
   it('falls back safely for unsupported or malformed values', () => {
     expect(
       parseGeneratorSelection(
-        new URLSearchParams('preset=invalid&hop=6&precision=17.5'),
+        new URLSearchParams(
+          'preset=invalid&hop=6&precision=17.5&test=1&bots=false',
+        ),
       ),
     ).toEqual(DEFAULT_SELECTION);
   });
@@ -49,8 +55,15 @@ describe('configuration generator URL selection', () => {
         profileId: 'LongFast',
         hopLimit: 4,
         positionPrecision: 18,
+        additionalChannels: ['Bots', 'Test'],
       }).toString(),
-    ).toBe('preset=LongFast&hop=4&precision=18');
+    ).toBe('preset=LongFast&hop=4&precision=18&test=true&bots=true');
+  });
+
+  it('keeps the legacy query string when no additional channel is selected', () => {
+    expect(createGeneratorSearchParams(DEFAULT_SELECTION).toString()).toBe(
+      'preset=LongFast&hop=4&precision=15',
+    );
   });
 
   it('warns for 182 meters or more precise selections', () => {
