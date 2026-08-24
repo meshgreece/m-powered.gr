@@ -40,11 +40,19 @@ export const ADDITIONAL_CHANNELS: Record<
   },
 };
 
+export const ADDITIONAL_CHANNEL_DESCRIPTIONS: Record<
+  AdditionalChannelId,
+  string
+> = {
+  Test: 'δοκιμές εμβέλειας και γενικό spam, μακριά από το κύριο κανάλι',
+  Bots: 'αυτοματισμοί και bots της κοινότητας',
+};
+
 export const PROFILES: Record<ProfileId, ConfigurationProfile> = {
   LongFast: {
     id: 'LongFast',
     name: 'LongFast',
-    description: 'Η προτεινόμενη προεπιλογή για να ξεκινήσεις.',
+    description: 'Η προεπιλογή για όλο το ελληνικό mesh.',
     channelSet: {
       settings: [
         {
@@ -68,7 +76,7 @@ export const PROFILES: Record<ProfileId, ConfigurationProfile> = {
   NarrowSlow: {
     id: 'NarrowSlow',
     name: 'NarrowSlow',
-    description: 'Εφαρμόζει τις ρυθμίσεις NarrowSlow.',
+    description: 'Το τρέχον (custom) preset για Αττική, Βοιωτία και Εύβοια.',
     channelSet: {
       settings: [
         {
