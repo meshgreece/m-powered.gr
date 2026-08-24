@@ -162,6 +162,11 @@ export default function MeshtasticConfigGenerator() {
             </div>
             <div className={styles.selectWrapper}>
               <select
+                aria-describedby={`configuration-profile-description${
+                  selection.profileId === 'NarrowSlow'
+                    ? ' configuration-narrow-slow-warning'
+                    : ''
+                }`}
                 id="configuration-profile"
                 className={styles.select}
                 value={selection.profileId}
@@ -179,13 +184,28 @@ export default function MeshtasticConfigGenerator() {
               </select>
               <SelectChevron />
             </div>
-            <p className={styles.hint}>{profile.description}</p>
+            <p className={styles.hint} id="configuration-profile-description">
+              {profile.description}
+            </p>
             {selection.profileId === 'NarrowSlow' && (
-              <p className={styles.hint}>
-                <Link to="/docs/eu-n-868-narrow-slow">
-                  Διάβασε τον οδηγό μετάβασης σε NarrowSlow.
-                </Link>
-              </p>
+              <div
+                aria-live="polite"
+                className={styles.migrationWarning}
+                id="configuration-narrow-slow-warning"
+                role="status"
+              >
+                <strong>Μεταβαίνεις από LongFast;</strong>
+                <span>
+                  {' '}
+                  Διάβασε πρώτα τον{' '}
+                  <Link to="/docs/eu-n-868-narrow-slow">
+                    οδηγό EU_N_868 / NARROW_SLOW
+                  </Link>
+                  . Έλεγξε ιδιαίτερα το hop limit και τον ρόλο του κόμβου σου,
+                  ειδικά αν είναι <code>ROUTER</code> ή <code>ROUTER_LATE</code>
+                  .
+                </span>
+              </div>
             )}
           </div>
 

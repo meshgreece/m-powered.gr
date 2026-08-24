@@ -184,6 +184,7 @@
   right: 0.6rem;
 }
 
+.migrationWarning,
 .privacyWarning {
   margin-top: 0.85rem;
   padding: 0.75rem 0.9rem;
@@ -193,6 +194,16 @@
   color: var(--generator-warning-text);
   font-size: 0.86rem;
   line-height: 1.5;
+}
+
+.migrationWarning a {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 0.12em;
+}
+
+.migrationWarning code {
+  color: inherit;
 }
 
 .channels {
