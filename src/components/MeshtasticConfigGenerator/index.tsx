@@ -28,7 +28,7 @@ import {
 } from './types';
 import type {AdditionalChannelId, GeneratorSelection, ProfileId} from './types';
 
-const COVERAGE_MAP_URL = 'https://map.m-powered.gr/';
+const COVERAGE_MAP_URL = '/docs/coverage-map';
 
 function SelectChevron() {
   return (

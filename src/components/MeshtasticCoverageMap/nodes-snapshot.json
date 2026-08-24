@@ -1,0 +1,778 @@
+{
+  "nodes": [
+    {
+      "last_lat": 379682816,
+      "last_long": 236224512,
+      "channel": "LongFast",
+      "is_mqtt_gateway": true
+    },
+    {
+      "last_lat": null,
+      "last_long": null,
+      "channel": "LongFast",
+      "is_mqtt_gateway": null
+    },
+    {
+      "last_lat": 379453440,
+      "last_long": 237109248,
+      "channel": "NarrowSlow",
+      "is_mqtt_gateway": null
+    },
+    {
+      "last_lat": null,
+      "last_long": null,
+      "channel": "LongFast",
+      "is_mqtt_gateway": null
+    },
+    {
+      "last_lat": null,
+      "last_long": null,
+      "channel": "LongFast",
+      "is_mqtt_gateway": true
+    },
+    {
+      "last_lat": 383188992,
+      "last_long": 233242624,
+      "channel": "NarrowSlow",
+      "is_mqtt_gateway": null
+    },
+    {
+      "last_lat": null,
+      "last_long": null,
+      "channel": "NarrowSlow",
+      "is_mqtt_gateway": null
+    },
+    {
+      "last_lat": 381943808,
+      "last_long": 217841664,
+      "channel": "LongFast",
+      "is_mqtt_gateway": null
+    },
+    {
+      "last_lat": 380043264,
+      "last_long": 238616576,
+      "channel": "NarrowSlow",
+      "is_mqtt_gateway": null
+    },
+    {
+      "last_lat": 378961920,
+      "last_long": 237731840,
+      "channel": "LongFast",
+      "is_mqtt_gateway": null
+    },
+    {
+      "last_lat": null,
+      "last_long": null,
+      "channel": "NarrowSlow",
+      "is_mqtt_gateway": null
+    },
+    {
+      "last_lat": null,
+      "last_long": null,
+      "channel": "NarrowSlow",
+      "is_mqtt_gateway": null
+    },
+    {
+      "last_lat": 379944960,
+      "last_long": 237666304,
+      "channel": "LongFast",
+      "is_mqtt_gateway": true
+    },
+    {
+      "last_lat": 374603776,
+      "last_long": 254017536,
+      "channel": "LongFast",
+      "is_mqtt_gateway": null
+    },
+    {
+      "last_lat": 379355136,
+      "last_long": 237142016,
+      "channel": "NarrowSlow",
+      "is_mqtt_gateway": null
+    },
+    {
+      "last_lat": 368460883,
+      "last_long": 273224450,
+      "channel": "LongFast",
+      "is_mqtt_gateway": null
+    },
+    {
+      "last_lat": 379912192,
+      "last_long": 237568000,
+      "channel": "LongFast",
+      "is_mqtt_gateway": true
+    },
+    {
+      "last_lat": 373161984,
+      "last_long": 265420800,
+      "channel": "LongFast",
+      "is_mqtt_gateway": null
+    },
+    {
+      "last_lat": 373182579,
+      "last_long": 265441051,
+      "channel": "LongFast",
+      "is_mqtt_gateway": null
+    },
+    {
+      "last_lat": 379330560,
+      "last_long": 236118016,
+      "channel": "LongFast",
+      "is_mqtt_gateway": null
+    },
+    {
+      "last_lat": null,
+      "last_long": null,
+      "channel": "NarrowSlow",
+      "is_mqtt_gateway": null
+    },
+    {
+      "last_lat": 353632256,
+      "last_long": 251396096,
+      "channel": "LongFast",
+      "is_mqtt_gateway": null
+    },
+    {
+      "last_lat": 376774656,
+      "last_long": 239951872,
+      "channel": "LongFast",
+      "is_mqtt_gateway": null
+    },
+    {
+      "last_lat": 376774656,
+      "last_long": 239919104,
+      "channel": "LongFast",
+      "is_mqtt_gateway": null
+    },
+    {
+      "last_lat": 380043264,
+      "last_long": 238616576,
+      "channel": "LongFast",
+      "is_mqtt_gateway": null
+    },
+    {
+      "last_lat": 368082944,
+      "last_long": 219119616,
+      "channel": "LongFast",
+      "is_mqtt_gateway": null
+    },
+    {
+      "last_lat": null,
+      "last_long": null,
+      "channel": "LongFast",
+      "is_mqtt_gateway": null
+    },
+    {
+      "last_lat": 373915663,
+      "last_long": 248930121,
+      "channel": "LongFast",
+      "is_mqtt_gateway": null
+    },
+    {
+      "last_lat": 379846656,
+      "last_long": 238813184,
+      "channel": "LongFast",
+      "is_mqtt_gateway": null
+    },
+    {
+      "last_lat": 379846656,
+      "last_long": 236716032,
+      "channel": "NarrowSlow",
+      "is_mqtt_gateway": null
+    },
+    {
+      "last_lat": 377749504,
+      "last_long": 234618880,
+      "channel": "LongFast",
+      "is_mqtt_gateway": null
+    },
+    {
+      "last_lat": 380207104,
+      "last_long": 237535232,
+      "channel": "NarrowSlow",
+      "is_mqtt_gateway": null
+    },
+    {
+      "last_lat": 380272640,
+      "last_long": 238583808,
+      "channel": "LongFast",
+      "is_mqtt_gateway": null
+    },
+    {
+      "last_lat": 378798080,
+      "last_long": 239861760,
+      "channel": "LongFast",
+      "is_mqtt_gateway": null
+    },
+    {
+      "last_lat": 379944960,
+      "last_long": 237666304,
+      "channel": "NarrowSlow",
+      "is_mqtt_gateway": null
+    },
+    {
+      "last_lat": 379912192,
+      "last_long": 237699072,
+      "channel": "NarrowSlow",
+      "is_mqtt_gateway": true
+    },
+    {
+      "last_lat": null,
+      "last_long": null,
+      "channel": "LongFast",
+      "is_mqtt_gateway": null
+    },
+    {
+      "last_lat": null,
+      "last_long": null,
+      "channel": "LongFast",
+      "is_mqtt_gateway": null
+    },
+    {
+      "last_lat": null,
+      "last_long": null,
+      "channel": "NarrowSlow",
+      "is_mqtt_gateway": null
+    },
+    {
+      "last_lat": null,
+      "last_long": null,
+      "channel": "NarrowSlow",
+      "is_mqtt_gateway": null
+    },
+    {
+      "last_lat": null,
+      "last_long": null,
+      "channel": "LongFast",
+      "is_mqtt_gateway": null
+    },
+    {
+      "last_lat": null,
+      "last_long": null,
+      "channel": "LongFast",
+      "is_mqtt_gateway": null
+    },
+    {
+      "last_lat": null,
+      "last_long": null,
+      "channel": "NarrowSlow",
+      "is_mqtt_gateway": null
+    },
+    {
+      "last_lat": 354418688,
+      "last_long": 249561088,
+      "channel": "LongFast",
+      "is_mqtt_gateway": null
+    },
+    {
+      "last_lat": 392226677,
+      "last_long": 219782939,
+      "channel": "LongFast",
+      "is_mqtt_gateway": null
+    },
+    {
+      "last_lat": null,
+      "last_long": null,
+      "channel": "LongFast",
+      "is_mqtt_gateway": null
+    },
+    {
+      "last_lat": null,
+      "last_long": null,
+      "channel": "LongFast",
+      "is_mqtt_gateway": null
+    },
+    {
+      "last_lat": null,
+      "last_long": null,
+      "channel": "LongFast",
+      "is_mqtt_gateway": null
+    },
+    {
+      "last_lat": null,
+      "last_long": null,
+      "channel": "LongFast",
+      "is_mqtt_gateway": null
+    },
+    {
+      "last_lat": null,
+      "last_long": null,
+      "channel": "LongFast",
+      "is_mqtt_gateway": null
+    },
+    {
+      "last_lat": 392226677,
+      "last_long": 219782939,
+      "channel": "LongFast",
+      "is_mqtt_gateway": true
+    },
+    {
+      "last_lat": 353366000,
+      "last_long": 250096000,
+      "channel": "LongFast",
+      "is_mqtt_gateway": null
+    },
+    {
+      "last_lat": null,
+      "last_long": null,
+      "channel": "LongFast",
+      "is_mqtt_gateway": null
+    },
+    {
+      "last_lat": 383451136,
+      "last_long": 236650496,
+      "channel": "NarrowSlow",
+      "is_mqtt_gateway": null
+    },
+    {
+      "last_lat": 380502016,
+      "last_long": 237895680,
+      "channel": "LongFast",
+      "is_mqtt_gateway": null
+    },
+    {
+      "last_lat": 383516672,
+      "last_long": 240910336,
+      "channel": "NarrowSlow",
+      "is_mqtt_gateway": null
+    },
+    {
+      "last_lat": 379683494,
+      "last_long": 236248264,
+      "channel": "LongFast",
+      "is_mqtt_gateway": null
+    },
+    {
+      "last_lat": null,
+      "last_long": null,
+      "channel": "LongFast",
+      "is_mqtt_gateway": null
+    },
+    {
+      "last_lat": null,
+      "last_long": null,
+      "channel": "NarrowSlow",
+      "is_mqtt_gateway": null
+    },
+    {
+      "last_lat": 379977728,
+      "last_long": 238419968,
+      "channel": "LongFast",
+      "is_mqtt_gateway": null
+    },
+    {
+      "last_lat": 378797832,
+      "last_long": 237439167,
+      "channel": "LongFast",
+      "is_mqtt_gateway": null
+    },
+    {
+      "last_lat": 378929152,
+      "last_long": 237371392,
+      "channel": "NarrowSlow",
+      "is_mqtt_gateway": null
+    },
+    {
+      "last_lat": 380305408,
+      "last_long": 238616576,
+      "channel": "LongFast",
+      "is_mqtt_gateway": null
+    },
+    {
+      "last_lat": 378798080,
+      "last_long": 237240320,
+      "channel": "LongFast",
+      "is_mqtt_gateway": null
+    },
+    {
+      "last_lat": null,
+      "last_long": null,
+      "channel": "LongFast",
+      "is_mqtt_gateway": null
+    },
+    {
+      "last_lat": 380394000,
+      "last_long": 237975000,
+      "channel": "LongFast",
+      "is_mqtt_gateway": null
+    },
+    {
+      "last_lat": null,
+      "last_long": null,
+      "channel": "LongFast",
+      "is_mqtt_gateway": true
+    },
+    {
+      "last_lat": 379650048,
+      "last_long": 237436928,
+      "channel": "LongFast",
+      "is_mqtt_gateway": null
+    },
+    {
+      "last_lat": 393609216,
+      "last_long": 219021312,
+      "channel": "LongFast",
+      "is_mqtt_gateway": null
+    },
+    {
+      "last_lat": 381812736,
+      "last_long": 232390656,
+      "channel": "NarrowSlow",
+      "is_mqtt_gateway": null
+    },
+    {
+      "last_lat": null,
+      "last_long": null,
+      "channel": "LongFast",
+      "is_mqtt_gateway": null
+    },
+    {
+      "last_lat": 381550592,
+      "last_long": 237371392,
+      "channel": "NarrowSlow",
+      "is_mqtt_gateway": null
+    },
+    {
+      "last_lat": 380370944,
+      "last_long": 238813184,
+      "channel": "LongFast",
+      "is_mqtt_gateway": null
+    },
+    {
+      "last_lat": 380370944,
+      "last_long": 238813184,
+      "channel": "LongFast",
+      "is_mqtt_gateway": null
+    },
+    {
+      "last_lat": 379322368,
+      "last_long": 236716032,
+      "channel": "LongFast",
+      "is_mqtt_gateway": null
+    },
+    {
+      "last_lat": 383090688,
+      "last_long": 233209856,
+      "channel": "NarrowSlow",
+      "is_mqtt_gateway": null
+    },
+    {
+      "last_lat": 380796928,
+      "last_long": 238845952,
+      "channel": "NarrowSlow",
+      "is_mqtt_gateway": true
+    },
+    {
+      "last_lat": 379650048,
+      "last_long": 235732992,
+      "channel": "NarrowSlow",
+      "is_mqtt_gateway": null
+    },
+    {
+      "last_lat": 369812770,
+      "last_long": 219269510,
+      "channel": "LongFast",
+      "is_mqtt_gateway": null
+    },
+    {
+      "last_lat": 384565248,
+      "last_long": 235667456,
+      "channel": "NarrowSlow",
+      "is_mqtt_gateway": null
+    },
+    {
+      "last_lat": 384040960,
+      "last_long": 234094592,
+      "channel": "NarrowSlow",
+      "is_mqtt_gateway": null
+    },
+    {
+      "last_lat": null,
+      "last_long": null,
+      "channel": "LongFast",
+      "is_mqtt_gateway": null
+    },
+    {
+      "last_lat": 353107968,
+      "last_long": 250871808,
+      "channel": "LongFast",
+      "is_mqtt_gateway": true
+    },
+    {
+      "last_lat": null,
+      "last_long": null,
+      "channel": "LongFast",
+      "is_mqtt_gateway": null
+    },
+    {
+      "last_lat": 355041280,
+      "last_long": 240549888,
+      "channel": "LongFast",
+      "is_mqtt_gateway": null
+    },
+    {
+      "last_lat": 355033088,
+      "last_long": 240459776,
+      "channel": "LongFast",
+      "is_mqtt_gateway": null
+    },
+    {
+      "last_lat": 354893824,
+      "last_long": 241516544,
+      "channel": "LongFast",
+      "is_mqtt_gateway": null
+    },
+    {
+      "last_lat": null,
+      "last_long": null,
+      "channel": "LongFast",
+      "is_mqtt_gateway": null
+    },
+    {
+      "last_lat": 371589120,
+      "last_long": 268828672,
+      "channel": "LongFast",
+      "is_mqtt_gateway": null
+    },
+    {
+      "last_lat": null,
+      "last_long": null,
+      "channel": "LongFast",
+      "is_mqtt_gateway": null
+    },
+    {
+      "last_lat": 383385600,
+      "last_long": 233439232,
+      "channel": "NarrowSlow",
+      "is_mqtt_gateway": null
+    },
+    {
+      "last_lat": 353632256,
+      "last_long": 251920384,
+      "channel": "LongFast",
+      "is_mqtt_gateway": null
+    },
+    {
+      "last_lat": 379879424,
+      "last_long": 238256128,
+      "channel": "NarrowSlow",
+      "is_mqtt_gateway": null
+    },
+    {
+      "last_lat": null,
+      "last_long": null,
+      "channel": "LongFast",
+      "is_mqtt_gateway": null
+    },
+    {
+      "last_lat": null,
+      "last_long": null,
+      "channel": "NarrowSlow",
+      "is_mqtt_gateway": null
+    },
+    {
+      "last_lat": 379650048,
+      "last_long": 235732992,
+      "channel": "LongFast",
+      "is_mqtt_gateway": true
+    },
+    {
+      "last_lat": 379944960,
+      "last_long": 237666304,
+      "channel": "NarrowSlow",
+      "is_mqtt_gateway": true
+    },
+    {
+      "last_lat": 379944960,
+      "last_long": 237666304,
+      "channel": "LongFast",
+      "is_mqtt_gateway": null
+    },
+    {
+      "last_lat": 379813888,
+      "last_long": 237600768,
+      "channel": "NarrowSlow",
+      "is_mqtt_gateway": null
+    },
+    {
+      "last_lat": 378798080,
+      "last_long": 237764608,
+      "channel": "LongFast",
+      "is_mqtt_gateway": null
+    },
+    {
+      "last_lat": 379650048,
+      "last_long": 237305856,
+      "channel": "LongFast",
+      "is_mqtt_gateway": null
+    },
+    {
+      "last_lat": 378716160,
+      "last_long": 237518848,
+      "channel": "NarrowSlow",
+      "is_mqtt_gateway": null
+    },
+    {
+      "last_lat": null,
+      "last_long": null,
+      "channel": "LongFast",
+      "is_mqtt_gateway": null
+    },
+    {
+      "last_lat": 369360896,
+      "last_long": 221511680,
+      "channel": "LongFast",
+      "is_mqtt_gateway": null
+    },
+    {
+      "last_lat": 379813888,
+      "last_long": 237600768,
+      "channel": "LongFast",
+      "is_mqtt_gateway": null
+    },
+    {
+      "last_lat": 380043264,
+      "last_long": 238878720,
+      "channel": "LongFast",
+      "is_mqtt_gateway": null
+    },
+    {
+      "last_lat": 368082944,
+      "last_long": 219119616,
+      "channel": "LongFast",
+      "is_mqtt_gateway": true
+    },
+    {
+      "last_lat": 379322368,
+      "last_long": 236716032,
+      "channel": "LongFast",
+      "is_mqtt_gateway": null
+    },
+    {
+      "last_lat": null,
+      "last_long": null,
+      "channel": "LongFast",
+      "is_mqtt_gateway": null
+    },
+    {
+      "last_lat": 378798080,
+      "last_long": 237764608,
+      "channel": "LongFast",
+      "is_mqtt_gateway": null
+    },
+    {
+      "last_lat": 379650048,
+      "last_long": 235732992,
+      "channel": "NarrowSlow",
+      "is_mqtt_gateway": null
+    },
+    {
+      "last_lat": 379715584,
+      "last_long": 235798528,
+      "channel": "NarrowSlow",
+      "is_mqtt_gateway": true
+    },
+    {
+      "last_lat": 378929152,
+      "last_long": 237371392,
+      "channel": "NarrowSlow",
+      "is_mqtt_gateway": null
+    },
+    {
+      "last_lat": 378929152,
+      "last_long": 237371392,
+      "channel": "NarrowSlow",
+      "is_mqtt_gateway": null
+    },
+    {
+      "last_lat": null,
+      "last_long": null,
+      "channel": "LongFast",
+      "is_mqtt_gateway": null
+    },
+    {
+      "last_lat": null,
+      "last_long": null,
+      "channel": "LongFast",
+      "is_mqtt_gateway": null
+    },
+    {
+      "last_lat": null,
+      "last_long": null,
+      "channel": "LongFast",
+      "is_mqtt_gateway": null
+    },
+    {
+      "last_lat": 392167424,
+      "last_long": 220200960,
+      "channel": "LongFast",
+      "is_mqtt_gateway": null
+    },
+    {
+      "last_lat": 393478144,
+      "last_long": 218365952,
+      "channel": "LongFast",
+      "is_mqtt_gateway": null
+    },
+    {
+      "last_lat": null,
+      "last_long": null,
+      "channel": "LongFast",
+      "is_mqtt_gateway": null
+    },
+    {
+      "last_lat": null,
+      "last_long": null,
+      "channel": "LongFast",
+      "is_mqtt_gateway": null
+    },
+    {
+      "last_lat": 379453440,
+      "last_long": 236847104,
+      "channel": "LongFast",
+      "is_mqtt_gateway": null
+    },
+    {
+      "last_lat": 379322368,
+      "last_long": 236716032,
+      "channel": "LongFast",
+      "is_mqtt_gateway": null
+    },
+    {
+      "last_lat": null,
+      "last_long": null,
+      "channel": "LongFast",
+      "is_mqtt_gateway": null
+    },
+    {
+      "last_lat": 379650048,
+      "last_long": 237305856,
+      "channel": "LongFast",
+      "is_mqtt_gateway": null
+    },
+    {
+      "last_lat": 393216000,
+      "last_long": 219152384,
+      "channel": "LongFast",
+      "is_mqtt_gateway": true
+    },
+    {
+      "last_lat": 392429568,
+      "last_long": 219938816,
+      "channel": "LongFast",
+      "is_mqtt_gateway": true
+    },
+    {
+      "last_lat": null,
+      "last_long": null,
+      "channel": "LongFast",
+      "is_mqtt_gateway": null
+    },
+    {
+      "last_lat": null,
+      "last_long": null,
+      "channel": "LongFast",
+      "is_mqtt_gateway": null
+    }
+  ]
+}

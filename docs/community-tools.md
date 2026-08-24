@@ -72,3 +72,4 @@ description: 'Χάρτης, Meshview και Malla: τι κοιτάς πού κα
 - [Ξεκινώντας](./get-started)
 - [Προσωπικός Κόμβος](./personal-node)
 - [Σταθεροί Κόμβοι & Backbone](./fixed-nodes-backbone)
+- [Κατανομή Preset ανά Περιοχή](./coverage-map)

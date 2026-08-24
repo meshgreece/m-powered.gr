@@ -1,0 +1,321 @@
+.coverage {
+  /* Only the preset hues are hardcoded; there is no Infima equivalent for
+     them. Everything neutral reuses the theme tokens so both themes follow. */
+  --coverage-LongFast: #7bacf1;
+  --coverage-NarrowSlow: #c2410c;
+  --coverage-Mixed: #a48ce4;
+  --coverage-None: var(--ifm-color-emphasis-200);
+  /* Muting drops a unit back to the neutral base tone rather than to the
+     frame colour, so a toggled-off unit still reads as a shape. */
+  --coverage-muted: var(--coverage-None);
+  --coverage-coast: var(--ifm-color-emphasis-300);
+  --coverage-hairline: var(--ifm-color-emphasis-200);
+  /* Unit borders melt into the frame; the NUTS 2 seams sit on top of them. */
+  --coverage-unit-stroke: var(--ifm-background-surface-color);
+  --coverage-seam: var(--coverage-unit-stroke);
+  --coverage-focus: var(--ifm-color-primary);
+  --coverage-frame: #fbfbfc;
+  margin: 1.5rem 0;
+}
+
+:global([data-theme='dark']) .coverage {
+  /* Lifted so all four states stay apart on the dark surface. */
+  --coverage-LongFast: #7bacf1;
+  --coverage-NarrowSlow: #e8703a;
+  --coverage-Mixed: #ac93ee;
+  --coverage-focus: #fff;
+  --coverage-frame: var(--ifm-background-surface-color);
+}
+
+.layout {
+  display: flex;
+  flex-wrap: wrap;
+  gap: clamp(1.25rem, 4vw, 2.5rem);
+  align-items: flex-start;
+}
+
+/* Map ---------------------------------------------------------------- */
+
+.mapFrame {
+  flex: 1 1 380px;
+  min-width: 0;
+  padding: 0.75rem;
+  border: 1px solid var(--coverage-hairline);
+  border-radius: 14px;
+  background: var(--coverage-frame);
+}
+
+.mapCanvas {
+  position: relative;
+}
+
+.map {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* Same aspect ratio as the SVG, so the frame never collapses or jumps. */
+  aspect-ratio: 640 / 560;
+  color: var(--ifm-color-emphasis-600);
+  font-size: 0.9rem;
+}
+
+.coast {
+  fill: none;
+  stroke: var(--coverage-coast);
+  stroke-width: 1.6;
+  stroke-linejoin: round;
+}
+
+.unit {
+  stroke: var(--coverage-unit-stroke);
+  stroke-width: 0.6;
+  stroke-linejoin: round;
+  cursor: pointer;
+  transition: opacity 120ms ease;
+}
+
+.unit:hover {
+  opacity: 0.82;
+}
+
+.unit:focus {
+  outline: none;
+}
+
+.unit:focus-visible {
+  stroke: var(--coverage-focus);
+  stroke-width: 2;
+}
+
+.seam {
+  fill: none;
+  stroke: var(--coverage-seam);
+  stroke-width: 1.6;
+  stroke-linejoin: round;
+  pointer-events: none;
+}
+
+.stateLongFast {
+  fill: var(--coverage-LongFast);
+  background: var(--coverage-LongFast);
+}
+
+.stateNarrowSlow {
+  fill: var(--coverage-NarrowSlow);
+  background: var(--coverage-NarrowSlow);
+}
+
+.stateMixed {
+  fill: var(--coverage-Mixed);
+  background: var(--coverage-Mixed);
+}
+
+.stateNone {
+  fill: var(--coverage-None);
+  background: var(--coverage-None);
+}
+
+/* Must follow the state fills: same specificity, so source order decides
+   whether a legend toggle can grey a unit out. */
+.unitMuted {
+  fill: var(--coverage-muted);
+  opacity: 0.5;
+}
+
+.tooltip {
+  position: absolute;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  padding: 0.4rem 0.6rem;
+  transform: translate(-50%, calc(-100% - 0.5rem));
+  border-radius: 8px;
+  background: var(--ifm-color-primary);
+  color: #fff;
+  font-size: 0.78rem;
+  line-height: 1.35;
+  pointer-events: none;
+  white-space: nowrap;
+}
+
+:global([data-theme='dark']) .tooltip {
+  background: var(--ifm-color-emphasis-200);
+  color: var(--ifm-font-color-base);
+}
+
+.tooltipName {
+  font-weight: 700;
+}
+
+.tooltipCounts {
+  opacity: 0.82;
+}
+
+/* Panel -------------------------------------------------------------- */
+
+.panel {
+  position: sticky;
+  top: 24px;
+  flex: 0 1 230px;
+  min-width: 0;
+}
+
+.eyebrow {
+  margin: 0 0 0.6rem;
+  color: var(--ifm-color-emphasis-600);
+  font-size: 0.66rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.legend {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.legendRow {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  width: 100%;
+  padding: 0.3rem 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.legendRow:hover .legendLabel {
+  color: var(--ifm-link-color);
+}
+
+.legendRowOff {
+  opacity: 0.45;
+}
+
+.swatch {
+  flex: none;
+  width: 0.85rem;
+  height: 0.85rem;
+  border-radius: 3px;
+}
+
+.legendRowOff .swatch {
+  background: var(--coverage-muted);
+}
+
+.legendLabel {
+  flex: 1 1 auto;
+  min-width: 0;
+  font-size: 0.84rem;
+}
+
+.legendCount {
+  flex: none;
+  color: var(--ifm-color-emphasis-600);
+  font-size: 0.84rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.detail {
+  margin-top: 0.9rem;
+  padding-top: 0.9rem;
+  border-top: 1px solid var(--coverage-hairline);
+}
+
+.detailLead {
+  margin: 0 0 0.75rem;
+  font-size: 0.84rem;
+  line-height: 1.5;
+}
+
+.detailTitle {
+  margin: 0 0 0.2rem;
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
+.detailState {
+  margin: 0 0 0.75rem;
+  color: var(--ifm-color-emphasis-600);
+  font-size: 0.8rem;
+}
+
+.counts {
+  margin: 0;
+}
+
+.count {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.18rem 0;
+  font-size: 0.84rem;
+}
+
+.count dt {
+  color: var(--ifm-color-emphasis-700);
+}
+
+.count dd {
+  margin: 0;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.positionless {
+  margin-top: 1rem;
+}
+
+.positionless .detailTitle {
+  margin-bottom: 0.35rem;
+  font-size: 0.8rem;
+}
+
+.cta {
+  display: inline-block;
+  margin-top: 0.9rem;
+  font-size: 0.84rem;
+  font-weight: 600;
+}
+
+.error {
+  margin: 0;
+  color: var(--ifm-color-danger-dark);
+  font-size: 0.84rem;
+  line-height: 1.5;
+}
+
+/* Footer -------------------------------------------------------------- */
+
+.footnote {
+  margin: 1.5rem 0 0;
+  color: var(--ifm-color-emphasis-700);
+  font-size: 0.84rem;
+  line-height: 1.6;
+}
+
+.attribution {
+  margin: 0.5rem 0 0;
+  color: var(--ifm-color-emphasis-600);
+  font-size: 0.72rem;
+}
+
+@media (max-width: 768px) {
+  .panel {
+    position: static;
+    flex-basis: 100%;
+  }
+}

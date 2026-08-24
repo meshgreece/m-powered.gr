@@ -66,6 +66,11 @@ const sidebars: SidebarsConfig = {
         },
         {
           type: 'doc',
+          id: 'coverage-map',
+          label: 'Κατανομή Preset',
+        },
+        {
+          type: 'doc',
           id: 'eu-n-868-narrow-slow',
           label: 'Μετάβαση σε EU_N_868',
         },
