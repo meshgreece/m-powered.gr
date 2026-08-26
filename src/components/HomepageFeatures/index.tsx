@@ -57,9 +57,9 @@ const startLinks: ActionItem[] = [
 const toolRows: ToolItem[] = [
   {
     title: 'Χάρτης Κόμβων Ελλάδας',
-    summary:
-      'Για μια πρώτη εικόνα αν υπάρχει γενικά παρουσία κοντά σου.',
-    caution: 'Δεν αποδεικνύει ότι όλοι οι κόμβοι που βλέπεις είναι ενεργοί εκείνη τη στιγμή.',
+    summary: 'Για μια πρώτη εικόνα αν υπάρχει γενικά παρουσία κοντά σου.',
+    caution:
+      'Δεν αποδεικνύει ότι όλοι οι κόμβοι που βλέπεις είναι ενεργοί εκείνη τη στιγμή.',
     label: 'Άνοιξε τον χάρτη',
     href: 'https://map.m-powered.gr/',
   },
@@ -75,7 +75,8 @@ const toolRows: ToolItem[] = [
     title: 'Malla',
     summary:
       'Για πιο βαθύ ψάξιμο πάνω στα ίδια MQTT δεδομένα: packet browser, traceroutes και network graph.',
-    caution: 'Δεν είναι δεύτερη ανεξάρτητη πηγή από το Meshview. Διαβάζει πάλι MQTT.',
+    caution:
+      'Δεν είναι δεύτερη ανεξάρτητη πηγή από το Meshview. Διαβάζει πάλι MQTT.',
     label: 'Άνοιξε το Malla',
     href: 'https://malla.m-powered.gr/',
   },
@@ -87,7 +88,11 @@ const guideCards: GuideItem[] = [
     audience: 'Για πρώτο κόμβο και πρώτο στήσιμο',
     description:
       'Ο σύντομος οδηγός για να μπεις στο δίκτυο σωστά από την πρώτη μέρα.',
-    points: ['region EU_868 και CLIENT', 'hop limit 3 ή 4', 'τι να αφήσεις για αργότερα'],
+    points: [
+      'region EU_868 και CLIENT',
+      'hop limit 3 ή 4',
+      'τι να αφήσεις για αργότερα',
+    ],
     label: 'Ξεκίνα από εδώ',
     to: '/docs/get-started',
   },
@@ -96,7 +101,11 @@ const guideCards: GuideItem[] = [
     audience: 'Για φορητή συσκευή, αυτοκίνητο ή σπίτι',
     description:
       'Για καθημερινή χρήση, όταν ο κόμβος είναι δικός σου και δεν τον στήνεις σαν υποδομή.',
-    points: ['φορητή ή οικιακή χρήση', 'πρακτικές ρυθμίσεις', 'τι να κρατήσεις απλό'],
+    points: [
+      'φορητή ή οικιακή χρήση',
+      'πρακτικές ρυθμίσεις',
+      'τι να κρατήσεις απλό',
+    ],
     label: 'Δες τον οδηγό για προσωπικό κόμβο',
     to: '/docs/personal-node',
   },
@@ -105,7 +114,11 @@ const guideCards: GuideItem[] = [
     audience: 'Για σταθερό σημείο και σοβαρότερη κάλυψη',
     description:
       'Για περιπτώσεις όπου η θέση και η κεραία μπορούν όντως να βοηθήσουν το δίκτυο.',
-    points: ['CLIENT_BASE και ROUTER_LATE', 'κεραία και θέση', 'favorites και zero-cost hops'],
+    points: [
+      'CLIENT_BASE και ROUTER_LATE',
+      'κεραία και θέση',
+      'favorites και zero-cost hops',
+    ],
     label: 'Δες τον οδηγό για σταθερούς κόμβους',
     to: '/docs/fixed-nodes-backbone',
   },
@@ -157,7 +170,14 @@ function ToolRow({title, summary, caution, href, label}: ToolItem) {
   );
 }
 
-function GuideCard({title, audience, description, points, label, to}: GuideItem) {
+function GuideCard({
+  title,
+  audience,
+  description,
+  points,
+  label,
+  to,
+}: GuideItem) {
   return (
     <Link className={styles.guideCard} to={to}>
       <p className={styles.guideAudience}>{audience}</p>
@@ -186,9 +206,9 @@ export default function HomepageFeatures(): ReactNode {
                 Ξεκίνα από τα λίγα που όντως χρειάζεσαι
               </Heading>
               <p className={styles.sectionDescription}>
-                Αν τώρα μπαίνεις στο Meshtastic, αυτά φτάνουν για να μπεις
-                σωστά στο δίκτυο χωρίς να πειράζεις ρυθμίσεις που δεν
-                χρειάζονται ακόμα.
+                Αν τώρα μπαίνεις στο Meshtastic, αυτά φτάνουν για να μπεις σωστά
+                στο δίκτυο χωρίς να πειράζεις ρυθμίσεις που δεν χρειάζονται
+                ακόμα.
               </p>
             </div>
           </div>
@@ -203,7 +223,7 @@ export default function HomepageFeatures(): ReactNode {
           <div className={styles.sectionHeader}>
             <div>
               <Heading as="h2" className={styles.sectionTitle}>
-                Ό,τι κι αν στήνεις, σε καλύπτουμε
+                Υπάρχει οδηγός για κάθε τύπο κόμβου
               </Heading>
               <p className={styles.sectionDescription}>
                 Διάλεξε τον οδηγό που ταιριάζει σε αυτό που στήνεις τώρα. Οι
@@ -226,8 +246,8 @@ export default function HomepageFeatures(): ReactNode {
               </Heading>
               <p className={styles.sectionDescription}>
                 Χάρτης, Meshview και Malla μπορούν να σε βοηθήσουν να
-                ξεκαθαρίσεις τι φαίνεται πού. Και αν θέλεις βοήθεια μετά, θα
-                σου είναι πιο εύκολο να εξηγήσεις τι βλέπεις.
+                ξεκαθαρίσεις τι φαίνεται πού. Και αν θέλεις βοήθεια μετά, θα σου
+                είναι πιο εύκολο να εξηγήσεις τι βλέπεις.
               </p>
             </div>
           </div>
