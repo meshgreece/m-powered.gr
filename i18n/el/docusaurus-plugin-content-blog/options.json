@@ -1,14 +1,14 @@
 {
   "title": {
-    "message": "Blog",
+    "message": "Ενημερώσεις",
     "description": "The title for the blog used in SEO"
   },
   "description": {
-    "message": "Blog",
+    "message": "Σύντομες ενημερώσεις του Meshtastic Greece Community για τους οδηγούς, τα εργαλεία και το ελληνικό mesh.",
     "description": "The description for the blog used in SEO"
   },
   "sidebar.title": {
-    "message": "Πρόσφατες αναρτήσεις",
+    "message": "Πρόσφατες ενημερώσεις",
     "description": "The label for the left sidebar"
   }
 }

@@ -42,16 +42,16 @@ const config: Config = {
       {
         docs: {
           sidebarPath: './sidebars.ts',
-          editUrl:
-            'https://github.com/meshgreece/m-powered.gr/tree/master/',
+          editUrl: 'https://github.com/meshgreece/m-powered.gr/tree/master/',
         },
         blog: {
-          blogTitle: 'Νέα του Meshtastic Greece Community',
+          blogTitle: 'Ενημερώσεις',
           blogDescription:
-            'Νέα, οδηγοί και ενημερώσεις για την κοινότητα Meshtastic στην Ελλάδα.',
-          showReadingTime: true,
-          editUrl:
-            'https://github.com/meshgreece/m-powered.gr/tree/master/',
+            'Σύντομες ενημερώσεις του Meshtastic Greece Community για τους οδηγούς, τα εργαλεία και το ελληνικό mesh.',
+          blogSidebarCount: 0,
+          postsPerPage: 'ALL',
+          showReadingTime: false,
+          editUrl: 'https://github.com/meshgreece/m-powered.gr/tree/master/',
           feedOptions: {
             type: ['rss', 'atom'],
             xslt: true,
@@ -82,7 +82,7 @@ const config: Config = {
           position: 'left',
           label: 'Οδηγοί',
         },
-        {to: '/blog', label: 'Νέα', position: 'left'},
+        {to: '/blog', label: 'Ενημερώσεις', position: 'left'},
         {to: '/status', label: 'Κατάσταση', position: 'left'},
         {
           label: 'Εργαλεία',

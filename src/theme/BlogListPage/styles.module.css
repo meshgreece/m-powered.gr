@@ -1,0 +1,159 @@
+.page {
+  max-width: 58rem;
+  margin: 0 auto;
+  padding: 4rem 0 5rem;
+}
+
+.header {
+  display: flex;
+  gap: 2rem;
+  align-items: end;
+  justify-content: space-between;
+  padding-bottom: 1.5rem;
+  border-bottom: 2px solid var(--ifm-color-emphasis-800);
+}
+
+.header h1 {
+  margin: 0;
+  font-size: clamp(2.25rem, 6vw, 3.4rem);
+  line-height: 1;
+  letter-spacing: -0.035em;
+}
+
+.header p {
+  max-width: 39rem;
+  margin: 0.85rem 0 0;
+  color: var(--ifm-color-emphasis-700);
+  font-size: 1.05rem;
+  line-height: 1.7;
+}
+
+.links {
+  display: flex;
+  flex: 0 0 auto;
+  gap: 1rem;
+  padding-bottom: 0.1rem;
+  font-size: 0.9rem;
+}
+
+.links a,
+.moreLink,
+.tag {
+  font-weight: 650;
+  text-decoration: none;
+}
+
+.links a:hover,
+.moreLink:hover,
+.tag:hover {
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+
+.entries {
+  border-bottom: 1px solid var(--ifm-color-emphasis-300);
+}
+
+.entry {
+  display: grid;
+  grid-template-columns: 9rem minmax(0, 1fr);
+  gap: 2rem;
+  padding: 2.25rem 0 2.5rem;
+  border-top: 1px solid var(--ifm-color-emphasis-300);
+}
+
+.entry:first-child {
+  border-top: 0;
+}
+
+.date {
+  padding-top: 0.35rem;
+  color: var(--ifm-color-emphasis-700);
+  font-size: 0.86rem;
+  font-weight: 650;
+  line-height: 1.45;
+}
+
+.entryBody {
+  min-width: 0;
+}
+
+.entryTitle {
+  margin: 0;
+  font-size: clamp(1.45rem, 3vw, 1.85rem);
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+}
+
+.entryTitle a {
+  color: var(--ifm-heading-color);
+  text-decoration: none;
+}
+
+.entryTitle a:hover {
+  color: var(--ifm-link-color);
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem 0.8rem;
+  margin-top: 0.65rem;
+  font-size: 0.8rem;
+}
+
+.tag {
+  color: var(--ifm-color-emphasis-700);
+}
+
+.summary {
+  margin-top: 1.15rem;
+  line-height: 1.75;
+}
+
+.summary p {
+  margin-bottom: 0.9rem;
+}
+
+.summary ul {
+  margin: 0;
+  padding-left: 1.2rem;
+}
+
+.summary li + li {
+  margin-top: 0.35rem;
+}
+
+.summary > :last-child {
+  margin-bottom: 0;
+}
+
+.moreLink {
+  display: inline-block;
+  margin-top: 1.25rem;
+  font-size: 0.9rem;
+}
+
+@media screen and (max-width: 700px) {
+  .page {
+    padding: 3rem 0 4rem;
+  }
+
+  .header {
+    display: block;
+  }
+
+  .links {
+    margin-top: 1rem;
+  }
+
+  .entry {
+    display: block;
+    padding: 1.8rem 0 2rem;
+  }
+
+  .date {
+    display: block;
+    padding: 0 0 0.55rem;
+  }
+}

@@ -1,14 +1,19 @@
-meshtastic:
-  label: Meshtastic
-  permalink: /meshtastic
-  description: Meshtastic mesh δίκτυο
+ιστότοπος:
+  label: Ιστότοπος
+  permalink: /istoselida
+  description: Αλλαγές στο m-powered.gr
 
-ελλάδα:
-  label: Ελλάδα
-  permalink: /ellada
-  description: Ελληνική κοινότητα
+οδηγοί:
+  label: Οδηγοί
+  permalink: /odigoi
+  description: Νέοι και ενημερωμένοι οδηγοί
 
-κοινότητα:
-  label: Κοινότητα
-  permalink: /koinotita
-  description: Η κοινότητα μας
+κατάσταση:
+  label: Κατάσταση
+  permalink: /katastasi
+  description: Ενημερώσεις για την εικόνα του δικτύου
+
+εργαλεία:
+  label: Εργαλεία
+  permalink: /ergaleia
+  description: Εργαλεία του Meshtastic Greece Community
