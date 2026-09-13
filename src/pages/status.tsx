@@ -20,6 +20,7 @@ const LOCALE = 'el-GR';
 type CoreNodeReference = {
   nodeId: string;
   prefecture: string;
+  temporary?: boolean;
 };
 
 type NodeCardData = CoreNodeReference & {
@@ -108,6 +109,11 @@ const CORE_NODE_REFERENCES: CoreNodeReference[] = [
     prefecture: 'Νομός Αττικής',
   },
   {
+    nodeId: '2794858800',
+    prefecture: 'Νομός Αττικής',
+    temporary: true,
+  },
+  {
     nodeId: '3650121153',
     prefecture: 'Νομός Αττικής',
   },
@@ -117,6 +123,10 @@ const CORE_NODE_REFERENCES: CoreNodeReference[] = [
   },
   {
     nodeId: '1966387221',
+    prefecture: 'Νομός Αττικής',
+  },
+  {
+    nodeId: '574382240',
     prefecture: 'Νομός Αττικής',
   },
 ];
@@ -1127,6 +1137,9 @@ function NodeCard({
                 rel="noopener noreferrer">
                 {node.name}
               </a>
+              {node.temporary && (
+                <span className={styles.temporaryBadge}>Προσωρινός</span>
+              )}
             </Heading>
             <p className={styles.cardMeta}>
               <span className={styles.cardMetaHex}>{node.hexId}</span>

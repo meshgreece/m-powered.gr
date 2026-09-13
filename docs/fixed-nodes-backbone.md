@@ -79,10 +79,12 @@ description: Οδηγός για σταθερούς κόμβους με ρόλο
 | Κόμβος        | Hex ID      | Ρόλος       | Meshview                                                 |
 | ------------- | ----------- | ----------- | -------------------------------------------------------- |
 | Parnitha ☀️   | `!ce51114b` | ROUTER      | [Προβολή](https://meshview.m-powered.gr/node/3461419339) |
+| Penteli ☀️ *(προσωρινός)* | `!a6962930` | ROUTER      | [Προβολή](https://meshview.m-powered.gr/node/2794858800) |
 | Ypato ☀️      | `!75f15c34` | ROUTER      | [Προβολή](https://meshview.m-powered.gr/node/1978752052) |
 | Ymittos ☀️    | `!d9906dc1` | ROUTER      | [Προβολή](https://meshview.m-powered.gr/node/3650121153) |
 | Dystos ☀️     | `!aa2b6fcc` | ROUTER_LATE | [Προβολή](https://meshview.m-powered.gr/node/2854973388) |
 | Kitheronas ☀️ | `!7534b015` | ROUTER_LATE | [Προβολή](https://meshview.m-powered.gr/node/1966387221) |
+| Xerxes ☀️     | `!223c60a0` | ROUTER_LATE | [Προβολή](https://meshview.m-powered.gr/node/574382240)  |
 
 Η ζωντανή κατάσταση και η τηλεμετρία τους εμφανίζονται στη σελίδα [Κατάσταση](/status).
 

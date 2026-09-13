@@ -21,6 +21,9 @@
   --status-point-stroke: #f4f6fa;
   --status-skeleton-base: rgba(44, 45, 60, 0.1);
   --status-skeleton-highlight: rgba(255, 255, 255, 0.8);
+  --status-temporary-border: #a15c05;
+  --status-temporary-background: #fff8e8;
+  --status-temporary-text: #653800;
   padding: 2rem 0 3rem;
 }
 
@@ -276,10 +279,15 @@
 }
 
 .cardHeading {
+  flex: 1;
   min-width: 0;
 }
 
 .cardTitle {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.45rem;
   margin: 0;
   color: var(--status-text);
   font-size: 1.2rem;
@@ -299,6 +307,19 @@
   outline: 2px solid var(--status-accent);
   outline-offset: 3px;
   border-radius: 4px;
+}
+
+.temporaryBadge {
+  margin-left: auto;
+  padding: 0.08rem 0.38rem;
+  border: 1px solid var(--status-temporary-border);
+  border-radius: 6px;
+  background: var(--status-temporary-background);
+  color: var(--status-temporary-text);
+  font-size: 0.66rem;
+  font-weight: 700;
+  line-height: 1.4;
+  white-space: nowrap;
 }
 
 .cardMeta,
@@ -624,6 +645,9 @@
   --status-point-stroke: rgba(25, 29, 39, 0.94);
   --status-skeleton-base: rgba(255, 255, 255, 0.12);
   --status-skeleton-highlight: rgba(255, 255, 255, 0.24);
+  --status-temporary-border: #d99a3d;
+  --status-temporary-background: rgba(217, 154, 61, 0.1);
+  --status-temporary-text: #f3c77f;
 }
 
 [data-theme='dark'] .mapTiles {
