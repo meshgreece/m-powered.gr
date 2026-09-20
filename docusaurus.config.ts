@@ -65,7 +65,7 @@ const config: Config = {
   ],
 
   themeConfig: {
-    image: 'img/m-powered-social-card.png',
+    image: 'img/m-powered-social-card-2026.png',
     colorMode: {
       respectPrefersColorScheme: true,
     },
