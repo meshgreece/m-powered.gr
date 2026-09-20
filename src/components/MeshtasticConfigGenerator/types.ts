@@ -1,5 +1,4 @@
 import {create} from '@bufbuild/protobuf';
-import type {AppOnly} from '@meshtastic/protobufs';
 import {AppOnly as AppOnlySchemas} from '@meshtastic/protobufs';
 
 type ChannelSetInit = Parameters<

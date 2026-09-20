@@ -2,7 +2,11 @@
   // This file is not used in compilation. It is here just for a nice editor experience.
   "extends": "@docusaurus/tsconfig",
   "compilerOptions": {
-    "baseUrl": "."
+    "baseUrl": ".",
+    // The build uses swc and never typechecks, so `npm run typecheck` is the
+    // only thing that catches imports and locals left dead by a deletion.
+    "noUnusedLocals": true,
+    "noUnusedParameters": true
   },
   "exclude": [".docusaurus", "build"]
 }

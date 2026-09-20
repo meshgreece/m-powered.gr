@@ -8,8 +8,7 @@ type ActionItem = {
   description: string;
   label: string;
   meta?: string;
-  href?: string;
-  to?: string;
+  to: string;
 };
 
 type ToolItem = {
@@ -124,19 +123,9 @@ const guideCards: GuideItem[] = [
   },
 ];
 
-function ActionLink({title, description, label, meta, href, to}: ActionItem) {
-  const linkProps = href
-    ? {
-        href,
-        target: '_blank',
-        rel: 'noopener noreferrer',
-      }
-    : {
-        to: to ?? '/',
-      };
-
+function ActionLink({title, description, label, meta, to}: ActionItem) {
   return (
-    <Link className={styles.actionLink} {...linkProps}>
+    <Link className={styles.actionLink} to={to}>
       <div className={styles.actionCopy}>
         <Heading as="h3" className={styles.actionTitle}>
           {title}

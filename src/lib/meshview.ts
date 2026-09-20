@@ -71,13 +71,10 @@ export function getMeshviewApiUrl(
   endpoint: 'nodes' | 'packets',
   params: Record<string, number | string> = {},
 ): string {
-  const searchParams = new URLSearchParams();
+  const query = new URLSearchParams(
+    Object.entries(params).map(([key, value]) => [key, String(value)]),
+  ).toString();
 
-  for (const [key, value] of Object.entries(params)) {
-    searchParams.set(key, String(value));
-  }
-
-  const query = searchParams.toString();
   return `${MESHVIEW_API_BASE}/${endpoint}${query ? `?${query}` : ''}`;
 }
 
@@ -99,24 +96,19 @@ export function parseImportTimeUs(
 export function getNewestPacketImportTimeUs(
   packets: MeshviewPacket[] | undefined,
 ): number | null {
-  if (!Array.isArray(packets) || packets.length === 0) {
+  if (!Array.isArray(packets)) {
     return null;
   }
 
-  let newestImportTimeUs: number | null = null;
+  const newestImportTimeUs = Math.max(
+    ...packets
+      .map((packet) => parseImportTimeUs(packet.import_time_us))
+      .filter((importTimeUs) => importTimeUs !== null),
+  );
 
-  for (const packet of packets) {
-    const importTimeUs = parseImportTimeUs(packet.import_time_us);
-
-    if (
-      importTimeUs !== null &&
-      (newestImportTimeUs === null || importTimeUs > newestImportTimeUs)
-    ) {
-      newestImportTimeUs = importTimeUs;
-    }
-  }
-
-  return newestImportTimeUs;
+  // Math.max() over nothing is -Infinity, which must never reach a timestamp:
+  // no packets and no readable timestamps both mean "nothing to show".
+  return Number.isFinite(newestImportTimeUs) ? newestImportTimeUs : null;
 }
 
 export function floorToUtcHourMs(ms: number): number {
@@ -214,24 +206,10 @@ export function parseTelemetry(packets: MeshviewPacket[] | undefined): Telemetry
     }
   }
 
-  let latestBattery: number | null = null;
-  let latestVoltage: number | null = null;
-
-  for (let index = orderedPackets.length - 1; index >= 0; index -= 1) {
-    const packet = orderedPackets[index];
-
-    if (latestBattery === null) {
-      latestBattery = parseMetric(packet.payload, 'battery_level');
-    }
-
-    if (latestVoltage === null) {
-      latestVoltage = parseMetric(packet.payload, 'voltage');
-    }
-
-    if (latestBattery !== null && latestVoltage !== null) {
-      break;
-    }
-  }
+  // Both series are built in ascending time order, so the newest reading is
+  // already the last element of each.
+  const latestBattery = batterySeries.at(-1) ?? null;
+  const latestVoltage = voltageSeries.at(-1) ?? null;
 
   return {
     battery: latestBattery !== null ? Math.round(latestBattery) : null,

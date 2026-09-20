@@ -13,11 +13,9 @@ const QUERY_PARAMETERS = {
   positionPrecision: 'precision',
 } as const;
 
-const ADDITIONAL_CHANNEL_QUERY_PARAMETERS: Record<AdditionalChannelId, string> =
-  {
-    Test: 'test',
-    Bots: 'bots',
-  };
+function getChannelQueryParameter(channelId: AdditionalChannelId): string {
+  return channelId.toLowerCase();
+}
 
 function parseInteger(value: string | null): number | null {
   if (value === null || !/^\d+$/.test(value)) return null;
@@ -45,7 +43,7 @@ export function parseGeneratorSelection(
         : DEFAULT_SELECTION.positionPrecision,
     additionalChannels: ADDITIONAL_CHANNEL_IDS.filter(
       (channelId) =>
-        params.get(ADDITIONAL_CHANNEL_QUERY_PARAMETERS[channelId]) === 'true',
+        params.get(getChannelQueryParameter(channelId)) === 'true',
     ),
   };
 }
@@ -61,7 +59,7 @@ export function createGeneratorSearchParams(
 
   for (const channelId of ADDITIONAL_CHANNEL_IDS) {
     if (selection.additionalChannels.includes(channelId)) {
-      params.set(ADDITIONAL_CHANNEL_QUERY_PARAMETERS[channelId], 'true');
+      params.set(getChannelQueryParameter(channelId), 'true');
     }
   }
 

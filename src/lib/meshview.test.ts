@@ -66,6 +66,17 @@ describe('δραστηριότητα 24ώρου από πακέτα', () => {
     expect(buildActivitySeriesFromPackets([])).toEqual(Array(24).fill(0));
     expect(getNewestPacketImportTimeUs([])).toBeNull();
   });
+
+  // A non-empty list whose timestamps are all unusable must still be "no
+  // packet" — never -Infinity, which would render as a date far in the past.
+  it('γυρίζει null όταν καμία σφραγίδα χρόνου δεν διαβάζεται', () => {
+    expect(
+      getNewestPacketImportTimeUs([
+        {import_time_us: undefined},
+        {import_time_us: 'όχι αριθμός'},
+      ]),
+    ).toBeNull();
+  });
 });
 
 describe('τηλεμετρία', () => {
@@ -74,8 +85,23 @@ describe('τηλεμετρία', () => {
       packets.filter((packet) => Number(packet.portnum) === TELEMETRY_PORTNUM),
     );
 
-    expect(telemetry.battery).not.toBeNull();
-    expect(telemetry.voltage).not.toBeNull();
+    expect(telemetry.battery).toBe(95);
+    expect(telemetry.voltage).toBe(4.122);
     expect(telemetry.batterySeries.length).toBeGreaterThan(0);
+  });
+
+  // The series is built in ascending time order, so the newest reading is its
+  // last element — there is nothing to scan backwards for.
+  it('η τρέχουσα τιμή είναι η τελευταία της σειράς', () => {
+    const telemetry = parseTelemetry(
+      packets.filter((packet) => Number(packet.portnum) === TELEMETRY_PORTNUM),
+    );
+
+    expect(telemetry.battery).toBe(
+      Math.round(telemetry.batterySeries[telemetry.batterySeries.length - 1]),
+    );
+    expect(telemetry.voltage).toBe(
+      telemetry.voltageSeries[telemetry.voltageSeries.length - 1],
+    );
   });
 });

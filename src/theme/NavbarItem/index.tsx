@@ -5,10 +5,8 @@ import type {WrapperProps} from '@docusaurus/types';
 import StatusWidget from '@site/src/components/StatusWidget';
 
 type Props = WrapperProps<typeof NavbarItemType> & {
-  readonly items?: readonly any[];
   readonly mobile?: boolean;
   readonly position?: 'left' | 'right';
-  readonly label?: string;
   readonly href?: string;
 };
 

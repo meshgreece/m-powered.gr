@@ -1,4 +1,4 @@
-import {geoBounds, geoContains, geoDistance} from 'd3-geo';
+import {geoContains, geoDistance} from 'd3-geo';
 
 import {getUnitName} from './labels';
 import type {
@@ -23,62 +23,28 @@ const MIXED_RUNNER_UP_SHARE = 0.25;
 const NEAREST_UNIT_FALLBACK_KM = 15;
 
 const EARTH_RADIUS_KM = 6371;
-/** Rough degree padding around a unit's bounds for the fallback prefilter. */
-const FALLBACK_BOUNDS_PADDING_DEGREES = 0.25;
 
 type Point = [longitude: number, latitude: number];
 
 type IndexedUnit = {
   feature: NutsUnitFeature;
-  bounds: [Point, Point];
   boundaryPoints: Point[];
 };
 
 export type UnitIndex = IndexedUnit[];
 
-function collectBoundaryPoints(coordinates: unknown, into: Point[]): void {
-  if (!Array.isArray(coordinates)) return;
-
-  if (typeof coordinates[0] === 'number') {
-    into.push(coordinates as unknown as Point);
-    return;
-  }
-
-  for (const nested of coordinates) {
-    collectBoundaryPoints(nested, into);
-  }
-}
-
 /**
- * Precomputes bounds and boundary vertices once, so classifying a node stays a
- * cheap lookup even when the fallback has to run.
+ * Precomputes the boundary vertices once, so classifying a node stays a cheap
+ * lookup even when the fallback has to run.
  */
 export function createUnitIndex(features: NutsUnitFeature[]): UnitIndex {
-  return features.map((feature) => {
-    const boundaryPoints: Point[] = [];
-    collectBoundaryPoints(feature.geometry.coordinates, boundaryPoints);
-
-    return {
-      feature,
-      bounds: geoBounds(feature) as [Point, Point],
-      boundaryPoints,
-    };
-  });
-}
-
-function isNearBounds(
-  unit: IndexedUnit,
-  [longitude, latitude]: Point,
-): boolean {
-  const [[minLongitude, minLatitude], [maxLongitude, maxLatitude]] =
-    unit.bounds;
-
-  return (
-    longitude >= minLongitude - FALLBACK_BOUNDS_PADDING_DEGREES &&
-    longitude <= maxLongitude + FALLBACK_BOUNDS_PADDING_DEGREES &&
-    latitude >= minLatitude - FALLBACK_BOUNDS_PADDING_DEGREES &&
-    latitude <= maxLatitude + FALLBACK_BOUNDS_PADDING_DEGREES
-  );
+  return features.map((feature) => ({
+    feature,
+    // A ring is [[lng, lat], …]; a MultiPolygon nests one level deeper.
+    boundaryPoints: (
+      feature.geometry.coordinates as unknown[]
+    ).flat(feature.geometry.type === 'Polygon' ? 1 : 2) as Point[],
+  }));
 }
 
 /** Returns the unit a point belongs to, or null when it is outside Greece. */
@@ -93,8 +59,6 @@ export function locateUnitId(index: UnitIndex, point: Point): string | null {
   let nearestDistanceKm = NEAREST_UNIT_FALLBACK_KM;
 
   for (const unit of index) {
-    if (!isNearBounds(unit, point)) continue;
-
     for (const boundaryPoint of unit.boundaryPoints) {
       const distanceKm = geoDistance(boundaryPoint, point) * EARTH_RADIUS_KM;
 

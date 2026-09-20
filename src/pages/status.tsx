@@ -21,6 +21,27 @@ import type {
   PacketsResponse,
   TelemetryData,
 } from '../lib/meshview';
+import {
+  MAP_TILE_SIZE,
+  MAP_VIEWPORT_HEIGHT,
+  MAP_VIEWPORT_WIDTH,
+  MAP_ZOOM,
+  clamp,
+  getLinePath,
+  getLocalMapLayout,
+  getMapPoint,
+  getPointsInBand,
+  mod,
+} from '../lib/plot';
+import {
+  formatPowerValue,
+  formatRelativeTime,
+  formatTelemetryPercent,
+  formatTelemetryVoltage,
+  getLatestSeriesValue,
+  getRefreshCountdown,
+  getRefreshTimestamp,
+} from '../lib/format';
 
 const AUTO_REFRESH_INTERVAL_MS = 60_000;
 const REFRESH_COUNTDOWN_TICK_MS = 1_000;
@@ -29,12 +50,9 @@ const NODE_RECORDS_TTL_MS = 5 * AUTO_REFRESH_INTERVAL_MS;
 // ponytail: limit 200 against a measured max of 41 packets/24h. If a node ever
 // fills the page the bars under-report - add a /stats fallback if that happens.
 const PACKET_PAGE_LIMIT = 200;
-const MAP_TILE_SIZE = 256;
-const MAP_ZOOM = 10;
-const MAP_VIEWPORT_WIDTH = 320;
-const MAP_VIEWPORT_HEIGHT = 136;
 const MAP_RING_RADIUS = 12;
-const LOCALE = 'el-GR';
+/** RF utilisation is already a percentage, so its band scale is fixed. */
+const PERCENT = [0, 100] as const;
 
 type CoreNodeReference = {
   nodeId: string;
@@ -114,196 +132,8 @@ const PREFECTURE_ORDER = [
   'Νομός Ευβοίας',
 ] as const;
 
-function clamp(value: number, minimum: number, maximum: number): number {
-  return Math.min(maximum, Math.max(minimum, value));
-}
-
-function projectToWorldPixels(
-  latitude: number,
-  longitude: number,
-  zoom: number,
-): {x: number; y: number} {
-  const limitedLatitude = clamp(latitude, -85.05112878, 85.05112878);
-  const scale = MAP_TILE_SIZE * 2 ** zoom;
-  const x = ((longitude + 180) / 360) * scale;
-  const sinLatitude = Math.sin((limitedLatitude * Math.PI) / 180);
-  const y =
-    (0.5 -
-      Math.log((1 + sinLatitude) / (1 - sinLatitude)) / (4 * Math.PI)) *
-    scale;
-
-  return {
-    x,
-    y,
-  };
-}
-
-function mod(value: number, divisor: number): number {
-  return ((value % divisor) + divisor) % divisor;
-}
-
 function hasPosition(node: NodeCardData): node is PositionedNode {
   return node.latitude !== null && node.longitude !== null;
-}
-
-function getLocalMapLayout(latitude: number, longitude: number): {
-  originX: number;
-  originY: number;
-  startTileX: number;
-  endTileX: number;
-  startTileY: number;
-  endTileY: number;
-} {
-  const center = projectToWorldPixels(latitude, longitude, MAP_ZOOM);
-  const originX = center.x - MAP_VIEWPORT_WIDTH / 2;
-  const originY = center.y - MAP_VIEWPORT_HEIGHT / 2;
-
-  return {
-    originX,
-    originY,
-    startTileX: Math.floor(originX / MAP_TILE_SIZE) - 1,
-    endTileX:
-      Math.floor((originX + MAP_VIEWPORT_WIDTH - 1) / MAP_TILE_SIZE) + 1,
-    startTileY: Math.floor(originY / MAP_TILE_SIZE) - 1,
-    endTileY:
-      Math.floor((originY + MAP_VIEWPORT_HEIGHT - 1) / MAP_TILE_SIZE) + 1,
-  };
-}
-
-function getMapPoint(
-  latitude: number,
-  longitude: number,
-  originX: number,
-  originY: number,
-): {x: number; y: number} {
-  const projected = projectToWorldPixels(latitude, longitude, MAP_ZOOM);
-
-  return {
-    x: Number((projected.x - originX).toFixed(2)),
-    y: Number((projected.y - originY).toFixed(2)),
-  };
-}
-
-function getBounds(values: number[]): [number, number] {
-  const finiteValues = values.filter((value) => Number.isFinite(value));
-
-  if (!finiteValues.length) {
-    return [0, 1];
-  }
-
-  const minimum = Math.min(...finiteValues);
-  const maximum = Math.max(...finiteValues);
-
-  if (minimum === maximum) {
-    return [minimum - 1, maximum + 1];
-  }
-
-  return [minimum, maximum];
-}
-
-function getPointsInBand(
-  values: number[],
-  left: number,
-  right: number,
-  top: number,
-  bottom: number,
-): Array<[number, number]> {
-  const [minimum, maximum] = getBounds(values);
-  const range = maximum - minimum || 1;
-
-  return values.map((value, index) => {
-    const x =
-      left + (index / Math.max(values.length - 1, 1)) * (right - left);
-    const normalized = (value - minimum) / range;
-    const y = bottom - normalized * (bottom - top);
-    return [Number(x.toFixed(2)), Number(y.toFixed(2))];
-  });
-}
-
-function getPercentPointsInBand(
-  values: number[],
-  left: number,
-  right: number,
-  top: number,
-  bottom: number,
-): Array<[number, number]> {
-  return values.map((value, index) => {
-    const x =
-      left + (index / Math.max(values.length - 1, 1)) * (right - left);
-    const normalized = clamp(value, 0, 100) / 100;
-    const y = bottom - normalized * (bottom - top);
-    return [Number(x.toFixed(2)), Number(y.toFixed(2))];
-  });
-}
-
-function getLinePath(points: Array<[number, number]>): string {
-  return points
-    .map(([x, y], index) => `${index === 0 ? 'M' : 'L'} ${x} ${y}`)
-    .join(' ');
-}
-
-function resampleSeries(values: number[], targetLength: number): number[] {
-  if (!values.length) {
-    return [];
-  }
-
-  if (values.length === targetLength) {
-    return values;
-  }
-
-  if (values.length === 1) {
-    return Array.from({length: targetLength}, () => values[0]);
-  }
-
-  const sourceLastIndex = values.length - 1;
-
-  return Array.from({length: targetLength}, (_, index) => {
-    const position = (index / Math.max(targetLength - 1, 1)) * sourceLastIndex;
-    const leftIndex = Math.floor(position);
-    const rightIndex = Math.ceil(position);
-
-    if (leftIndex === rightIndex) {
-      return values[leftIndex];
-    }
-
-    const ratio = position - leftIndex;
-    return values[leftIndex] + (values[rightIndex] - values[leftIndex]) * ratio;
-  });
-}
-
-function padNumber(value: number): string {
-  return value.toString().padStart(2, '0');
-}
-
-function formatRelativeTime(importTimeUs: number | null, nowMs: number): string {
-  if (importTimeUs === null) {
-    return '—';
-  }
-
-  const diffMs = Math.max(0, nowMs - importTimeUs / 1000);
-  const minutes = Math.floor(diffMs / 60_000);
-
-  if (minutes < 1) {
-    return 'μόλις τώρα';
-  }
-
-  if (minutes < 60) {
-    return `${minutes} λεπτά πριν`;
-  }
-
-  const hours = Math.floor(minutes / 60);
-  const remainingMinutes = minutes % 60;
-
-  if (hours < 24) {
-    if (remainingMinutes === 0) {
-      return hours === 1 ? '1 ώρα πριν' : `${hours} ώρες πριν`;
-    }
-
-    return `${hours} ώρες και ${remainingMinutes} λεπτά πριν`;
-  }
-
-  const days = Math.floor(hours / 24);
-  return days === 1 ? '1 ημέρα πριν' : `${days} ημέρες πριν`;
 }
 
 function createInitialNodeCardData(reference: CoreNodeReference): NodeCardData {
@@ -636,39 +466,22 @@ function Combined24hPlot({
   const hasRfUtilization = hasAirUtilTx || hasChannelUtilization;
   const hasActivity = activity.some((value) => value > 0);
   const batteryPoints = hasBattery
-    ? getPointsInBand(
-        resampleSeries(battery, activity.length),
-        plotLeft,
-        plotRight,
-        powerTop,
-        powerBottom,
-      )
+    ? getPointsInBand(battery, plotLeft, plotRight, powerTop, powerBottom)
     : [];
   const voltagePoints = hasVoltage
-    ? getPointsInBand(
-        resampleSeries(voltage, activity.length),
-        plotLeft,
-        plotRight,
-        powerTop,
-        powerBottom,
-      )
+    ? getPointsInBand(voltage, plotLeft, plotRight, powerTop, powerBottom)
     : [];
   const airUtilTxPoints = hasAirUtilTx
-    ? getPercentPointsInBand(
-        resampleSeries(airUtilTx, activity.length),
-        plotLeft,
-        plotRight,
-        rfTop,
-        rfBottom,
-      )
+    ? getPointsInBand(airUtilTx, plotLeft, plotRight, rfTop, rfBottom, PERCENT)
     : [];
   const channelUtilizationPoints = hasChannelUtilization
-    ? getPercentPointsInBand(
-        resampleSeries(channelUtilization, activity.length),
+    ? getPointsInBand(
+        channelUtilization,
         plotLeft,
         plotRight,
         rfTop,
         rfBottom,
+        PERCENT,
       )
     : [];
   const peakActivity = Math.max(...activity, 1);
@@ -825,34 +638,6 @@ function Combined24hPlot({
       ) : null}
     </svg>
   );
-}
-
-function getLatestSeriesValue(series: number[]): number | null {
-  return series.length > 0 ? series[series.length - 1] : null;
-}
-
-function formatTelemetryPercent(value: number | null, precision = 0): string {
-  if (value === null) {
-    return '—';
-  }
-
-  const multiplier = 10 ** precision;
-  const roundedValue = Math.round(value * multiplier) / multiplier;
-  return `${roundedValue}%`;
-}
-
-function formatTelemetryVoltage(value: number | null): string {
-  return value === null ? '—' : `${value.toFixed(2)}V`;
-}
-
-function formatPowerValue(node: NodeCardData): string {
-  if (node.battery === null && node.voltage === null) {
-    return 'Χωρίς δεδομένα';
-  }
-
-  const batteryValue = node.battery !== null ? `${node.battery}%` : '—';
-  const voltageValue = node.voltage !== null ? `${node.voltage.toFixed(2)}V` : '—';
-  return `${batteryValue} · ${voltageValue}`;
 }
 
 function PlotLoadingState() {
@@ -1044,43 +829,6 @@ function NodeCard({
       </div>
     </article>
   );
-}
-
-function getRefreshTimestamp(lastUpdated: number | null): string {
-  if (lastUpdated === null) {
-    return 'Αναμονή…';
-  }
-
-  return new Intl.DateTimeFormat(LOCALE, {
-    hour12: false,
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
-    hour: '2-digit',
-    minute: '2-digit',
-    second: '2-digit',
-  }).format(lastUpdated);
-}
-
-function getRefreshCountdown(
-  nextRefreshAt: number | null,
-  now: number,
-  isLoading: boolean,
-  isRefreshing: boolean,
-): string {
-  if (isRefreshing) {
-    return 'τώρα…';
-  }
-
-  if (nextRefreshAt === null) {
-    return isLoading ? 'μετά τη φόρτωση…' : 'Αναμονή…';
-  }
-
-  const remainingSeconds = Math.max(0, Math.ceil((nextRefreshAt - now) / 1000));
-  const minutes = Math.floor(remainingSeconds / 60);
-  const seconds = remainingSeconds % 60;
-
-  return `σε ${padNumber(minutes)}:${padNumber(seconds)}`;
 }
 
 /**
