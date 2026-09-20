@@ -369,20 +369,22 @@ async function fetchNodeRecords(
  */
 async function fetchNodeSeries(
   nodeId: string,
-  sinceUs: number,
+  anchorHourMs: number,
   signal: AbortSignal,
 ): Promise<NodeSeries> {
   const data = await fetchJson<PacketsResponse>(
     getMeshviewApiUrl('packets', {
       from_node_id: nodeId,
-      since: sinceUs,
+      since: anchorHourMs * 1000 - ONE_DAY_US,
       limit: PACKET_PAGE_LIMIT,
     }),
     signal,
   );
 
   const packets = data.packets ?? [];
-  const activity24h = buildActivitySeriesFromPackets(packets);
+  // Anchored on the current hour, not on the node's newest active hour, so the
+  // rightmost bar means now and a silent node shows a trailing gap.
+  const activity24h = buildActivitySeriesFromPackets(packets, anchorHourMs);
 
   return {
     activity24h,
@@ -809,7 +811,11 @@ function Combined24hPlot({
       <text className={styles.plotXAxisLabel} x={plotLeft} y={xAxisLabelY}>
         24ω πριν
       </text>
-      <text className={styles.plotXAxisLabel} x={plotRight} y={xAxisLabelY} textAnchor="end">
+      <text
+        className={styles.plotXAxisLabel}
+        x={plotRight}
+        y={xAxisLabelY}
+        textAnchor="end">
         Τώρα
       </text>
       {!hasPower && !hasRfUtilization && !hasActivity ? (
@@ -1254,14 +1260,15 @@ function useCoreNodeStatus() {
       }
 
       const nowMs = Date.now();
-      // One window for every node, aligned to the hour so the oldest bucket is
-      // complete and the packet count does not drift between refreshes.
-      const sinceUs = floorToUtcHourMs(nowMs) * 1000 - ONE_DAY_US;
+      // One hour-aligned anchor for every node: it fixes both the fetch window
+      // and the bars, so the oldest bucket is complete, the packet count does not
+      // drift between refreshes, and no bar falls outside what was fetched.
+      const anchorHourMs = floorToUtcHourMs(nowMs);
 
       const [recordsResult, ...seriesResults] = await Promise.allSettled([
         loadNodeRecords(nowMs),
         ...CORE_NODE_REFERENCES.map((reference) =>
-          fetchNodeSeries(reference.nodeId, sinceUs, abortController.signal),
+          fetchNodeSeries(reference.nodeId, anchorHourMs, abortController.signal),
         ),
       ]);
 

@@ -50,6 +50,18 @@ describe('δραστηριότητα 24ώρου από πακέτα', () => {
     expect(series.reduce((total, value) => total + value, 0)).toBe(1);
   });
 
+  it('αφήνει κενό στο τέλος όταν ο κόμβος έχει σιωπήσει', () => {
+    const anchorHourMs = floorToUtcHourMs(Date.now());
+    const threeHoursAgo: MeshviewPacket = {
+      import_time_us: (anchorHourMs - 3 * HOUR_MS) * 1000,
+    };
+
+    const series = buildActivitySeriesFromPackets([threeHoursAgo], anchorHourMs);
+
+    expect(series.slice(-3)).toEqual([0, 0, 0]);
+    expect(series.at(-4)).toBe(1);
+  });
+
   it('γυρίζει 24 μηδενικά χωρίς πακέτα', () => {
     expect(buildActivitySeriesFromPackets([])).toEqual(Array(24).fill(0));
     expect(getNewestPacketImportTimeUs([])).toBeNull();
