@@ -7,7 +7,7 @@ import type * as Preset from '@docusaurus/preset-classic';
 const config: Config = {
   title: 'Meshtastic Greece Community',
   tagline:
-    'Οδηγοί, χάρτης κόμβων και τα βασικά για να μπεις στο ελληνικό mesh χωρίς πολύ ψάξιμο.',
+    'Από το firmware μέχρι το πρώτο «γεια», όλα τα βήματα για να μπεις στο ελληνικό mesh.',
   favicon: 'img/favicon.ico',
 
   // Future flags, see https://docusaurus.io/docs/api/docusaurus-config#future
@@ -90,11 +90,11 @@ const config: Config = {
           position: 'left',
           items: [
             {
-              label: 'Προφίλ Ρυθμίσεων',
+              label: 'Προφίλ ρυθμίσεων',
               to: '/docs/configuration-generator',
             },
             {
-              label: 'Χάρτης Κόμβων',
+              label: 'Χάρτης κόμβων',
               href: 'https://map.m-powered.gr/',
             },
             {
@@ -116,6 +116,7 @@ const config: Config = {
           href: 'https://github.com/meshgreece/m-powered.gr',
           label: 'GitHub',
           position: 'right',
+          className: 'navbar-github-link',
         },
       ],
     },
@@ -126,23 +127,23 @@ const config: Config = {
           title: 'Οδηγοί',
           items: [
             {
-              label: 'Ξεκινώντας',
+              label: 'Ξεκίνα εδώ',
               to: '/docs/get-started',
             },
             {
-              label: 'Προτεινόμενο Υλικό',
+              label: 'Προτεινόμενο υλικό',
               to: '/docs/recommended-hardware',
             },
             {
-              label: 'Προσωπικός Κόμβος',
+              label: 'Προσωπικός κόμβος',
               to: '/docs/personal-node',
             },
             {
-              label: 'Σταθεροί Κόμβοι & Backbone',
+              label: 'Σταθεροί κόμβοι και backbone',
               to: '/docs/fixed-nodes-backbone',
             },
             {
-              label: 'Συχνές Ερωτήσεις',
+              label: 'Συχνές ερωτήσεις',
               to: '/docs/faq',
             },
           ],
@@ -159,7 +160,7 @@ const config: Config = {
               href: 'https://github.com/meshgreece/m-powered.gr',
             },
             {
-              label: 'Εργαλεία Κοινότητας',
+              label: 'Εργαλεία κοινότητας',
               to: '/docs/community-tools',
             },
           ],
@@ -168,7 +169,7 @@ const config: Config = {
           title: 'Εργαλεία',
           items: [
             {
-              label: 'Χάρτης Κόμβων Ελλάδας',
+              label: 'Χάρτης κόμβων Ελλάδας',
               href: 'https://map.m-powered.gr/',
             },
             {

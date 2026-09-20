@@ -1,46 +1,47 @@
-/**
- * CSS files with the .module.css suffix will be treated as CSS modules
- * and scoped locally.
- */
-
-.heroBanner {
-  padding: 4.75rem 0 3.75rem;
-  color: #ffffff;
-  background: linear-gradient(180deg, #202431 0%, #2c2d3c 100%);
+.hero {
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  background: #202431;
+  color: #ffffff;
 }
 
-.heroLayout {
-  display: grid;
-  grid-template-columns: minmax(0, 1.35fr) minmax(18rem, 0.95fr);
-  gap: 2rem;
-  align-items: start;
+.heroInner {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  width: 100%;
+  max-width: 1240px;
+  min-height: clamp(28rem, 50vh, 34rem);
+  margin: 0 auto;
+  padding: 4.5rem 1rem 4rem;
 }
 
 .heroCopy {
-  max-width: 42rem;
+  min-width: 0;
+  max-width: 34rem;
 }
 
 .heroTitle {
   margin: 0;
-  font-size: clamp(2.5rem, 6vw, 4rem);
-  line-height: 0.98;
-  letter-spacing: -0.04em;
-}
-
-.heroTagline {
-  margin: 1rem 0 0;
-  color: rgba(255, 255, 255, 0.76);
-  font-size: 1rem;
-  line-height: 1.65;
+  color: #ffffff;
+  font-size: clamp(2rem, 4.2vw, 3rem);
+  font-weight: 700;
+  line-height: 1.04;
+  letter-spacing: -0.03em;
+  text-wrap: balance;
 }
 
 .heroLead {
-  max-width: 40rem;
-  margin: 1rem 0 0;
-  color: rgba(255, 255, 255, 0.92);
-  font-size: 1.08rem;
-  line-height: 1.8;
+  margin: 1.25rem 0 0;
+  font-size: clamp(1.05rem, 1.5vw, 1.25rem);
+  line-height: 1.6;
+  text-wrap: pretty;
 }
 
 .heroActions {
@@ -48,126 +49,89 @@
   flex-wrap: wrap;
   gap: 0.75rem;
   align-items: center;
-  margin-top: 1.75rem;
+  margin-top: 2rem;
+}
+
+.primaryButton,
+.secondaryButton {
+  display: inline-block;
+  flex: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-size: 1.0625rem;
+  font-weight: 700;
+  line-height: 1.4;
+  white-space: nowrap;
+  text-decoration: none;
 }
 
 .primaryButton {
-  --ifm-button-background-color: #58a6ff;
-  --ifm-button-border-color: #58a6ff;
-  --ifm-button-color: #202431;
-  font-weight: 700;
-}
-
-.primaryButton:hover {
-  --ifm-button-background-color: #9ecbff;
-  --ifm-button-border-color: #9ecbff;
+  border: 1px solid #58a6ff;
+  background: #58a6ff;
   color: #202431;
 }
 
+.primaryButton:hover {
+  border-color: #9ecbff;
+  background: #9ecbff;
+  color: #202431;
+  text-decoration: none;
+}
+
 .secondaryButton {
-  border: 1px solid rgba(255, 255, 255, 0.18);
+  border: 1px solid rgba(255, 255, 255, 0.4);
   background: transparent;
   color: #ffffff;
-  font-weight: 700;
 }
 
 .secondaryButton:hover {
   background: rgba(255, 255, 255, 0.08);
   color: #ffffff;
+  text-decoration: none;
 }
 
-.heroPanel {
-  padding: 1.25rem;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 12px;
-  background: rgba(255, 255, 255, 0.04);
+.heroTertiary {
+  margin: 1.25rem 0 0;
 }
 
-.heroPanelTitle {
-  margin: 0 0 1rem;
-  font-size: 1.15rem;
+.tertiaryLink {
+  position: relative;
+  display: inline-flex;
+  gap: 0.35rem;
+  align-items: center;
+  color: rgba(255, 255, 255, 0.88);
+  font-size: 0.9rem;
+  font-weight: 500;
+  text-decoration: none;
 }
 
-.heroSteps {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.heroStep {
-  display: grid;
-  gap: 0.75rem;
-  padding: 0.95rem 0;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.heroStep:first-child {
-  padding-top: 0;
-  border-top: 0;
-}
-
-.heroStep:last-child {
-  padding-bottom: 0;
-}
-
-.heroStepTitle {
-  margin: 0;
+.tertiaryLink:hover {
   color: #ffffff;
-  font-size: 1rem;
-  font-weight: 700;
+  text-decoration: underline;
 }
 
-.heroStepDescription {
-  margin: 0.3rem 0 0;
-  color: rgba(255, 255, 255, 0.74);
-  line-height: 1.6;
+.hero a:focus-visible {
+  border-radius: 4px;
+  outline: 2px solid #ffffff;
+  outline-offset: 3px;
 }
 
-.heroStepLink {
-  width: fit-content;
-  color: #58a6ff;
-  font-weight: 700;
-  text-decoration: none;
+.visuallyHidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
 }
 
-.heroStepLink:hover {
-  color: #9ecbff;
-  text-decoration: none;
-}
-
-@media screen and (max-width: 996px) {
-  .heroBanner {
-    padding: 4rem 0 3rem;
-  }
-
-  .heroLayout {
-    grid-template-columns: 1fr;
-  }
-}
-
-@media screen and (max-width: 640px) {
-  .heroBanner {
-    padding: 3.25rem 0 2.75rem;
-  }
-
-  .heroTitle {
-    font-size: 2.35rem;
-  }
-
-  .heroLead {
-    font-size: 1rem;
-  }
-
-  .heroActions {
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  .heroPanel {
-    padding: 1rem;
-  }
-
-  .heroActions :global(.button) {
-    width: 100%;
+@media screen and (max-width: 768px) {
+  .heroInner {
+    order: 1;
+    min-height: auto;
+    padding: 2.5rem 1rem 2rem;
   }
 }

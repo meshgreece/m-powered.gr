@@ -1,29 +1,55 @@
 .statusWidget {
+  --status-neutral: #6b6d7a;
   display: flex;
+  flex: none;
   align-items: center;
   gap: 0.4rem;
-  padding: 0.3rem 0.625rem;
-  background: rgba(44, 45, 60, 0.08);
-  backdrop-filter: blur(4px);
-  border-radius: 9999px;
-  border: 1px solid rgba(44, 45, 60, 0.15);
   margin-right: 0.75rem;
+  padding: 0.3rem 0.625rem;
+  border: 1px solid rgba(44, 45, 60, 0.15);
+  border-radius: 9999px;
+  background: rgba(44, 45, 60, 0.08);
   color: inherit;
   text-decoration: none;
   cursor: pointer;
 }
 
 [data-theme='dark'] .statusWidget {
+  --status-neutral: rgba(255, 255, 255, 0.6);
+  border-color: rgba(255, 255, 255, 0.2);
   background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
-.iconContainer {
-  display: flex;
-  align-items: center;
+.statusWidget:hover {
+  text-decoration: none;
 }
 
-.pulseContainer {
+/* Light colours keep the icon at least 3:1 against the chip. */
+.live {
+  --status-color: #15803d;
+}
+
+.stale {
+  --status-color: #a16207;
+}
+
+.error {
+  --status-color: #c2410c;
+}
+
+[data-theme='dark'] .live {
+  --status-color: #67ea94;
+}
+
+[data-theme='dark'] .stale {
+  --status-color: #f0c04a;
+}
+
+[data-theme='dark'] .error {
+  --status-color: #f08a6a;
+}
+
+.indicator {
   position: relative;
   display: flex;
   align-items: center;
@@ -32,46 +58,59 @@
   height: 0.75rem;
 }
 
-.pulseRing {
+.ping {
   position: absolute;
   width: 0.75rem;
   height: 0.75rem;
-  background-color: rgb(16, 185, 129);
   border-radius: 50%;
+  background: #10b981;
   opacity: 0.75;
   animation: ping 1.5s cubic-bezier(0, 0, 0.2, 1) infinite;
 }
 
-.pulseDot {
+.icon {
   position: relative;
-  width: 0.5rem;
-  height: 0.5rem;
-  background-color: rgb(16, 185, 129);
-  border-radius: 50%;
+  display: block;
+  width: 0.75rem;
+  height: 0.75rem;
+  color: var(--status-color, var(--status-neutral));
+}
+
+.spinner {
+  animation: spin 1s linear infinite;
 }
 
 .message {
-  display: inline;
-  font-size: 0.8125rem;
-  white-space: nowrap;
   color: rgba(44, 45, 60, 0.75);
+  font-size: 0.8125rem;
+  font-variant-numeric: tabular-nums;
   font-weight: 500;
+  white-space: nowrap;
 }
 
 [data-theme='dark'] .message {
   color: rgba(255, 255, 255, 0.8);
 }
 
-.statusSeconds {
-  display: inline;
-  font-family: inherit;
-  font-variant-numeric: inherit;
-  opacity: 1;
-}
-
-@media (max-width: 640px) {
+@media (max-width: 1024px) {
   .message {
     display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ping {
+    display: none;
+  }
+
+  .spinner {
+    animation: none;
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
   }
 }
 
@@ -80,7 +119,8 @@
     transform: scale(1);
     opacity: 0.75;
   }
-  75%, 100% {
+  75%,
+  100% {
     transform: scale(1.5);
     opacity: 0;
   }

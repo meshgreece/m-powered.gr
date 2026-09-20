@@ -53,3 +53,16 @@
   --ifm-button-background-color: #7dbbff;
   --ifm-button-border-color: #7dbbff;
 }
+
+/* Header reduction sequence; the mobile sidebar takes over at 996px. */
+@media (max-width: 1300px) {
+  .navbar__title {
+    display: none;
+  }
+}
+
+@media (max-width: 1100px) {
+  .navbar__link.navbar-github-link {
+    display: none;
+  }
+}

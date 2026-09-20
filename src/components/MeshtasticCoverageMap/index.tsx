@@ -5,6 +5,8 @@ import {geoMercator, geoPath} from 'd3-geo';
 import * as topojson from 'topojson-client';
 import type {GeometryCollection, Topology} from 'topojson-specification';
 
+import {MESHVIEW_BASE_URL, getMeshviewApiUrl} from '@site/src/lib/meshview';
+
 import {buildCoverage, createUnitIndex} from './coverage';
 import styles from './styles.module.css';
 import {COVERAGE_STATES} from './types';
@@ -18,8 +20,7 @@ import type {
   UnitCoverage,
 } from './types';
 
-const MESHVIEW_NODES_ENDPOINT = 'https://meshview.m-powered.gr/api/nodes';
-const MESHVIEW_URL = 'https://meshview.m-powered.gr/';
+const MESHVIEW_URL = `${MESHVIEW_BASE_URL}/`;
 const GENERATOR_URL = '/docs/configuration-generator';
 const DAYS_ACTIVE = 14;
 
@@ -127,7 +128,7 @@ export default function MeshtasticCoverageMap() {
       try {
         const [topologyResponse, nodesResponse] = await Promise.all([
           fetch(topologyUrl, {headers: {accept: 'application/json'}}),
-          fetch(`${MESHVIEW_NODES_ENDPOINT}?days_active=${DAYS_ACTIVE}`, {
+          fetch(getMeshviewApiUrl('nodes', {days_active: DAYS_ACTIVE}), {
             headers: {accept: 'application/json'},
           }),
         ]);

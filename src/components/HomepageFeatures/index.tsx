@@ -1,255 +1,261 @@
 import type {ReactNode} from 'react';
+import clsx from 'clsx';
 import Link from '@docusaurus/Link';
 import Heading from '@theme/Heading';
 import styles from './styles.module.css';
 
-type ActionItem = {
-  title: string;
-  description: string;
-  label: string;
-  meta?: string;
-  to: string;
-};
+const TELEGRAM_URL = 'https://t.me/+_5Z0q7DWM6UwMDJk';
 
-type ToolItem = {
-  title: string;
-  summary: string;
-  caution: string;
-  href: string;
-  label: string;
-};
-
-type GuideItem = {
-  title: string;
-  audience: string;
-  description: string;
-  points: string[];
-  label: string;
-  to: string;
-};
-
-const startLinks: ActionItem[] = [
+const quickStartSteps = [
   {
-    title: 'Πρώτος κόμβος χωρίς άγχος',
+    title: 'Φόρτωσε το firmware',
     description:
-      'Τα βασικά για να ξεκινήσεις σωστά: region EU_868, ρόλος CLIENT, hop limit και τα λίγα που αξίζει να πειράξεις στην αρχή.',
-    label: 'Δες τον οδηγό εκκίνησης',
-    to: '/docs/get-started',
+      'Σύνδεσε τη συσκευή με USB και φόρτωσε το επίσημο firmware του Meshtastic από τον Web Flasher.',
+    to: 'https://flash.meshtastic.org/',
+    label: 'Άνοιξε τον Web Flasher',
   },
   {
-    title: 'Τι συσκευή να πάρεις',
+    title: 'Κάνε τις βασικές ρυθμίσεις',
     description:
-      'Αν δεν ξέρεις τι να αγοράσεις, ξεκίνα εδώ. Θα σου γλιτώσει αρκετό ψάξιμο και τα πιο κλασικά λάθη.',
-    label: 'Δες το προτεινόμενο υλικό',
-    to: '/docs/recommended-hardware',
-    meta: 'Το βασικό: η συσκευή να είναι 868MHz.',
+      'Σύνδεσε τη συσκευή στην εφαρμογή, δώσε της ένα όνομα και έλεγξε το βασικό κανάλι.',
+    to: 'https://meshtastic.org/docs/software/',
+    label: 'Δες τις εφαρμογές',
   },
   {
-    title: 'Οι συχνές απορίες, μαζεμένες',
+    title: 'Στείλε ένα «γεια»',
     description:
-      'MQTT, hop limit, χάρτης και τα κλασικά μπερδέματα που έρχονται τις πρώτες μέρες.',
-    label: 'Άνοιξε τις συχνές ερωτήσεις',
-    to: '/docs/faq',
+      'Γράψε ένα «γεια» στο βασικό κανάλι και στείλε το πρώτο σου μήνυμα.',
+    to: '/docs/get-started#δοκίμασέ-το',
+    label: 'Δες πώς γίνεται η δοκιμή',
+  },
+  {
+    title: 'Δες αν έφτασε',
+    description:
+      'Αν το μήνυμα φτάσει στο Meshview, θα το δεις στη ζωντανή ροή — και στον χάρτη πιο πάνω.',
+    to: 'https://meshview.m-powered.gr/firehose',
+    label: 'Άνοιξε τη ζωντανή ροή',
+  },
+  {
+    title: 'Έλα στην κοινότητα',
+    description:
+      'Πες μας από πού είσαι, γνώρισε τους υπόλοιπους και ρώτησε ό,τι σε δυσκολεύει.',
+    to: TELEGRAM_URL,
+    label: 'Μπες στο Telegram',
   },
 ];
 
-const toolRows: ToolItem[] = [
+const nodeGuides = [
   {
-    title: 'Χάρτης Κόμβων Ελλάδας',
-    summary: 'Για μια πρώτη εικόνα αν υπάρχει γενικά παρουσία κοντά σου.',
-    caution:
-      'Δεν αποδεικνύει ότι όλοι οι κόμβοι που βλέπεις είναι ενεργοί εκείνη τη στιγμή.',
+    title: 'Προσωπικός κόμβος',
+    description:
+      'Για την τσέπη, το αυτοκίνητο ή το σπίτι. Απλό στήσιμο για καθημερινή χρήση.',
+    to: '/docs/personal-node',
+    accent: styles.accentBlue,
+  },
+  {
+    title: 'Σταθερός κόμβος',
+    description:
+      'Για ένα μόνιμο σημείο που βοηθά το δίκτυο να φτάσει πιο μακριά.',
+    to: '/docs/fixed-nodes-backbone',
+    accent: styles.accentOrange,
+  },
+];
+
+const networkTools = [
+  {
+    title: 'Χάρτης κόμβων',
+    description: 'Δες ποιοι κόμβοι υπάρχουν κοντά σου.',
+    to: 'https://map.m-powered.gr/',
     label: 'Άνοιξε τον χάρτη',
-    href: 'https://map.m-powered.gr/',
   },
   {
     title: 'Meshview',
-    summary:
-      'Για γρήγορη εικόνα από ό,τι φτάνει στο MQTT: κόμβοι, χάρτης, telemetry και κίνηση.',
-    caution: 'Είναι live εργαλείο, όχι πλήρης εικόνα όλης της LoRa κίνησης.',
+    description: 'Δες ζωντανά την κίνηση και ποιοι κόμβοι ακούγονται.',
+    to: 'https://meshview.m-powered.gr/',
     label: 'Άνοιξε το Meshview',
-    href: 'https://meshview.m-powered.gr/',
   },
   {
     title: 'Malla',
-    summary:
-      'Για πιο βαθύ ψάξιμο πάνω στα ίδια MQTT δεδομένα: packet browser, traceroutes και network graph.',
-    caution:
-      'Δεν είναι δεύτερη ανεξάρτητη πηγή από το Meshview. Διαβάζει πάλι MQTT.',
+    description:
+      'Δες αναλυτικά δεδομένα, διαδρομές και συνδέσεις του δικτύου.',
+    to: 'https://malla.m-powered.gr/',
     label: 'Άνοιξε το Malla',
-    href: 'https://malla.m-powered.gr/',
   },
 ];
 
-const guideCards: GuideItem[] = [
+const iconProps = {
+  width: 15,
+  height: 15,
+  viewBox: '0 0 24 24',
+  fill: 'none',
+  stroke: 'currentColor',
+  strokeWidth: 1.6,
+  strokeLinecap: 'round',
+  strokeLinejoin: 'round',
+  'aria-hidden': true,
+  focusable: false,
+} as const;
+
+const communityLinks = [
   {
-    title: 'Ξεκινώντας',
-    audience: 'Για πρώτο κόμβο και πρώτο στήσιμο',
-    description:
-      'Ο σύντομος οδηγός για να μπεις στο δίκτυο σωστά από την πρώτη μέρα.',
-    points: [
-      'region EU_868 και CLIENT',
-      'hop limit 3 ή 4',
-      'τι να αφήσεις για αργότερα',
-    ],
-    label: 'Ξεκίνα από εδώ',
-    to: '/docs/get-started',
+    label: 'Telegram',
+    to: TELEGRAM_URL,
+    icon: <path d="M21 4 3 11l5 2 2 6 3-4 5 3z" />,
   },
   {
-    title: 'Προσωπικός Κόμβος',
-    audience: 'Για φορητή συσκευή, αυτοκίνητο ή σπίτι',
-    description:
-      'Για καθημερινή χρήση, όταν ο κόμβος είναι δικός σου και δεν τον στήνεις σαν υποδομή.',
-    points: [
-      'φορητή ή οικιακή χρήση',
-      'πρακτικές ρυθμίσεις',
-      'τι να κρατήσεις απλό',
-    ],
-    label: 'Δες τον οδηγό για προσωπικό κόμβο',
-    to: '/docs/personal-node',
+    label: 'Ενημερώσεις',
+    to: '/blog',
+    icon: (
+      <>
+        <path d="M5 9h3l7-4v14l-7-4H5z" />
+        <path d="M18 9a3.5 3.5 0 0 1 0 6" />
+      </>
+    ),
   },
   {
-    title: 'Σταθεροί Κόμβοι & Backbone',
-    audience: 'Για σταθερό σημείο και σοβαρότερη κάλυψη',
-    description:
-      'Για περιπτώσεις όπου η θέση και η κεραία μπορούν όντως να βοηθήσουν το δίκτυο.',
-    points: [
-      'CLIENT_BASE και ROUTER_LATE',
-      'κεραία και θέση',
-      'favorites και zero-cost hops',
-    ],
-    label: 'Δες τον οδηγό για σταθερούς κόμβους',
-    to: '/docs/fixed-nodes-backbone',
+    label: 'GitHub',
+    to: 'https://github.com/meshgreece/m-powered.gr',
+    icon: <path d="m9 8-5 4 5 4M15 8l5 4-5 4" />,
+  },
+  {
+    label: 'Συχνές ερωτήσεις',
+    to: '/docs/faq',
+    icon: (
+      <>
+        <path d="M9.2 9a2.9 2.9 0 1 1 4 2.7c-.8.4-1.2 1-1.2 1.8v.5" />
+        <path d="M12 17.5h.01" />
+      </>
+    ),
   },
 ];
 
-function ActionLink({title, description, label, meta, to}: ActionItem) {
+function SectionIntro({title, children}: {title: string; children: ReactNode}) {
   return (
-    <Link className={styles.actionLink} to={to}>
-      <div className={styles.actionCopy}>
-        <Heading as="h3" className={styles.actionTitle}>
-          {title}
-        </Heading>
-        <p className={styles.actionDescription}>{description}</p>
-        {meta ? <p className={styles.actionMeta}>{meta}</p> : null}
-      </div>
-      <span className={styles.actionCta}>{label}</span>
-    </Link>
-  );
-}
-
-function ToolRow({title, summary, caution, href, label}: ToolItem) {
-  return (
-    <div className={styles.toolRow}>
-      <div className={styles.toolCopy}>
-        <Heading as="h3" className={styles.toolTitle}>
-          {title}
-        </Heading>
-        <p className={styles.toolSummary}>{summary}</p>
-        <p className={styles.toolCaution}>{caution}</p>
-      </div>
-      <Link
-        className={styles.toolLink}
-        href={href}
-        target="_blank"
-        rel="noopener noreferrer">
-        {label}
-      </Link>
-    </div>
-  );
-}
-
-function GuideCard({
-  title,
-  audience,
-  description,
-  points,
-  label,
-  to,
-}: GuideItem) {
-  return (
-    <Link className={styles.guideCard} to={to}>
-      <p className={styles.guideAudience}>{audience}</p>
-      <Heading as="h3" className={styles.guideTitle}>
+    <div className={styles.sectionIntro}>
+      <Heading as="h2" className={styles.sectionTitle}>
         {title}
       </Heading>
-      <p className={styles.guideDescription}>{description}</p>
-      <ul className={styles.guideList}>
-        {points.map((point) => (
-          <li key={point}>{point}</li>
-        ))}
-      </ul>
-      <span className={styles.guideCta}>{label}</span>
-    </Link>
+      <p className={styles.sectionDescription}>{children}</p>
+    </div>
   );
 }
 
 export default function HomepageFeatures(): ReactNode {
   return (
-    <section className={styles.hub}>
-      <div className="container">
-        <section className={styles.section}>
-          <div className={styles.sectionHeader}>
-            <div>
-              <Heading as="h2" className={styles.sectionTitle}>
-                Ξεκίνα από τα λίγα που όντως χρειάζεσαι
-              </Heading>
-              <p className={styles.sectionDescription}>
-                Αν τώρα μπαίνεις στο Meshtastic, αυτά φτάνουν για να μπεις σωστά
-                στο δίκτυο χωρίς να πειράζεις ρυθμίσεις που δεν χρειάζονται
-                ακόμα.
-              </p>
-            </div>
-          </div>
-          <div className={styles.stack}>
-            {startLinks.map((link) => (
-              <ActionLink key={link.title} {...link} />
+    <div className={styles.sections}>
+      <section className={clsx(styles.band, styles.hub, styles.quickStart)}
+        id="quick-start">
+        <div className={styles.inner}>
+          <SectionIntro title="Από το κουτί στο πρώτο «γεια»">
+            Πέντε βήματα για να στήσεις τον κόμβο σου και να στείλεις το πρώτο
+            σου μήνυμα.
+          </SectionIntro>
+          <ol className={styles.steps}>
+            {quickStartSteps.map((step, index) => (
+              <li className={styles.step} key={step.title}>
+                <div className={styles.stepMarker}>
+                  <span className={styles.stepNumber} aria-hidden="true">
+                    {String(index + 1).padStart(2, '0')}
+                  </span>
+                  <span className={styles.stepLine} />
+                </div>
+                <div className={styles.stepBody}>
+                  <Heading as="h3" className={styles.stepTitle}>
+                    {step.title}
+                  </Heading>
+                  <p className={styles.stepDescription}>{step.description}</p>
+                  <Link className={styles.stepLink} to={step.to}>
+                    {step.label} →
+                  </Link>
+                </div>
+              </li>
             ))}
-          </div>
-        </section>
+          </ol>
+        </div>
+      </section>
 
-        <section className={styles.section}>
-          <div className={styles.sectionHeader}>
-            <div>
-              <Heading as="h2" className={styles.sectionTitle}>
-                Υπάρχει οδηγός για κάθε τύπο κόμβου
+      <section className={styles.band} id="node-guides">
+        <div className={clsx(styles.inner, styles.guidesInner)}>
+          <SectionIntro title="Οδηγοί για κόμβους">
+            Ξεκίνα από τον βασικό οδηγό και μετά διάλεξε τον κόμβο που σου
+            ταιριάζει.
+          </SectionIntro>
+          <Link
+            className={clsx(styles.card, styles.starter, styles.accentGreen)}
+            to="/docs/get-started">
+            <div className={styles.starterCopy}>
+              <Heading as="h3" className={styles.starterTitle}>
+                Πρώτη φορά στο Meshtastic; Ξεκίνα από εδώ
               </Heading>
-              <p className={styles.sectionDescription}>
-                Διάλεξε τον οδηγό που ταιριάζει σε αυτό που στήνεις τώρα. Οι
-                υπόλοιποι θα είναι εδώ όταν τους χρειαστείς.
+              <p className={styles.cardDescription}>
+                Τα βασικά για τον πρώτο σου κόμβο, χωρίς να χαθείς στις
+                ρυθμίσεις.
               </p>
             </div>
-          </div>
-          <div className={styles.guideGrid}>
-            {guideCards.map((card) => (
-              <GuideCard key={card.title} {...card} />
-            ))}
-          </div>
-        </section>
-
-        <section className={styles.section}>
-          <div className={styles.sectionHeader}>
-            <div>
-              <Heading as="h2" className={styles.sectionTitle}>
-                Τα εργαλεία που σε βοηθούν να δεις τι συμβαίνει
-              </Heading>
-              <p className={styles.sectionDescription}>
-                Χάρτης, Meshview και Malla μπορούν να σε βοηθήσουν να
-                ξεκαθαρίσεις τι φαίνεται πού. Και αν θέλεις βοήθεια μετά, θα σου
-                είναι πιο εύκολο να εξηγήσεις τι βλέπεις.
-              </p>
-            </div>
-          </div>
-          <div className={styles.toolTable}>
-            {toolRows.map((tool) => (
-              <ToolRow key={tool.title} {...tool} />
-            ))}
-          </div>
-          <Link className={styles.sectionLink} to="/docs/community-tools">
-            Δες πότε βοηθά το κάθε εργαλείο
+            <span className={styles.starterCta}>Άνοιξε τον βασικό οδηγό →</span>
           </Link>
-        </section>
-      </div>
-    </section>
+          <div className={styles.guideGrid}>
+            {nodeGuides.map((guide) => (
+              <Link
+                className={clsx(styles.card, styles.guideCard, guide.accent)}
+                key={guide.title}
+                to={guide.to}>
+                <Heading as="h3" className={styles.guideTitle}>
+                  {guide.title}
+                </Heading>
+                <p className={styles.cardDescription}>{guide.description}</p>
+                <span className={styles.guideCta}>Δες τον οδηγό →</span>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className={styles.band}>
+        <div className={styles.inner}>
+          <SectionIntro title="Δες το δίκτυο από κοντά">
+            Τρία εργαλεία, τρεις ματιές στο ίδιο δίκτυο.
+          </SectionIntro>
+          <ul className={styles.toolList}>
+            {networkTools.map((tool) => (
+              <li key={tool.title}>
+                <Link className={styles.toolRow} to={tool.to}>
+                  <span className={styles.toolTitle}>{tool.title}</span>
+                  <span className={styles.toolDescription}>
+                    {tool.description}
+                  </span>
+                  <span className={styles.toolCta}>{tool.label} →</span>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
+
+      <section className={clsx(styles.band, styles.hub, styles.community)}>
+        <div className={clsx(styles.inner, styles.communityGrid)}>
+          <div>
+            <Heading as="h2" className={styles.communityTitle}>
+              Το δίκτυο το φτιάχνουν άνθρωποι
+            </Heading>
+            <p className={styles.sectionDescription}>
+              Έλα στο Telegram, γνώρισε άλλους χρήστες και ρώτησε ό,τι
+              χρειάζεσαι. Αν δεις κάτι λάθος ή κάτι που λείπει στους οδηγούς,
+              στείλε διόρθωση ή πρόταση.
+            </p>
+          </div>
+          <ul className={styles.communityLinks}>
+            {communityLinks.map((link) => (
+              <li key={link.label}>
+                <Link className={styles.communityLink} to={link.to}>
+                  <svg {...iconProps}>{link.icon}</svg>
+                  {link.label}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
+    </div>
   );
 }

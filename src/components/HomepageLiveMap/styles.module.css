@@ -1,0 +1,120 @@
+.shell {
+  --map-long-fast: #58a6ff;
+  --map-narrow-slow: #e8703a;
+  --map-unknown: #ffffff;
+  position: absolute;
+  z-index: 0;
+  inset: 0;
+  min-width: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.mapFrame,
+.map,
+.scrim {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.scrim {
+  background: linear-gradient(
+    90deg,
+    #202431 0%,
+    rgba(32, 36, 49, 0.88) 26%,
+    rgba(32, 36, 49, 0.46) 50%,
+    rgba(32, 36, 49, 0) 70%
+  );
+}
+
+.land {
+  fill: #333b50;
+  opacity: 0.95;
+}
+
+.borders {
+  fill: none;
+  stroke: rgba(255, 255, 255, 0.2);
+  stroke-width: 1;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+}
+
+.node {
+  opacity: 0.88;
+  stroke: #202431;
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+
+.focusedNode {
+  opacity: 1;
+}
+
+.longFast {
+  fill: var(--map-long-fast);
+}
+
+.narrowSlow {
+  fill: var(--map-narrow-slow);
+}
+
+.unknown {
+  fill: var(--map-unknown);
+}
+
+/* After the channel classes so `fill: none` wins. */
+.pulse {
+  fill: none;
+  stroke-width: 2;
+  transform-box: fill-box;
+  transform-origin: center;
+  vector-effect: non-scaling-stroke;
+  animation: packetPulse 1.8s cubic-bezier(0.2, 0.65, 0.35, 1) forwards;
+}
+
+.pulse.longFast {
+  stroke: var(--map-long-fast);
+}
+
+.pulse.narrowSlow {
+  stroke: var(--map-narrow-slow);
+}
+
+.pulse.unknown {
+  stroke: var(--map-unknown);
+}
+
+@keyframes packetPulse {
+  0% {
+    opacity: 0.95;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(4.2);
+  }
+}
+
+/* Stacked hero: the map is its own band below the copy. */
+@media (max-width: 768px) {
+  .shell {
+    position: relative;
+    inset: auto;
+    order: 2;
+    width: 100%;
+    height: 18rem;
+  }
+
+  .scrim {
+    background: linear-gradient(
+      180deg,
+      rgba(32, 36, 49, 0.42) 0%,
+      rgba(32, 36, 49, 0.12) 35%,
+      rgba(32, 36, 49, 0.12) 100%
+    );
+  }
+}

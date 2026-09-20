@@ -1,84 +1,53 @@
+import {useRef} from 'react';
 import type {ReactNode} from 'react';
-import clsx from 'clsx';
 import Link from '@docusaurus/Link';
-import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 import Layout from '@theme/Layout';
-import HomepageFeatures from '@site/src/components/HomepageFeatures';
 import Heading from '@theme/Heading';
+import HomepageFeatures from '@site/src/components/HomepageFeatures';
+import HomepageLiveMap from '@site/src/components/HomepageLiveMap';
 
 import styles from './index.module.css';
 
-const firstSteps = [
-  {
-    title: 'Διάλεξε σωστή συσκευή',
-    description: 'Πρώτα βεβαιώσου ότι η συσκευή είναι 868MHz.',
-    to: '/docs/recommended-hardware',
-    label: 'Προτεινόμενο υλικό',
-  },
-  {
-    title: 'Στήσε σωστά τον πρώτο κόμβο',
-    description:
-      'Βάλε region EU_868, ρόλο CLIENT και hop limit 3 ή 4. Τα υπόλοιπα μπορούν να περιμένουν.',
-    to: '/docs/get-started',
-    label: 'Οδηγός εκκίνησης',
-  },
-  {
-    title: 'Αν κολλήσεις, ξεκίνα από εδώ',
-    description:
-      'Χάρτης, Meshview και Malla μπορούν να σε βοηθήσουν να δεις τι συμβαίνει και να ζητήσεις βοήθεια πιο εύκολα αν χρειαστεί.',
-    to: '/docs/community-tools',
-    label: 'Εργαλεία κοινότητας',
-  },
-];
-
 function HomepageHeader() {
-  const {siteConfig} = useDocusaurusContext();
+  const copyRef = useRef<HTMLDivElement>(null);
 
   return (
-    <header className={styles.heroBanner}>
-      <div className={clsx('container', styles.heroLayout)}>
-        <div className={styles.heroCopy}>
+    <header className={styles.hero}>
+      <HomepageLiveMap copyRef={copyRef} />
+      <div className={styles.heroInner}>
+        <div className={styles.heroCopy} ref={copyRef}>
           <Heading as="h1" className={styles.heroTitle}>
-            {siteConfig.title}
+            Ένα δίκτυο που το στήνουμε μαζί
           </Heading>
-          <p className={styles.heroTagline}>{siteConfig.tagline}</p>
           <p className={styles.heroLead}>
-            Εδώ θα βρεις τα βασικά για να μπεις στο ελληνικό mesh χωρίς να
-            χαθείς στα settings. Τι συσκευή να πάρεις, πώς να στήσεις τον
-            πρώτο κόμβο και πού να κοιτάξεις όταν κάτι δεν σου βγαίνει.
+            Το Meshtastic στην Ελλάδα μεγαλώνει με κάθε νέο κόμβο. Εδώ βρίσκεις
+            ό,τι χρειάζεσαι για να ξεκινήσεις, να δεις τι γίνεται γύρω σου και
+            να γνωρίσεις την κοινότητα.
           </p>
           <div className={styles.heroActions}>
+            <a className={styles.primaryButton} href="#quick-start">
+              Ξεκίνα σε 5 βήματα
+            </a>
             <Link
-              className={clsx('button button--lg', styles.primaryButton)}
-              to="/docs/get-started">
-              Ξεκίνα από τον οδηγό
-            </Link>
-            <Link
-              className={clsx('button button--lg', styles.secondaryButton)}
+              className={styles.secondaryButton}
               to="/docs/recommended-hardware">
-              Δες προτεινόμενο υλικό
+              Βρες τη σωστή συσκευή
             </Link>
           </div>
+          <p className={styles.heroTertiary}>
+            <Link
+              className={styles.tertiaryLink}
+              href="https://meshview.m-powered.gr/"
+              target="_blank"
+              rel="noopener noreferrer">
+              Βρες έναν κόμβο στο Meshview
+              <span aria-hidden="true">↗</span>
+              <span className={styles.visuallyHidden}>
+                (εξωτερικός σύνδεσμος, ανοίγει σε νέα καρτέλα)
+              </span>
+            </Link>
+          </p>
         </div>
-
-        <aside className={styles.heroPanel}>
-          <Heading as="h2" className={styles.heroPanelTitle}>
-            Αν ξεκινάς σήμερα
-          </Heading>
-          <ol className={styles.heroSteps}>
-            {firstSteps.map((step) => (
-              <li key={step.title} className={styles.heroStep}>
-                <div>
-                  <p className={styles.heroStepTitle}>{step.title}</p>
-                  <p className={styles.heroStepDescription}>{step.description}</p>
-                </div>
-                <Link className={styles.heroStepLink} to={step.to}>
-                  {step.label}
-                </Link>
-              </li>
-            ))}
-          </ol>
-        </aside>
       </div>
     </header>
   );
@@ -88,7 +57,7 @@ export default function Home(): ReactNode {
   return (
     <Layout
       title="Meshtastic Greece Community"
-      description="Οδηγοί, εργαλεία και πρακτική βοήθεια για την κοινότητα Meshtastic στην Ελλάδα.">
+      description="Το Meshtastic στην Ελλάδα μεγαλώνει με κάθε νέο κόμβο. Ξεκίνα σε πέντε βήματα, δες το δίκτυο ζωντανά και γνώρισε την κοινότητα.">
       <HomepageHeader />
       <main>
         <HomepageFeatures />

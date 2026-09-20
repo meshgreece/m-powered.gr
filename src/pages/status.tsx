@@ -12,6 +12,7 @@ import {
   floorToUtcHourMs,
   getMeshviewApiUrl,
   getNewestPacketImportTimeUs,
+  normalizeMeshviewCoordinate,
   parseImportTimeUs,
   parseTelemetry,
 } from '../lib/meshview';
@@ -47,7 +48,7 @@ const AUTO_REFRESH_INTERVAL_MS = 60_000;
 const REFRESH_COUNTDOWN_TICK_MS = 1_000;
 /** Node records barely change, so refetch the list every 5th cycle. */
 const NODE_RECORDS_TTL_MS = 5 * AUTO_REFRESH_INTERVAL_MS;
-// ponytail: limit 200 against a measured max of 41 packets/24h. If a node ever
+// Limit 200 against a measured max of 41 packets/24h. If a node ever
 // fills the page the bars under-report - add a /stats fallback if that happens.
 const PACKET_PAGE_LIMIT = 200;
 const MAP_RING_RADIUS = 12;
@@ -251,8 +252,8 @@ function mergeNodeCard(
       role: record.role ?? previous.role,
       preset: record.channel ?? previous.preset,
       hexId: record.id ?? previous.hexId,
-      latitude: typeof record.last_lat === 'number' ? record.last_lat / 1e7 : null,
-      longitude: typeof record.last_long === 'number' ? record.last_long / 1e7 : null,
+      latitude: normalizeMeshviewCoordinate(record.last_lat, 90),
+      longitude: normalizeMeshviewCoordinate(record.last_long, 180),
     }),
     ...(series
       ? {

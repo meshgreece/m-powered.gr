@@ -17,6 +17,12 @@ export const TELEMETRY_PORTNUM = 67;
 
 export const EMPTY_ACTIVITY_SERIES = Array.from({length: HOURS_24}, () => 0);
 
+/**
+ * The Meshview `/api/nodes` fields this site reads, all optional because
+ * consumers render whatever the record happens to carry. Coordinates arrive as
+ * strings often enough to type for it; run them through
+ * `normalizeMeshviewCoordinate` rather than dividing by 1e7 at the call site.
+ */
 export type MeshviewNode = {
   id?: string | null;
   node_id?: number | string | null;
@@ -24,8 +30,8 @@ export type MeshviewNode = {
   short_name?: string | null;
   role?: string | null;
   channel?: string | null;
-  last_lat?: number | null;
-  last_long?: number | null;
+  last_lat?: number | string | null;
+  last_long?: number | string | null;
   last_seen_us?: number | string | null;
 };
 
@@ -34,6 +40,7 @@ export type NodesResponse = {
 };
 
 export type MeshviewPacket = {
+  from_node_id?: number | string;
   import_time_us?: number | string;
   portnum?: number | string | null;
   payload?: string | null;
@@ -93,6 +100,23 @@ export function parseImportTimeUs(
   return null;
 }
 
+/**
+ * Meshview stores coordinates as 1e-7 degree integers, sometimes stringified.
+ * Anything unreadable or outside `limit` degrees is no position at all.
+ */
+export function normalizeMeshviewCoordinate(
+  value: number | string | null | undefined,
+  limit: number,
+): number | null {
+  if (value === null || value === undefined) return null;
+
+  const parsed = Number(value);
+  if (!Number.isFinite(parsed)) return null;
+
+  const coordinate = parsed / 10_000_000;
+  return Math.abs(coordinate) <= limit ? coordinate : null;
+}
+
 export function getNewestPacketImportTimeUs(
   packets: MeshviewPacket[] | undefined,
 ): number | null {
@@ -109,6 +133,26 @@ export function getNewestPacketImportTimeUs(
   // Math.max() over nothing is -Infinity, which must never reach a timestamp:
   // no packets and no readable timestamps both mean "nothing to show".
   return Number.isFinite(newestImportTimeUs) ? newestImportTimeUs : null;
+}
+
+/**
+ * Newest import time a packets response can vouch for: the `latest_import_time`
+ * cursor the API reports, raised by anything newer in the packet history for the
+ * cases where that cursor is missing or lags behind the packets it ships with.
+ */
+export function getLatestImportTimeUs(data: PacketsResponse): number | null {
+  const fromCursor = parseImportTimeUs(data.latest_import_time);
+  const fromPackets = getNewestPacketImportTimeUs(data.packets);
+
+  if (fromCursor === null) {
+    return fromPackets;
+  }
+
+  if (fromPackets === null) {
+    return fromCursor;
+  }
+
+  return Math.max(fromCursor, fromPackets);
 }
 
 export function floorToUtcHourMs(ms: number): number {
