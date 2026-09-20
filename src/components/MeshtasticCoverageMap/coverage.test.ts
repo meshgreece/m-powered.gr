@@ -32,7 +32,7 @@ const index = createUnitIndex(features);
 const nodes = snapshot.nodes as MeshviewNode[];
 
 describe('Greek NUTS 3 geometry', () => {
-  it('ships every περιφερειακή ενότητα and nothing else', () => {
+  it('ships every regional unit and nothing else', () => {
     expect(features).toHaveLength(52);
     expect(
       features.every((feature) => feature.properties.id.startsWith('EL')),

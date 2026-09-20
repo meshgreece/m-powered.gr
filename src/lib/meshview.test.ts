@@ -19,8 +19,8 @@ const STATS_DERIVED_SERIES = [
   2, 4, 0, 1, 0, 3, 0, 1, 0, 2, 0, 3, 1, 2, 0, 1, 0, 3, 2, 1, 0, 1, 0, 3,
 ];
 
-describe('δραστηριότητα 24ώρου από πακέτα', () => {
-  it('αναπαράγει τη σειρά που έδινε το /stats', () => {
+describe('24h activity from packets', () => {
+  it('reproduces the series /stats used to return', () => {
     const series = buildActivitySeriesFromPackets(packets);
 
     // The first bucket is excluded: our `since` is hour-aligned and captures that
@@ -30,12 +30,12 @@ describe('δραστηριότητα 24ώρου από πακέτα', () => {
     expect(series[0]).toBeGreaterThanOrEqual(STATS_DERIVED_SERIES[0]);
   });
 
-  it('δεν χάνει πακέτα μέσα στο παράθυρο', () => {
+  it('loses no packet inside the window', () => {
     const series = buildActivitySeriesFromPackets(packets);
     expect(series.reduce((total, value) => total + value, 0)).toBe(packets.length);
   });
 
-  it('κόβει ό,τι πέφτει έξω από το παράθυρο των 24 ωρών', () => {
+  it('drops anything outside the 24 hour window', () => {
     const anchorHourMs = floorToUtcHourMs(Date.now());
     const inside: MeshviewPacket = {
       import_time_us: (anchorHourMs - 23 * HOUR_MS) * 1000,
@@ -50,7 +50,7 @@ describe('δραστηριότητα 24ώρου από πακέτα', () => {
     expect(series.reduce((total, value) => total + value, 0)).toBe(1);
   });
 
-  it('αφήνει κενό στο τέλος όταν ο κόμβος έχει σιωπήσει', () => {
+  it('leaves a trailing gap when the node has gone quiet', () => {
     const anchorHourMs = floorToUtcHourMs(Date.now());
     const threeHoursAgo: MeshviewPacket = {
       import_time_us: (anchorHourMs - 3 * HOUR_MS) * 1000,
@@ -62,25 +62,25 @@ describe('δραστηριότητα 24ώρου από πακέτα', () => {
     expect(series.at(-4)).toBe(1);
   });
 
-  it('γυρίζει 24 μηδενικά χωρίς πακέτα', () => {
+  it('returns 24 zeros when there are no packets', () => {
     expect(buildActivitySeriesFromPackets([])).toEqual(Array(24).fill(0));
     expect(getNewestPacketImportTimeUs([])).toBeNull();
   });
 
   // A non-empty list whose timestamps are all unusable must still be "no
   // packet" — never -Infinity, which would render as a date far in the past.
-  it('γυρίζει null όταν καμία σφραγίδα χρόνου δεν διαβάζεται', () => {
+  it('returns null when no timestamp can be read', () => {
     expect(
       getNewestPacketImportTimeUs([
         {import_time_us: undefined},
-        {import_time_us: 'όχι αριθμός'},
+        {import_time_us: 'not a number'},
       ]),
     ).toBeNull();
   });
 });
 
-describe('τηλεμετρία', () => {
-  it('διαβάζει μόνο πακέτα τηλεμετρίας, με τη νεότερη τιμή τελευταία', () => {
+describe('telemetry', () => {
+  it('reads only telemetry packets, newest value last', () => {
     const telemetry = parseTelemetry(
       packets.filter((packet) => Number(packet.portnum) === TELEMETRY_PORTNUM),
     );
@@ -92,7 +92,7 @@ describe('τηλεμετρία', () => {
 
   // The series is built in ascending time order, so the newest reading is its
   // last element — there is nothing to scan backwards for.
-  it('η τρέχουσα τιμή είναι η τελευταία της σειράς', () => {
+  it('the current value is the last one in the series', () => {
     const telemetry = parseTelemetry(
       packets.filter((packet) => Number(packet.portnum) === TELEMETRY_PORTNUM),
     );

@@ -55,29 +55,29 @@ function heightAt(points: Array<[number, number]>, x: number): number {
   return points[points.length - 1][1];
 }
 
-describe('όρια σειράς', () => {
-  it('γυρίζει το εύρος των τιμών', () => {
+describe('series bounds', () => {
+  it('returns the range of the values', () => {
     expect(getBounds([2, 9, 5])).toEqual([2, 9]);
   });
 
-  it('ανοίγει τεχνητά το εύρος όταν όλες οι τιμές είναι ίδιες', () => {
+  it('widens the range when every value is identical', () => {
     expect(getBounds([5, 5, 5])).toEqual([4, 6]);
   });
 
-  it('αγνοεί μη πεπερασμένες τιμές και πέφτει σε [0, 1]', () => {
+  it('ignores non-finite values and falls back to [0, 1]', () => {
     expect(getBounds([Number.NaN, Number.POSITIVE_INFINITY])).toEqual([0, 1]);
   });
 });
 
-describe('σημεία μέσα στη ζώνη', () => {
-  it('απλώνεται σε όλο το πλάτος και αντιστρέφει τον y άξονα', () => {
+describe('points inside the band', () => {
+  it('spans the full width and inverts the y axis', () => {
     const points = getPointsInBand([0, 10], LEFT, RIGHT, TOP, BOTTOM);
 
     expect(points[0]).toEqual([LEFT, BOTTOM]);
     expect(points.at(-1)).toEqual([RIGHT, TOP]);
   });
 
-  it('δεν διαιρεί με το μηδέν σε επίπεδη σειρά', () => {
+  it('does not divide by zero on a flat series', () => {
     const points = getPointsInBand([5, 5], LEFT, RIGHT, TOP, BOTTOM);
 
     expect(points.every(([, y]) => Number.isFinite(y))).toBe(true);
@@ -85,7 +85,7 @@ describe('σημεία μέσα στη ζώνη', () => {
   });
 
   // Regression: a single point emits a bare moveto, which draws nothing at all.
-  it('τραβά γραμμή σε όλο το πλάτος με ένα μόνο δείγμα', () => {
+  it('draws a full width line from a single sample', () => {
     const points = getPointsInBand([3.9], LEFT, RIGHT, TOP, BOTTOM);
 
     expect(points).toHaveLength(2);
@@ -94,20 +94,20 @@ describe('σημεία μέσα στη ζώνη', () => {
     expect(getLinePath(points)).toContain('L');
   });
 
-  it('κρατά τιμές εκτός ορίων μέσα στη ζώνη τους', () => {
+  it('keeps out of range values inside their band', () => {
     const points = getPointsInBand([50, 130], LEFT, RIGHT, 90, 116, [0, 100]);
 
     expect(points.every(([, y]) => y >= 90 && y <= 116)).toBe(true);
     expect(points.at(-1)![1]).toBe(90);
   });
 
-  it('γυρίζει άδειο για άδεια σειρά', () => {
+  it('returns nothing for an empty series', () => {
     expect(getPointsInBand([], LEFT, RIGHT, TOP, BOTTOM)).toEqual([]);
   });
 });
 
-describe('η διαγραμμένη επαναδειγματοληψία', () => {
-  it('δεν άλλαζε την καμπύλη που σχεδιαζόταν', () => {
+describe('the deleted resampling step', () => {
+  it('did not change the curve that was drawn', () => {
     const series = Array.from({length: 41}, (_, index) =>
       Math.round(Math.sin(index / 3) * 50 + 50),
     );
@@ -133,15 +133,15 @@ describe('η διαγραμμένη επαναδειγματοληψία', () =>
   });
 });
 
-describe('προβολή σε pixel του κόσμου', () => {
-  it('βάζει τον μεσημβρινό και τον ισημερινό στο κέντρο', () => {
+describe('world pixel projection', () => {
+  it('puts the prime meridian and equator at the centre', () => {
     const {x, y} = projectToWorldPixels(0, 0, 0);
 
     expect(x).toBeCloseTo(128);
     expect(y).toBeCloseTo(128);
   });
 
-  it('κόβει τα πλάτη στα όρια του Mercator', () => {
+  it('clamps latitudes to the Mercator limits', () => {
     expect(projectToWorldPixels(90, 0, 0).y).toBeCloseTo(
       projectToWorldPixels(85.05112878, 0, 0).y,
     );

@@ -14,16 +14,16 @@ function minutesAgoUs(minutes: number): number {
   return (NOW_MS - minutes * 60_000) * 1000;
 }
 
-describe('πόση ώρα πριν', () => {
-  it('γυρίζει παύλα χωρίς πακέτο', () => {
+describe('relative time', () => {
+  it('returns a dash when there is no packet', () => {
     expect(formatRelativeTime(null, NOW_MS)).toBe('—');
   });
 
-  it('λέει «μόλις τώρα» κάτω από ένα λεπτό', () => {
+  it('says just now under one minute', () => {
     expect(formatRelativeTime(minutesAgoUs(0.5), NOW_MS)).toBe('μόλις τώρα');
   });
 
-  it('μετρά σε λεπτά, ώρες και ημέρες', () => {
+  it('counts in minutes, hours and days', () => {
     expect(formatRelativeTime(minutesAgoUs(5), NOW_MS)).toBe('πριν από 5 λεπτά');
     expect(formatRelativeTime(minutesAgoUs(3 * 60), NOW_MS)).toBe(
       'πριν από 3 ώρες',
@@ -33,20 +33,20 @@ describe('πόση ώρα πριν', () => {
     );
   });
 
-  it('αλλάζει μονάδα ακριβώς στα όρια', () => {
+  it('switches unit exactly at the boundaries', () => {
     expect(formatRelativeTime(minutesAgoUs(59), NOW_MS)).toContain('λεπτά');
     expect(formatRelativeTime(minutesAgoUs(60), NOW_MS)).toContain('ώρα');
     expect(formatRelativeTime(minutesAgoUs(24 * 60), NOW_MS)).toContain('ημέρα');
   });
 
   // A clock skewed ahead of the server must not produce a negative interval.
-  it('δεν πάει στο μέλλον όταν το ρολόι είναι μπροστά', () => {
+  it('never reads into the future when the clock runs ahead', () => {
     expect(formatRelativeTime(minutesAgoUs(-30), NOW_MS)).toBe('μόλις τώρα');
   });
 });
 
-describe('αντίστροφη μέτρηση ανανέωσης', () => {
-  it('δείχνει λεπτά και δευτερόλεπτα με δύο ψηφία', () => {
+describe('refresh countdown', () => {
+  it('shows two digit minutes and seconds', () => {
     expect(getRefreshCountdown(NOW_MS + 65_000, NOW_MS, false, false)).toBe(
       'σε 01:05',
     );
@@ -55,13 +55,13 @@ describe('αντίστροφη μέτρηση ανανέωσης', () => {
     );
   });
 
-  it('δεν γυρίζει αρνητικό όταν περάσει η ώρα', () => {
+  it('does not go negative once the time has passed', () => {
     expect(getRefreshCountdown(NOW_MS - 10_000, NOW_MS, false, false)).toBe(
       'σε 00:00',
     );
   });
 
-  it('προηγείται η κατάσταση από την ώρα', () => {
+  it('state takes precedence over the time', () => {
     expect(getRefreshCountdown(NOW_MS, NOW_MS, false, true)).toBe('τώρα…');
     expect(getRefreshCountdown(null, NOW_MS, true, false)).toBe(
       'μετά τη φόρτωση…',
@@ -69,13 +69,13 @@ describe('αντίστροφη μέτρηση ανανέωσης', () => {
   });
 });
 
-describe('τιμές τηλεμετρίας', () => {
-  it('παίρνει την τελευταία τιμή της σειράς', () => {
+describe('telemetry values', () => {
+  it('takes the last value of the series', () => {
     expect(getLatestSeriesValue([1, 2, 3])).toBe(3);
     expect(getLatestSeriesValue([])).toBeNull();
   });
 
-  it('δείχνει μπαταρία και τάση μαζί', () => {
+  it('shows battery and voltage together', () => {
     expect(formatPowerValue({battery: 95, voltage: 4.122})).toBe('95% · 4.12V');
     expect(formatPowerValue({battery: null, voltage: 4.122})).toBe('— · 4.12V');
     expect(formatPowerValue({battery: null, voltage: null})).toBe(
