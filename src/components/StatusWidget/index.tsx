@@ -1,33 +1,18 @@
 import React, {useEffect, useMemo, useRef, useState} from 'react';
 import Translate, {translate} from '@docusaurus/Translate';
 import styles from './styles.module.css';
+import {
+  MESHVIEW_BASE_URL,
+  fetchJson,
+  getMeshviewApiUrl,
+  getNewestPacketImportTimeUs,
+  parseImportTimeUs,
+} from '../../lib/meshview';
+import type {PacketsResponse} from '../../lib/meshview';
 
-const MESHVIEW_PACKETS_ENDPOINT = 'https://meshview.m-powered.gr/api/packets';
-const MESHVIEW_FIREHOSE_URL = 'https://meshview.m-powered.gr/firehose';
+const MESHVIEW_FIREHOSE_URL = `${MESHVIEW_BASE_URL}/firehose`;
 const PACKET_LIMIT = 1;
 const POLL_INTERVAL_MS = 3_000;
-
-type Packet = {
-  import_time_us?: number | string;
-};
-
-type PacketsResponse = {
-  latest_import_time?: number | string;
-  packets?: Packet[];
-};
-
-function parseImportTimeUs(value: number | string | undefined): number | null {
-  if (typeof value === 'number' && Number.isFinite(value)) {
-    return value;
-  }
-
-  if (typeof value === 'string') {
-    const parsed = Number(value);
-    return Number.isFinite(parsed) ? parsed : null;
-  }
-
-  return null;
-}
 
 function getLatestImportTimeUs(data: PacketsResponse): number | null {
   const fromLatestField = parseImportTimeUs(data.latest_import_time);
@@ -36,27 +21,6 @@ function getLatestImportTimeUs(data: PacketsResponse): number | null {
   }
 
   return getNewestPacketImportTimeUs(data.packets);
-}
-
-function getNewestPacketImportTimeUs(packets: Packet[] | undefined): number | null {
-  if (!Array.isArray(packets) || packets.length === 0) {
-    return null;
-  }
-
-  let newestImportTimeUs: number | null = null;
-
-  for (const packet of packets) {
-    const importTimeUs = parseImportTimeUs(packet.import_time_us);
-
-    if (
-      importTimeUs !== null &&
-      (newestImportTimeUs === null || importTimeUs > newestImportTimeUs)
-    ) {
-      newestImportTimeUs = importTimeUs;
-    }
-  }
-
-  return newestImportTimeUs;
 }
 
 export default function StatusWidget() {
@@ -78,24 +42,15 @@ export default function StatusWidget() {
       isFetchInFlightRef.current = true;
 
       try {
-        const queryParams = new URLSearchParams({
-          limit: String(PACKET_LIMIT),
-        });
+        const params: Record<string, number | string> = {limit: PACKET_LIMIT};
 
         if (sinceCursorUsRef.current !== null) {
-          queryParams.set('since', String(sinceCursorUsRef.current));
+          params.since = sinceCursorUsRef.current;
         }
 
-        const response = await fetch(`${MESHVIEW_PACKETS_ENDPOINT}?${queryParams.toString()}`, {
-          cache: 'no-store',
-          headers: {accept: 'application/json'},
-        });
-
-        if (!response.ok) {
-          throw new Error(`Meshview request failed with status ${response.status}`);
-        }
-
-        const data = (await response.json()) as PacketsResponse;
+        const data = await fetchJson<PacketsResponse>(
+          getMeshviewApiUrl('packets', params),
+        );
         const newestPacketImportTimeUs = getNewestPacketImportTimeUs(data.packets);
 
         // Match Meshview frontend behavior: advance "since" only when a request

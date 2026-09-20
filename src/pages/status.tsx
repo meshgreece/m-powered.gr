@@ -2,14 +2,33 @@ import {useEffect, useRef, useState} from 'react';
 import Layout from '@theme/Layout';
 import Heading from '@theme/Heading';
 import styles from './status.module.css';
+import {
+  EMPTY_ACTIVITY_SERIES,
+  MESHVIEW_BASE_URL,
+  ONE_DAY_US,
+  TELEMETRY_PORTNUM,
+  buildActivitySeriesFromPackets,
+  fetchJson,
+  floorToUtcHourMs,
+  getMeshviewApiUrl,
+  getNewestPacketImportTimeUs,
+  parseImportTimeUs,
+  parseTelemetry,
+} from '../lib/meshview';
+import type {
+  MeshviewNode,
+  NodesResponse,
+  PacketsResponse,
+  TelemetryData,
+} from '../lib/meshview';
 
-const MESHVIEW_API_BASE = 'https://meshview.m-powered.gr/api';
-const MESHVIEW_BASE_URL = 'https://meshview.m-powered.gr';
-const HOURS_24 = 24;
-const ONE_DAY_US = 24 * 60 * 60 * 1_000_000;
 const AUTO_REFRESH_INTERVAL_MS = 60_000;
 const REFRESH_COUNTDOWN_TICK_MS = 1_000;
-const EMPTY_ACTIVITY_SERIES = Array.from({length: HOURS_24}, () => 0);
+/** Node records barely change, so refetch the list every 5th cycle. */
+const NODE_RECORDS_TTL_MS = 5 * AUTO_REFRESH_INTERVAL_MS;
+// ponytail: limit 200 against a measured max of 41 packets/24h. If a node ever
+// fills the page the bars under-report - add a /stats fallback if that happens.
+const PACKET_PAGE_LIMIT = 200;
 const MAP_TILE_SIZE = 256;
 const MAP_ZOOM = 10;
 const MAP_VIEWPORT_WIDTH = 320;
@@ -32,6 +51,8 @@ type NodeCardData = CoreNodeReference & {
   latitude: number | null;
   longitude: number | null;
   lastSeen: string;
+  /** No packets in the last 24h, i.e. the node is down. */
+  isStale: boolean;
   packets24h: number;
   battery: number | null;
   voltage: number | null;
@@ -43,60 +64,16 @@ type NodeCardData = CoreNodeReference & {
   isLoading: boolean;
 };
 
-type MeshviewNode = {
-  id?: string | null;
-  long_name?: string | null;
-  short_name?: string | null;
-  role?: string | null;
-  channel?: string | null;
-  last_lat?: number | null;
-  last_long?: number | null;
-  last_seen_us?: number | string | null;
-};
-
-type NodeResponse = {
-  nodes?: MeshviewNode[];
-};
-
-type StatsRow = {
-  period?: string;
-  count?: number;
-};
-
-type StatsResponse = {
-  data?: StatsRow[];
-};
-
-type Packet = {
-  import_time_us?: number | string;
-  payload?: string | null;
-};
-
-type PacketsResponse = {
-  packets?: Packet[];
-};
-
-type TelemetryData = {
-  battery: number | null;
-  voltage: number | null;
-  batterySeries: number[];
-  voltageSeries: number[];
-  airUtilTxSeries: number[];
-  channelUtilizationSeries: number[];
+type NodeSeries = {
+  activity24h: number[];
+  packets24h: number;
+  lastPacketUs: number | null;
+  telemetry: TelemetryData;
 };
 
 type PositionedNode = NodeCardData & {
   latitude: number;
   longitude: number;
-};
-
-const EMPTY_TELEMETRY: TelemetryData = {
-  battery: null,
-  voltage: null,
-  batterySeries: [],
-  voltageSeries: [],
-  airUtilTxSeries: [],
-  channelUtilizationSeries: [],
 };
 
 const CORE_NODE_REFERENCES: CoreNodeReference[] = [
@@ -298,70 +275,12 @@ function padNumber(value: number): string {
   return value.toString().padStart(2, '0');
 }
 
-function parseImportTimeUs(value: number | string | null | undefined): number | null {
-  if (typeof value === 'number' && Number.isFinite(value)) {
-    return value;
-  }
-
-  if (typeof value === 'string') {
-    const parsed = Number(value);
-    return Number.isFinite(parsed) ? parsed : null;
-  }
-
-  return null;
-}
-
-function parseStatsPeriod(period: string): number | null {
-  const parsed = Date.parse(`${period.replace(' ', 'T')}:00Z`);
-  return Number.isFinite(parsed) ? parsed : null;
-}
-
-function formatStatsPeriod(date: Date): string {
-  return [
-    date.getUTCFullYear(),
-    padNumber(date.getUTCMonth() + 1),
-    padNumber(date.getUTCDate()),
-  ].join('-') + ` ${padNumber(date.getUTCHours())}:00`;
-}
-
-function buildActivitySeries(rows: StatsRow[] | undefined): number[] {
-  if (!rows?.length) {
-    return [...EMPTY_ACTIVITY_SERIES];
-  }
-
-  const countsByPeriod = new Map<string, number>();
-  let latestPeriodMs: number | null = null;
-
-  for (const row of rows) {
-    if (!row.period) {
-      continue;
-    }
-
-    const count = typeof row.count === 'number' && Number.isFinite(row.count) ? row.count : 0;
-    countsByPeriod.set(row.period, count);
-
-    const periodMs = parseStatsPeriod(row.period);
-    if (periodMs !== null && (latestPeriodMs === null || periodMs > latestPeriodMs)) {
-      latestPeriodMs = periodMs;
-    }
-  }
-
-  if (latestPeriodMs === null) {
-    return [...EMPTY_ACTIVITY_SERIES];
-  }
-
-  return Array.from({length: HOURS_24}, (_, index) => {
-    const date = new Date(latestPeriodMs - (HOURS_24 - 1 - index) * 60 * 60 * 1000);
-    return countsByPeriod.get(formatStatsPeriod(date)) ?? 0;
-  });
-}
-
-function formatRelativeTime(importTimeUs: number | null): string {
+function formatRelativeTime(importTimeUs: number | null, nowMs: number): string {
   if (importTimeUs === null) {
     return '—';
   }
 
-  const diffMs = Math.max(0, Date.now() - importTimeUs / 1000);
+  const diffMs = Math.max(0, nowMs - importTimeUs / 1000);
   const minutes = Math.floor(diffMs / 60_000);
 
   if (minutes < 1) {
@@ -387,115 +306,6 @@ function formatRelativeTime(importTimeUs: number | null): string {
   return days === 1 ? '1 ημέρα πριν' : `${days} ημέρες πριν`;
 }
 
-function parseMetric(payload: string | null | undefined, metric: string): number | null {
-  if (!payload) {
-    return null;
-  }
-
-  const match = payload.match(new RegExp(`${metric}:\\s*([\\d.]+)`));
-  if (!match) {
-    return null;
-  }
-
-  const parsed = Number.parseFloat(match[1]);
-  return Number.isFinite(parsed) ? parsed : null;
-}
-
-function parseTelemetry(packets: Packet[] | undefined): TelemetryData {
-  const orderedPackets = (packets ?? [])
-    .map((packet) => ({
-      importTimeUs: parseImportTimeUs(packet.import_time_us),
-      payload: packet.payload ?? '',
-    }))
-    .filter(
-      (packet): packet is {importTimeUs: number; payload: string} =>
-        packet.importTimeUs !== null,
-    )
-    .sort((left, right) => left.importTimeUs - right.importTimeUs);
-
-  const batterySeries: number[] = [];
-  const voltageSeries: number[] = [];
-  const airUtilTxSeries: number[] = [];
-  const channelUtilizationSeries: number[] = [];
-
-  for (const packet of orderedPackets) {
-    const battery = parseMetric(packet.payload, 'battery_level');
-    const voltage = parseMetric(packet.payload, 'voltage');
-    const airUtilTx = parseMetric(packet.payload, 'air_util_tx');
-    const channelUtilization = parseMetric(packet.payload, 'channel_utilization');
-
-    if (battery !== null) {
-      batterySeries.push(battery);
-    }
-
-    if (voltage !== null) {
-      voltageSeries.push(voltage);
-    }
-
-    if (airUtilTx !== null) {
-      airUtilTxSeries.push(airUtilTx);
-    }
-
-    if (channelUtilization !== null) {
-      channelUtilizationSeries.push(channelUtilization);
-    }
-  }
-
-  let latestBattery: number | null = null;
-  let latestVoltage: number | null = null;
-
-  for (let index = orderedPackets.length - 1; index >= 0; index -= 1) {
-    const packet = orderedPackets[index];
-
-    if (latestBattery === null) {
-      latestBattery = parseMetric(packet.payload, 'battery_level');
-    }
-
-    if (latestVoltage === null) {
-      latestVoltage = parseMetric(packet.payload, 'voltage');
-    }
-
-    if (latestBattery !== null && latestVoltage !== null) {
-      break;
-    }
-  }
-
-  return {
-    battery: latestBattery !== null ? Math.round(latestBattery) : null,
-    voltage: latestVoltage,
-    batterySeries,
-    voltageSeries,
-    airUtilTxSeries,
-    channelUtilizationSeries,
-  };
-}
-
-async function fetchJson<T>(url: string): Promise<T> {
-  const response = await fetch(url, {
-    cache: 'no-store',
-    headers: {accept: 'application/json'},
-  });
-
-  if (!response.ok) {
-    throw new Error(`Meshview request failed with status ${response.status}`);
-  }
-
-  return (await response.json()) as T;
-}
-
-function getMeshviewApiUrl(
-  endpoint: 'nodes' | 'packets' | 'stats',
-  params: Record<string, number | string>,
-): string {
-  const searchParams = new URLSearchParams();
-
-  for (const [key, value] of Object.entries(params)) {
-    searchParams.set(key, String(value));
-  }
-
-  return `${MESHVIEW_API_BASE}/${endpoint}?${searchParams.toString()}`;
-}
-
 function createInitialNodeCardData(reference: CoreNodeReference): NodeCardData {
   return {
     ...reference,
@@ -507,6 +317,7 @@ function createInitialNodeCardData(reference: CoreNodeReference): NodeCardData {
     latitude: null,
     longitude: null,
     lastSeen: 'Φόρτωση…',
+    isStale: false,
     packets24h: 0,
     battery: null,
     voltage: null,
@@ -523,24 +334,6 @@ function createInitialNodeCards(): NodeCardData[] {
   return CORE_NODE_REFERENCES.map(createInitialNodeCardData);
 }
 
-async function fetchNodeCardDataSafely(
-  reference: CoreNodeReference,
-  latestNodes: NodeCardData[],
-): Promise<NodeCardData> {
-  try {
-    return await fetchNodeCardData(reference);
-  } catch (error) {
-    console.error(error);
-    return (
-      latestNodes.find((node) => node.nodeId === reference.nodeId) ?? {
-        ...createInitialNodeCardData(reference),
-        lastSeen: '—',
-        isLoading: false,
-      }
-    );
-  }
-}
-
 function getPrefectureSections(nodes: NodeCardData[]) {
   return PREFECTURE_ORDER.map((prefecture) => ({
     prefecture,
@@ -548,61 +341,99 @@ function getPrefectureSections(nodes: NodeCardData[]) {
   })).filter(({nodes: prefectureNodes}) => prefectureNodes.length > 0);
 }
 
-async function fetchNodeCardData(reference: CoreNodeReference): Promise<NodeCardData> {
-  const telemetrySinceUs = Date.now() * 1000 - ONE_DAY_US;
+function logUnlessAborted(error: unknown): void {
+  if (error instanceof Error && error.name === 'AbortError') {
+    return;
+  }
 
-  const [nodeResult, activityResult, telemetryResult] =
-    await Promise.allSettled([
-      fetchJson<NodeResponse>(
-        getMeshviewApiUrl('nodes', {node_id: reference.nodeId}),
-      ),
-      fetchJson<StatsResponse>(
-        getMeshviewApiUrl('stats', {
-          from_node: reference.nodeId,
-          period_type: 'hour',
-          length: HOURS_24,
-        }),
-      ),
-      fetchJson<PacketsResponse>(
-        getMeshviewApiUrl('packets', {
-          portnum: 67,
-          from_node_id: reference.nodeId,
-          since: telemetrySinceUs,
-        }),
-      ),
-    ]);
+  console.error(error);
+}
 
-  const node =
-    nodeResult.status === 'fulfilled' ? (nodeResult.value.nodes ?? [])[0] : undefined;
-  const activity24h =
-    activityResult.status === 'fulfilled'
-      ? buildActivitySeries(activityResult.value.data)
-      : [...EMPTY_ACTIVITY_SERIES];
-  const telemetry =
-    telemetryResult.status === 'fulfilled'
-      ? parseTelemetry(telemetryResult.value.packets)
-      : EMPTY_TELEMETRY;
+/** One request for every node: the endpoint returns the whole list. */
+async function fetchNodeRecords(
+  signal: AbortSignal,
+): Promise<Map<string, MeshviewNode>> {
+  const data = await fetchJson<NodesResponse>(
+    getMeshviewApiUrl('nodes'),
+    signal,
+  );
 
-  const packets24h = activity24h.reduce((total, value) => total + value, 0);
+  return new Map(
+    (data.nodes ?? []).map((node) => [String(node.node_id), node]),
+  );
+}
+
+/**
+ * One request per node with no portnum filter, which yields the newest packet,
+ * the telemetry subset and the hourly activity buckets all at once.
+ */
+async function fetchNodeSeries(
+  nodeId: string,
+  sinceUs: number,
+  signal: AbortSignal,
+): Promise<NodeSeries> {
+  const data = await fetchJson<PacketsResponse>(
+    getMeshviewApiUrl('packets', {
+      from_node_id: nodeId,
+      since: sinceUs,
+      limit: PACKET_PAGE_LIMIT,
+    }),
+    signal,
+  );
+
+  const packets = data.packets ?? [];
+  const activity24h = buildActivitySeriesFromPackets(packets);
 
   return {
-    ...reference,
-    name: node?.long_name ?? `Κόμβος ${reference.nodeId}`,
-    shortName: node?.short_name ?? reference.nodeId.slice(-4),
-    role: node?.role ?? '—',
-    preset: node?.channel ?? '—',
-    hexId: node?.id ?? '—',
-    latitude: typeof node?.last_lat === 'number' ? node.last_lat / 1e7 : null,
-    longitude: typeof node?.last_long === 'number' ? node.last_long / 1e7 : null,
-    lastSeen: formatRelativeTime(parseImportTimeUs(node?.last_seen_us)),
-    packets24h,
-    battery: telemetry.battery,
-    voltage: telemetry.voltage,
     activity24h,
-    batterySeries: telemetry.batterySeries,
-    voltageSeries: telemetry.voltageSeries,
-    airUtilTxSeries: telemetry.airUtilTxSeries,
-    channelUtilizationSeries: telemetry.channelUtilizationSeries,
+    // Sum of the buckets, not packets.length: the hour-aligned `since` can return
+    // packets older than the window the bars actually show.
+    packets24h: activity24h.reduce((total, value) => total + value, 0),
+    lastPacketUs: getNewestPacketImportTimeUs(packets),
+    telemetry: parseTelemetry(
+      packets.filter((packet) => Number(packet.portnum) === TELEMETRY_PORTNUM),
+    ),
+  };
+}
+
+/**
+ * The two requests fail independently, so each half falls back to what the card
+ * already showed: identity from /nodes, series from /packets.
+ */
+function mergeNodeCard(
+  reference: CoreNodeReference,
+  previous: NodeCardData,
+  record: MeshviewNode | undefined,
+  series: NodeSeries | null,
+  nowMs: number,
+): NodeCardData {
+  const lastPacketUs = series?.lastPacketUs ?? null;
+
+  return {
+    // Start from what was already on screen, then overlay whatever arrived fresh.
+    ...previous,
+    ...reference,
+    ...(record && {
+      name: record.long_name ?? previous.name,
+      shortName: record.short_name ?? previous.shortName,
+      role: record.role ?? previous.role,
+      preset: record.channel ?? previous.preset,
+      hexId: record.id ?? previous.hexId,
+      latitude: typeof record.last_lat === 'number' ? record.last_lat / 1e7 : null,
+      longitude: typeof record.last_long === 'number' ? record.last_long / 1e7 : null,
+    }),
+    ...(series
+      ? {
+          activity24h: series.activity24h,
+          packets24h: series.packets24h,
+          ...series.telemetry,
+          isStale: lastPacketUs === null,
+          lastSeen: formatRelativeTime(
+            lastPacketUs ?? parseImportTimeUs(record?.last_seen_us),
+            nowMs,
+          ),
+        }
+      : {lastSeen: previous.isLoading ? '—' : previous.lastSeen}),
     isLoading: false,
   };
 }
@@ -615,13 +446,22 @@ function VitalsCell({
   label,
   value,
   isLoading = false,
+  isStale = false,
 }: {
   label: string;
   value: string;
   isLoading?: boolean;
+  isStale?: boolean;
 }) {
   return (
-    <div className={styles.vitalCell}>
+    <div
+      className={styles.vitalCell}
+      data-state={isStale && !isLoading ? 'stale' : undefined}
+      title={
+        isStale && !isLoading
+          ? 'Χωρίς πακέτα το τελευταίο 24ωρο.'
+          : undefined
+      }>
       <p className={styles.vitalLabel}>{label}</p>
       {isLoading ? (
         <LoadingLine className={styles.loadingVitalValue} />
@@ -767,7 +607,7 @@ function Combined24hPlot({
   channelUtilization: number[];
 }) {
   const width = 360;
-  const height = 184;
+  const height = 180;
   const plotLeft = 10;
   const plotRight = width - 10;
   const powerLabelY = 16;
@@ -779,7 +619,11 @@ function Combined24hPlot({
   const activityLabelY = 136;
   const activityBandTop = 144;
   const activityBottom = 166;
-  const xAxisY = 174;
+  const xAxisY = 168;
+  // +1.6 centres the letters themselves (cap height plus descenders) rather than
+  // their baseline, so the gap above and below the label comes out equal.
+  // Tuned for the font-size: 7px in .plotXAxisLabel.
+  const xAxisLabelY = (xAxisY + height) / 2 + 1.6;
   const powerSeparatorY = 72;
   const rfSeparatorY = 126;
   const hasBattery = battery.length > 0;
@@ -962,10 +806,10 @@ function Combined24hPlot({
           data-series="channel-utilization"
         />
       ) : null}
-      <text className={styles.plotXAxisLabel} x={plotLeft} y={height - 3}>
+      <text className={styles.plotXAxisLabel} x={plotLeft} y={xAxisLabelY}>
         24ω πριν
       </text>
-      <text className={styles.plotXAxisLabel} x={plotRight} y={height - 3} textAnchor="end">
+      <text className={styles.plotXAxisLabel} x={plotRight} y={xAxisLabelY} textAnchor="end">
         Τώρα
       </text>
       {!hasPower && !hasRfUtilization && !hasActivity ? (
@@ -1153,6 +997,7 @@ function NodeCard({
             label="Τελευταίο πακέτο"
             value={node.lastSeen}
             isLoading={node.isLoading}
+            isStale={node.isStale}
           />
           <VitalsCell
             label="Πακέτα 24ω"
@@ -1232,18 +1077,38 @@ function getRefreshCountdown(
   return `σε ${padNumber(minutes)}:${padNumber(seconds)}`;
 }
 
+/**
+ * The one-second tick lives here alone. In StatusPage it would re-render every
+ * card and every MiniMap once a second.
+ */
+function RefreshCountdown({
+  nextRefreshAt,
+  isLoading,
+  isRefreshing,
+}: {
+  nextRefreshAt: number | null;
+  isLoading: boolean;
+  isRefreshing: boolean;
+}) {
+  const now = useCountdownClock();
+
+  return (
+    <span className={styles.refreshValue}>
+      {getRefreshCountdown(nextRefreshAt, now, isLoading, isRefreshing)}
+    </span>
+  );
+}
+
 function StatusHeader({
   isLoading,
   isRefreshing,
   lastUpdated,
   nextRefreshAt,
-  now,
 }: {
   isLoading: boolean;
   isRefreshing: boolean;
   lastUpdated: number | null;
   nextRefreshAt: number | null;
-  now: number;
 }) {
   return (
     <header className={styles.header}>
@@ -1270,9 +1135,11 @@ function StatusHeader({
         </div>
         <div className={styles.refreshRow}>
           <span className={styles.refreshLabel}>Αυτόματη ανανέωση</span>
-          <span className={styles.refreshValue}>
-            {getRefreshCountdown(nextRefreshAt, now, isLoading, isRefreshing)}
-          </span>
+          <RefreshCountdown
+            nextRefreshAt={nextRefreshAt}
+            isLoading={isLoading}
+            isRefreshing={isRefreshing}
+          />
         </div>
         <div className={styles.refreshRow}>
           <span className={styles.refreshLabel}>Κατάσταση</span>
@@ -1339,10 +1206,15 @@ function useCoreNodeStatus() {
   const [lastUpdated, setLastUpdated] = useState<number | null>(null);
   const [nextRefreshAt, setNextRefreshAt] = useState<number | null>(null);
   const latestNodesRef = useRef<NodeCardData[]>(createInitialNodeCards());
+  const nodeRecordsRef = useRef<{
+    records: Map<string, MeshviewNode>;
+    fetchedAtMs: number;
+  } | null>(null);
 
   useEffect(() => {
     let isMounted = true;
     let refreshTimeoutId: number | null = null;
+    const abortController = new AbortController();
 
     const clearRefreshTimeout = () => {
       if (refreshTimeoutId !== null) {
@@ -1359,6 +1231,18 @@ function useCoreNodeStatus() {
       }, AUTO_REFRESH_INTERVAL_MS);
     };
 
+    const loadNodeRecords = async (nowMs: number) => {
+      const cached = nodeRecordsRef.current;
+
+      if (cached && nowMs - cached.fetchedAtMs < NODE_RECORDS_TTL_MS) {
+        return cached.records;
+      }
+
+      const records = await fetchNodeRecords(abortController.signal);
+      nodeRecordsRef.current = {records, fetchedAtMs: nowMs};
+      return records;
+    };
+
     const loadNodes = async (initialLoad = false) => {
       clearRefreshTimeout();
       setNextRefreshAt(null);
@@ -1369,15 +1253,44 @@ function useCoreNodeStatus() {
         setIsRefreshing(true);
       }
 
-      const liveNodes = await Promise.all(
-        CORE_NODE_REFERENCES.map((reference) =>
-          fetchNodeCardDataSafely(reference, latestNodesRef.current),
-        ),
-      );
+      const nowMs = Date.now();
+      // One window for every node, aligned to the hour so the oldest bucket is
+      // complete and the packet count does not drift between refreshes.
+      const sinceUs = floorToUtcHourMs(nowMs) * 1000 - ONE_DAY_US;
 
-      if (!isMounted) {
+      const [recordsResult, ...seriesResults] = await Promise.allSettled([
+        loadNodeRecords(nowMs),
+        ...CORE_NODE_REFERENCES.map((reference) =>
+          fetchNodeSeries(reference.nodeId, sinceUs, abortController.signal),
+        ),
+      ]);
+
+      if (!isMounted || abortController.signal.aborted) {
         return;
       }
+
+      const records =
+        recordsResult.status === 'fulfilled' ? recordsResult.value : undefined;
+
+      if (recordsResult.status === 'rejected') {
+        logUnlessAborted(recordsResult.reason);
+      }
+
+      const liveNodes = CORE_NODE_REFERENCES.map((reference, index) => {
+        const seriesResult = seriesResults[index];
+
+        if (seriesResult.status === 'rejected') {
+          logUnlessAborted(seriesResult.reason);
+        }
+
+        return mergeNodeCard(
+          reference,
+          latestNodesRef.current[index],
+          records?.get(reference.nodeId),
+          seriesResult.status === 'fulfilled' ? seriesResult.value : null,
+          nowMs,
+        );
+      });
 
       latestNodesRef.current = liveNodes;
       setNodes(liveNodes);
@@ -1392,6 +1305,7 @@ function useCoreNodeStatus() {
     return () => {
       isMounted = false;
       clearRefreshTimeout();
+      abortController.abort();
     };
   }, []);
 
@@ -1406,7 +1320,6 @@ function useCoreNodeStatus() {
 
 export default function StatusPage() {
   const {nodes, isLoading, isRefreshing, lastUpdated, nextRefreshAt} = useCoreNodeStatus();
-  const now = useCountdownClock();
   const prefectureSections = getPrefectureSections(nodes);
 
   return (
@@ -1420,7 +1333,6 @@ export default function StatusPage() {
             isRefreshing={isRefreshing}
             lastUpdated={lastUpdated}
             nextRefreshAt={nextRefreshAt}
-            now={now}
           />
 
           {prefectureSections.map(({prefecture, nodes: prefectureNodes}) => (

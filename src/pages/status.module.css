@@ -6,6 +6,7 @@
   --status-surface: #ffffff;
   --status-surface-alt: #f4f6fa;
   --status-accent: #2f80ed;
+  --status-stale: #a86100;
   --status-map-gradient: linear-gradient(180deg, #2c2d3c 0%, #202431 100%);
   --status-map-ring-fill: rgba(47, 128, 237, 0.18);
   --status-map-ring-stroke: rgba(255, 255, 255, 0.26);
@@ -472,6 +473,11 @@
   overflow-wrap: anywhere;
 }
 
+/* No packets in the last 24h: the node is down, not merely quiet. */
+.vitalCell[data-state='stale'] .vitalValue {
+  color: var(--status-stale);
+}
+
 .loadingVitalValue {
   height: 1.25rem;
   max-width: 78%;
@@ -630,6 +636,7 @@
   --status-surface: rgba(32, 36, 49, 0.94);
   --status-surface-alt: rgba(25, 29, 39, 0.94);
   --status-accent: #7dbbff;
+  --status-stale: #f0b429;
   --status-map-gradient: linear-gradient(180deg, #2c2d3c 0%, #202431 100%);
   --status-map-ring-fill: rgba(88, 166, 255, 0.12);
   --status-map-ring-stroke: rgba(255, 255, 255, 0.24);
