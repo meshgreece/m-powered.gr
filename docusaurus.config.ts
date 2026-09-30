@@ -163,6 +163,10 @@ const config: Config = {
               label: 'Εργαλεία κοινότητας',
               to: '/docs/community-tools',
             },
+            {
+              label: 'Πολιτική απορρήτου',
+              to: '/privacy',
+            },
           ],
         },
         {
