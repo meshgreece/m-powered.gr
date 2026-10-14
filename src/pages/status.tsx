@@ -117,14 +117,6 @@ const CORE_NODE_REFERENCES: CoreNodeReference[] = [
     nodeId: '1978752052',
     prefecture: 'Νομός Βοιωτίας',
   },
-  {
-    nodeId: '1966387221',
-    prefecture: 'Νομός Αττικής',
-  },
-  {
-    nodeId: '574382240',
-    prefecture: 'Νομός Αττικής',
-  },
 ];
 
 const PREFECTURE_ORDER = [
