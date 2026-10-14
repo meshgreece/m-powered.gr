@@ -27,57 +27,72 @@ const sidebars: SidebarsConfig = {
         },
         {
           type: 'doc',
+          id: 'network-settings',
+          label: 'Ρυθμίσεις δικτύου',
+        },
+        {
+          type: 'doc',
           id: 'recommended-hardware',
-          label: 'Προτεινόμενο Υλικό',
+          label: 'Προτεινόμενο υλικό',
         },
         {
           type: 'doc',
           id: 'configuration-generator',
-          label: 'Προφίλ Ρυθμίσεων',
+          label: 'Προφίλ ρυθμίσεων',
         },
       ],
     },
     {
       type: 'category',
-      label: 'Οδηγοί Κόμβων',
+      label: 'Κόμβοι',
       collapsed: false,
       items: [
         {
           type: 'doc',
           id: 'personal-node',
-          label: 'Προσωπικός Κόμβος',
+          label: 'Προσωπικός κόμβος',
         },
         {
           type: 'doc',
-          id: 'fixed-nodes-backbone',
-          label: 'Σταθεροί Κόμβοι & Backbone',
+          id: 'fixed-nodes',
+          label: 'Σταθεροί κόμβοι',
+        },
+        {
+          type: 'doc',
+          id: 'best-practices',
+          label: 'Καλές πρακτικές',
         },
       ],
     },
     {
       type: 'category',
-      label: 'Κοινότητα',
+      label: 'Monitoring και βοήθεια',
       collapsed: false,
       items: [
         {
           type: 'doc',
           id: 'community-tools',
-          label: 'Εργαλεία Κοινότητας',
+          label: 'Εργαλεία κοινότητας',
+        },
+        {
+          type: 'doc',
+          id: 'mqtt',
+          label: 'MQTT και uplinks',
         },
         {
           type: 'doc',
           id: 'coverage-map',
-          label: 'Κατανομή Preset',
-        },
-        {
-          type: 'doc',
-          id: 'eu-n-868-narrow-slow',
-          label: 'Μετάβαση σε EU_N_868',
+          label: 'Κατανομή preset',
         },
         {
           type: 'doc',
           id: 'faq',
-          label: 'Συχνές Ερωτήσεις',
+          label: 'Συχνές ερωτήσεις',
+        },
+        {
+          type: 'link',
+          label: 'Κατάσταση backbone κόμβων της κοινότητας',
+          href: '/status',
         },
       ],
     },

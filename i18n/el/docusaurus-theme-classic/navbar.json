@@ -4,16 +4,16 @@
     "description": "The title in the navbar"
   },
   "logo.alt": {
-    "message": "Meshtastic Greece Community m-powered logo",
+    "message": "Λογότυπο του Meshtastic Greece Community στο m-powered.gr",
     "description": "The alt text of navbar logo"
   },
-  "item.label.Οδηγός": {
-    "message": "Οδηγός",
-    "description": "Navbar item with label Οδηγός"
+  "item.label.Οδηγοί": {
+    "message": "Οδηγοί",
+    "description": "Navbar item with label Οδηγοί"
   },
-  "item.label.Blog": {
-    "message": "Blog",
-    "description": "Navbar item with label Blog"
+  "item.label.Ενημερώσεις": {
+    "message": "Ενημερώσεις",
+    "description": "Navbar item with label Ενημερώσεις"
   },
   "item.label.GitHub": {
     "message": "GitHub",

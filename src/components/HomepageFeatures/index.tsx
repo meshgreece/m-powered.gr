@@ -10,16 +10,16 @@ const quickStartSteps = [
   {
     title: 'Φόρτωσε το firmware',
     description:
-      'Σύνδεσε τη συσκευή με USB και φόρτωσε το επίσημο firmware του Meshtastic από τον Web Flasher.',
+      'Σύνδεσε τη συσκευή με USB και φόρτωσε το επίσημο firmware από τον Meshtastic Web Flasher.',
     to: 'https://flash.meshtastic.org/',
-    label: 'Άνοιξε τον Web Flasher',
+    label: 'Άνοιξε τον Meshtastic Web Flasher',
   },
   {
-    title: 'Κάνε τις βασικές ρυθμίσεις',
+    title: 'Εφάρμοσε το NarrowSlow',
     description:
-      'Σύνδεσε τη συσκευή στην εφαρμογή, δώσε της ένα όνομα και έλεγξε το βασικό κανάλι.',
-    to: 'https://meshtastic.org/docs/software/',
-    label: 'Δες τις εφαρμογές',
+      'Εφάρμοσε το κοινοτικό προφίλ και επίλεξε συνήθως CLIENT ή CLIENT_MUTE. Για ρόλο υποδομής χρειάζεται συνεννόηση.',
+    to: '/docs/configuration-generator?preset=NarrowSlow',
+    label: 'Άνοιξε το προφίλ',
   },
   {
     title: 'Στείλε ένα «γεια»',
@@ -29,11 +29,11 @@ const quickStartSteps = [
     label: 'Δες πώς γίνεται η δοκιμή',
   },
   {
-    title: 'Δες αν έφτασε',
+    title: 'Έλεγξε το monitoring',
     description:
-      'Αν το μήνυμα φτάσει στο Meshview, θα το δεις στη ζωντανή ροή — και στον χάρτη πιο πάνω.',
+      'Στο Meshview βλέπεις πακέτα που έφτασαν στο MQTT monitoring. Για να ελέγξεις την παράδοση σε συγκεκριμένο κόμβο, ζήτησε απάντηση.',
     to: 'https://meshview.m-powered.gr/firehose',
-    label: 'Άνοιξε τη ζωντανή ροή',
+    label: 'Άνοιξε το live feed',
   },
   {
     title: 'Έλα στην κοινότητα',
@@ -55,29 +55,29 @@ const nodeGuides = [
   {
     title: 'Σταθερός κόμβος',
     description:
-      'Για ένα μόνιμο σημείο που βοηθά το δίκτυο να φτάσει πιο μακριά.',
-    to: '/docs/fixed-nodes-backbone',
+      'Για μόνιμη εγκατάσταση: θέση, κεραία, τροφοδοσία και συντήρηση.',
+    to: '/docs/fixed-nodes',
     accent: styles.accentOrange,
   },
 ];
 
 const networkTools = [
   {
-    title: 'Χάρτης κόμβων',
-    description: 'Δες ποιοι κόμβοι υπάρχουν κοντά σου.',
+    title: 'Χάρτης κόμβων στο m-powered.gr',
+    description: 'Δες καταγραφές κόμβων Meshtastic με θέση στην Ελλάδα.',
     to: 'https://map.m-powered.gr/',
     label: 'Άνοιξε τον χάρτη',
   },
   {
     title: 'Meshview',
-    description: 'Δες ζωντανά την κίνηση και ποιοι κόμβοι ακούγονται.',
+    description: 'Δες πακέτα και telemetry στο Meshview του m-powered.gr μέσω MQTT.',
     to: 'https://meshview.m-powered.gr/',
     label: 'Άνοιξε το Meshview',
   },
   {
     title: 'Malla',
     description:
-      'Δες αναλυτικά δεδομένα, διαδρομές και συνδέσεις του δικτύου.',
+      'Εξέτασε πακέτα και διαδρομές στο Malla του m-powered.gr, από την ίδια κοινοτική ροή MQTT.',
     to: 'https://malla.m-powered.gr/',
     label: 'Άνοιξε το Malla',
   },
@@ -214,7 +214,7 @@ export default function HomepageFeatures(): ReactNode {
       <section className={styles.band}>
         <div className={styles.inner}>
           <SectionIntro title="Δες το δίκτυο από κοντά">
-            Τρία εργαλεία, τρεις ματιές στο ίδιο δίκτυο.
+            Χάρτης κόμβων, πρόσφατα πακέτα και ιστορικό από την κοινοτική ροή MQTT.
           </SectionIntro>
           <ul className={styles.toolList}>
             {networkTools.map((tool) => (

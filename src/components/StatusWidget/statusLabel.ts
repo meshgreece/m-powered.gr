@@ -6,12 +6,12 @@ export function getStatusLabel(status: FeedStatus): string {
     case 'loading':
       return translate({
         id: 'statusWidget.loading',
-        message: 'Φορτώνει η ζωντανή ροή…',
+        message: 'Φορτώνει το live feed…',
       });
     case 'error':
       return translate({
         id: 'statusWidget.error',
-        message: 'Η ζωντανή ροή δεν είναι διαθέσιμη',
+        message: 'Το live feed δεν είναι διαθέσιμο',
       });
     case 'live':
       return status.seconds === 0
@@ -44,11 +44,13 @@ export function getStatusLabel(status: FeedStatus): string {
 }
 
 export function getStatusAccessibleName(label: string): string {
-  return translate(
+  const name = translate(
     {
       id: 'statusWidget.accessibleName',
       message: 'Κατάσταση δικτύου: {status}',
     },
     {status: label},
   );
+  const separator = /[.…]$/.test(label) ? ' ' : '. ';
+  return `${name}${separator}Η ένδειξη βασίζεται στην πρόσφατη κίνηση και στα σφάλματα του live feed πακέτων του Meshview· δεν ελέγχει κάθε κόμβο ή RF διαδρομή.`;
 }

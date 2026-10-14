@@ -1,6 +1,6 @@
 import type {ReactNode} from 'react';
-import {Redirect} from '@docusaurus/router';
+import GuideRedirect from '@site/src/components/GuideRedirect';
 
 export default function IntroRedirect(): ReactNode {
-  return <Redirect to="/docs/get-started" />;
+  return <GuideRedirect to="/docs/get-started" title="Ξεκίνα εδώ" />;
 }

@@ -15,13 +15,6 @@ const LEGACY_PAYLOADS = {
   NarrowSlow: 'ChMSAQEaCk5hcnJvd1Nsb3coATABEhYYPiAIKAY4A0ADSAFoAXVKXFlEyAYB',
 } as const;
 
-const CANONICAL_URLS = {
-  LongFast:
-    'https://meshtastic.org/e/#ChESAQEaCExvbmdGYXN0KAEwARINCAE4A0ADSAFoAcgGAQ',
-  NarrowSlow:
-    'https://meshtastic.org/e/#ChMSAQEaCk5hcnJvd1Nsb3coATABEhYYPiAIKAY4A0ADSAFoAXVKXFlEyAYB',
-} as const;
-
 const LEGACY_OPTIONS = {
   hopLimit: 3,
   positionPrecision: 0,
@@ -30,34 +23,67 @@ const LEGACY_OPTIONS = {
 
 describe('Meshtastic configuration profiles', () => {
   it.each(Object.keys(PROFILES) as Array<keyof typeof PROFILES>)(
-    'can still serialize the canonical legacy %s URL',
+    'still decodes the frozen legacy %s payload',
     (profileId) => {
-      expect(createConfigUrl(PROFILES[profileId], LEGACY_OPTIONS)).toBe(
-        CANONICAL_URLS[profileId],
-      );
+      const decoded = decodeConfigPayload(LEGACY_PAYLOADS[profileId]);
+      expect(decoded.settings[0]).toMatchObject({
+        name: profileId,
+        uplinkEnabled: true,
+        downlinkEnabled: true,
+      });
+      expect(Array.from(decoded.settings[0].psk)).toEqual([1]);
+      expect(decoded.loraConfig?.hopLimit).toBe(3);
     },
   );
 
   it.each(Object.keys(PROFILES) as Array<keyof typeof PROFILES>)(
-    'preserves the legacy %s configuration semantics',
+    'preserves legacy %s radio and channel semantics while disabling downlink',
     (profileId) => {
-      const canonicalPayload = createConfigUrl(
-        PROFILES[profileId],
-        LEGACY_OPTIONS,
-      ).split('#')[1];
-
-      expect(configToJson(decodeConfigPayload(canonicalPayload))).toEqual(
-        configToJson(decodeConfigPayload(LEGACY_PAYLOADS[profileId])),
+      const decoded = decodeConfigPayload(
+        createConfigUrl(PROFILES[profileId], LEGACY_OPTIONS).split('#')[1],
       );
+      const legacy = decodeConfigPayload(LEGACY_PAYLOADS[profileId]);
+      expect(configToJson({...decoded, settings: []})).toEqual(
+        configToJson({...legacy, settings: []}),
+      );
+      expect(decoded.settings[0].name).toBe(legacy.settings[0].name);
+      expect(decoded.settings[0].psk).toEqual(legacy.settings[0].psk);
+      expect(decoded.settings[0].uplinkEnabled).toBe(true);
+      expect(decoded.settings[0].downlinkEnabled).toBe(false);
     },
   );
 
-  it('uses the community defaults when options are omitted', () => {
-    const channelSet = createChannelSet(PROFILES.LongFast);
+  it.each(Object.keys(PROFILES) as Array<keyof typeof PROFILES>)(
+    'exports uplink-only primary and optional channels for %s',
+    (profileId) => {
+      const decoded = decodeConfigPayload(
+        createConfigUrl(PROFILES[profileId], {
+          hopLimit: 4,
+          positionPrecision: 15,
+          additionalChannels: ['Test', 'Bots'],
+        }).split('#')[1],
+      );
+      expect(decoded.settings.map((setting) => setting.name)).toEqual([
+        profileId,
+        'Test',
+        'Bots',
+      ]);
+      for (const setting of decoded.settings) {
+        expect(setting.uplinkEnabled).toBe(true);
+        expect(setting.downlinkEnabled).toBe(false);
+      }
+    },
+  );
 
-    expect(channelSet.loraConfig?.hopLimit).toBe(4);
-    expect(channelSet.settings[0]?.moduleSettings?.positionPrecision).toBe(15);
-  });
+  it.each(['LongFast', 'NarrowSlow'] as const)(
+    'uses the community defaults for %s when options are omitted',
+    (profileId) => {
+      const channelSet = createChannelSet(PROFILES[profileId]);
+
+      expect(channelSet.loraConfig?.hopLimit).toBe(4);
+      expect(channelSet.settings[0]?.moduleSettings?.positionPrecision).toBe(14);
+    },
+  );
 
   it('renders canonical JSON with readable non-default enum names', () => {
     const json = createConfigJson(PROFILES.LongFast);
@@ -128,7 +154,7 @@ describe('Meshtastic configuration profiles', () => {
       expect(Array.from(channelSet.settings[1]?.psk ?? [])).toEqual([2]);
       expect(channelSet.settings[1]).toMatchObject({
         uplinkEnabled: true,
-        downlinkEnabled: true,
+        downlinkEnabled: false,
       });
     },
   );

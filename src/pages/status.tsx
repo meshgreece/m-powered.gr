@@ -700,14 +700,14 @@ function ChartTelemetryLegend({node}: {node: NodeCardData}) {
     node.airUtilTxSeries.length > 0
       ? {
           series: "air-util-tx",
-          label: "Air TX",
+          label: "Airtime",
           value: formatTelemetryPercent(latestAirUtilTx),
         }
       : null,
     node.channelUtilizationSeries.length > 0
       ? {
           series: "channel-utilization",
-          label: "Κανάλι",
+          label: "Χρήση καναλιού",
           value: formatTelemetryPercent(latestChannelUtilization),
         }
       : null,
@@ -733,7 +733,7 @@ function ChartTelemetryLegend({node}: {node: NodeCardData}) {
   }
 
   return (
-    <div className={styles.chartLegend} aria-label="Τρέχουσα τηλεμετρία">
+    <div className={styles.chartLegend} aria-label="Τρέχον telemetry">
       {telemetryItems.map((item) => (
         <ChartTelemetryItem
           key={item.series}
@@ -808,7 +808,7 @@ function NodeCard({
             <p className={styles.plotTitle}>
               {node.batterySeries.length > 0 || node.voltageSeries.length > 0 ||
               node.airUtilTxSeries.length > 0 || node.channelUtilizationSeries.length > 0
-                ? 'Τηλεμετρία 24ώρου'
+                ? 'Telemetry 24ώρου'
                 : 'Δραστηριότητα 24ώρου'}
             </p>
           </div>
@@ -869,10 +869,10 @@ function StatusHeader({
     <header className={styles.header}>
       <div>
         <Heading as="h1" className={styles.pageTitle}>
-          Κατάσταση Κόμβων Κορμού
+          Κατάσταση backbone κόμβων της κοινότητας
         </Heading>
         <p className={styles.pageSubtitle}>
-          {isLoading ? 'Φόρτωση ζωντανών δεδομένων από το ' : 'Ζωντανά δεδομένα από το '}
+          {isLoading ? 'Φόρτωση δεδομένων από το ' : 'Δεδομένα από το '}
           <a
             className={styles.pageSubtitleLink}
             href={MESHVIEW_BASE_URL}
@@ -880,7 +880,17 @@ function StatusHeader({
             rel="noopener noreferrer">
             Meshview
           </a>
-          {isLoading ? '…' : null}
+          {isLoading ? '…' : '.'}{' '}
+          Τα στοιχεία δραστηριότητας για τους backbone κόμβους της κοινοτικής λίστας
+          προέρχονται από πακέτα που έφτασαν μέσω MQTT. Η καταγραφή ενός πακέτου
+          δεν επιβεβαιώνει παράδοση σε άλλον κόμβο.
+          Για την ερμηνεία των δεδομένων δες τα{' '}
+          <a className={styles.pageSubtitleLink} href="/docs/community-tools">
+            εργαλεία κοινότητας
+          </a>{' '}
+          και τον οδηγό για <a className={styles.pageSubtitleLink} href="/docs/fixed-nodes">
+            σταθερούς κόμβους
+          </a>. Η ένδειξη preset βασίζεται στο καταγεγραμμένο όνομα καναλιού.
         </p>
       </div>
       <div className={styles.refreshCard}>
@@ -902,6 +912,10 @@ function StatusHeader({
             {isLoading ? 'Φόρτωση…' : isRefreshing ? 'Ανανέωση…' : 'Live'}
           </span>
         </div>
+        <p className={styles.refreshHint}>
+          Το Live αφορά την αυτόματη ανανέωση της σελίδας. Δεν επιβεβαιώνει
+          ότι η τελευταία λήψη πέτυχε ή ότι κάθε κόμβος είναι online.
+        </p>
       </div>
     </header>
   );
@@ -1080,8 +1094,8 @@ export default function StatusPage() {
 
   return (
     <Layout
-      title="Κατάσταση Κόμβων Κορμού"
-      description="Ζωντανές κάρτες κατάστασης για τους εγκεκριμένους κόμβους κορμού με δραστηριότητα και τηλεμετρία 24ώρου.">
+      title="Κατάσταση backbone κόμβων της κοινότητας"
+      description="Πρόσφατη δραστηριότητα MQTT και telemetry 24ώρου από το Meshview του m-powered.gr για τους backbone κόμβους της λίστας της κοινότητας, χωρίς επιβεβαίωση παράδοσης.">
       <main className={styles.page}>
         <div className={`container ${styles.shell}`}>
           <StatusHeader

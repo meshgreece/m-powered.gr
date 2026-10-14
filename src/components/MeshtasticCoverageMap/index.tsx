@@ -16,7 +16,6 @@ import type {
   MeshviewNode,
   NutsUnitFeature,
   NutsUnitProperties,
-  PresetChannel,
   UnitCoverage,
 } from './types';
 
@@ -34,11 +33,6 @@ const STATE_LABELS: Record<CoverageState, string> = {
   Mixed: 'Μεικτό',
   None: 'Χωρίς κόμβους με θέση',
 };
-
-/** A Mixed or empty unit has no preset of its own; LongFast is the default. */
-function getSuggestedPreset(state: CoverageState): PresetChannel {
-  return state === 'NarrowSlow' ? 'NarrowSlow' : 'LongFast';
-}
 
 /** The NUTS 2 prefix of a unit id, i.e. the περιφέρεια it belongs to. */
 function getNuts2Group(geometry: {properties?: unknown}): string {
@@ -195,9 +189,6 @@ export default function MeshtasticCoverageMap() {
     setSelectedUnitId((current) => (current === unitId ? null : unitId));
   }
 
-  const suggestedPreset =
-    selectedUnit === null ? null : getSuggestedPreset(selectedUnit.state);
-
   function describeUnit(unit: UnitCoverage) {
     return unit.total === 0
       ? `${unit.name}: ${STATE_LABELS.None}`
@@ -339,6 +330,10 @@ export default function MeshtasticCoverageMap() {
 
                 <div className={styles.positionless}>
                   <p className={styles.detailTitle}>Χωρίς κοινοποίηση θέσης</p>
+                  <p className={styles.footnote}>
+                    Στις καταγραφές λείπουν οι συντεταγμένες· αυτό δεν δηλώνει
+                    αν ο χρήστης απενεργοποίησε την κοινοποίηση.
+                  </p>
                   <CountList
                     rows={[
                       ['LongFast', data.coverage.positionlessByPreset.LongFast],
@@ -363,14 +358,14 @@ export default function MeshtasticCoverageMap() {
                   rows={[
                     ['LongFast', selectedUnit.longFast],
                     ['NarrowSlow', selectedUnit.narrowSlow],
-                    ['Gateways', selectedUnit.gateways],
+                    ['MQTT gateways', selectedUnit.gateways],
                   ]}
                 />
                 <Link
                   className={styles.cta}
-                  to={`${GENERATOR_URL}?preset=${suggestedPreset}`}
+                  to={`${GENERATOR_URL}?preset=NarrowSlow`}
                 >
-                  Ρυθμίσεις {suggestedPreset} →
+                  Προφίλ ρυθμίσεων NarrowSlow →
                 </Link>
               </>
             )}
@@ -379,10 +374,15 @@ export default function MeshtasticCoverageMap() {
       </div>
 
       <p className={styles.footnote}>
-        Το χρώμα δείχνει τι <strong>επικρατεί</strong>, όχι τι υπάρχει
-        αποκλειστικά. Μετρώνται μόνο κόμβοι που στέλνουν θέση στο MQTT, και όπου
-        είναι λίγοι, ένας αρκεί για να αλλάξει το χρώμα — αν είσαι σε όριο,
-        κοίτα τους γείτονές σου στο <Link to={MESHVIEW_URL}>Meshview</Link>.
+        Το χρώμα δείχνει το επικρατέστερο preset στις πρόσφατες καταγραφές
+        κόμβων με θέση μέσω MQTT τις τελευταίες 14 ημέρες. Η ένδειξη προκύπτει
+        από τα καταγεγραμμένα ονόματα καναλιών LongFast και NarrowSlow· δεν
+        επαληθεύει όλες τις ρυθμίσεις LoRa ή ένα πλήρες προφίλ ρυθμίσεων.
+        Μπορεί να περιλαμβάνει
+        παλιές ή άσχετες με την κοινότητα ρυθμίσεις. Κόμβοι χωρίς θέση δεν
+        τοποθετούνται στον χάρτη· όσοι δεν έχουν πρόσφατο uplink μπορεί να
+        απουσιάζουν. Λίγοι κόμβοι μπορούν να αλλάξουν το αποτέλεσμα.
+        Οι καταγραφές δεν αποδεικνύουν RF κάλυψη ή παράδοση μηνυμάτων.
       </p>
 
       <p className={styles.attribution}>

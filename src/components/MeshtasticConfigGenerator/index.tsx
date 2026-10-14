@@ -93,10 +93,10 @@ export default function MeshtasticConfigGenerator() {
     [options, profile],
   );
   const shareableUrl = useMemo(() => {
-    if (!ExecutionEnvironment.canUseDOM) return '';
+    if (!ExecutionEnvironment.canUseDOM || !isInitialized) return '';
     const params = createGeneratorSearchParams(selection);
     return `${window.location.origin}${window.location.pathname}?${params.toString()}`;
-  }, [selection]);
+  }, [isInitialized, selection]);
   const showPrivacyWarning = hasPositionPrivacyWarning(
     selection.positionPrecision,
   );
@@ -104,9 +104,7 @@ export default function MeshtasticConfigGenerator() {
   const positionSummary =
     selection.positionPrecision === 0
       ? 'χωρίς κοινοποίηση θέσης'
-      : selection.positionPrecision === 32
-        ? 'θέση με πλήρη ακρίβεια'
-        : `θέση ${precisionLabel}`;
+      : `ρύθμιση θέσης: ${selection.positionPrecision} (${precisionLabel})`;
   const selectionSummary = [
     `hop limit ${selection.hopLimit}`,
     positionSummary,
@@ -146,7 +144,7 @@ export default function MeshtasticConfigGenerator() {
 
   return (
     <section
-      aria-label="Γεννήτρια ρυθμίσεων Meshtastic"
+      aria-label="Γεννήτρια προφίλ ρυθμίσεων του m-powered.gr"
       className={styles.generator}
     >
       <div className={styles.layout}>
@@ -157,7 +155,7 @@ export default function MeshtasticConfigGenerator() {
                 Προφίλ ρυθμίσεων
               </label>
               <Link className={styles.rowLink} to={COVERAGE_MAP_URL}>
-                Χάρτης κάλυψης →
+                Κατανομή preset →
               </Link>
             </div>
             <div className={styles.selectWrapper}>
@@ -194,16 +192,16 @@ export default function MeshtasticConfigGenerator() {
                 id="configuration-narrow-slow-warning"
                 role="status"
               >
-                <strong>Μεταβαίνεις από LongFast;</strong>
+                <strong>Έλεγξε και τον ρόλο του κόμβου</strong>
                 <span>
                   {' '}
-                  Διάβασε πρώτα τον{' '}
-                  <Link to="/docs/eu-n-868-narrow-slow">
-                    οδηγό EU_N_868 / NARROW_SLOW
+                  Διάβασε τις{' '}
+                  <Link to="/docs/network-settings">
+                    ρυθμίσεις δικτύου
                   </Link>
-                  . Έλεγξε ιδιαίτερα το hop limit και τον ρόλο του κόμβου σου,
-                  ειδικά αν είναι <code>ROUTER</code> ή <code>ROUTER_LATE</code>
-                  .
+                  . Επίλεξε συνήθως <code>CLIENT</code> ή <code>CLIENT_MUTE</code>.
+                  Για <code>ROUTER</code> ή <code>ROUTER_LATE</code>, συνεννοήσου
+                  πρώτα με την κοινότητα.
                 </span>
               </div>
             )}
@@ -236,7 +234,7 @@ export default function MeshtasticConfigGenerator() {
               {selection.hopLimit === 3
                 ? 'Η προεπιλογή του Meshtastic.'
                 : selection.hopLimit === 4
-                  ? 'Μεγαλύτερη κάλυψη, με περισσότερες αναμεταδόσεις.'
+                  ? 'Η αρχική επιλογή της γεννήτριας· περισσότερα hops επιτρέπουν περισσότερες αναμεταδόσεις.'
                   : 'Μόνο όπου χρειάζεται· αυξάνει τον φόρτο του mesh.'}
             </p>
           </div>
@@ -275,8 +273,14 @@ export default function MeshtasticConfigGenerator() {
               className={styles.hint}
               id="configuration-position-recommendations"
             >
-              Πρόταση: <strong>15</strong> (≈729 m) για προσωπικό ή φορητό
-              κόμβο, <strong>16</strong> (≈364 m) για σταθερό.
+              Πρόταση: <strong>14</strong> (≈1,5 km) για προσωπικό ή φορητό
+              κόμβο και <strong>15</strong> (≈729 m) για σταθερό. Σύμφωνα με την{' '}
+              <a href="https://meshtastic.org/docs/configuration/radio/channels/#position-precision">
+                τεκμηρίωση του firmware 2.8
+              </a>
+              , τα κανάλια με δημόσια γνωστό κλειδί, όπως αυτά των προφίλ μας,
+              περιορίζονται σε 15 bits. Μεγαλύτερες τιμές παραμένουν διαθέσιμες
+              για συμβατότητα με παλαιότερο firmware.
             </p>
             {showPrivacyWarning && (
               <div
@@ -285,15 +289,12 @@ export default function MeshtasticConfigGenerator() {
                 id="configuration-privacy-warning"
                 role="status"
               >
-                <strong>
-                  {selection.positionPrecision === 32
-                    ? 'Πλήρης κοινοποίηση θέσης'
-                    : 'Προσοχή στην ιδιωτικότητα'}
-                </strong>
+                <strong>Προσοχή στην ιδιωτικότητα</strong>
                 <span>
-                  {selection.positionPrecision === 32
-                    ? ' Οι πραγματικές συντεταγμένες σου θα μεταδίδονται σε κανάλι με δημόσια γνωστό κλειδί.'
-                    : ` Η ακρίβεια ${precisionLabel} περιορίζει τη θέση σου σε μια μικρή περιοχή. Το κανάλι χρησιμοποιεί δημόσια γνωστό κλειδί.`}
+                  {' '}
+                  Σε firmware χωρίς το όριο των 15 bits, αυτή η επιλογή μπορεί
+                  να αποκαλύπτει το σπίτι ή τη διαδρομή σου. Το κανάλι
+                  χρησιμοποιεί δημόσια γνωστό κλειδί.
                 </span>
               </div>
             )}
@@ -336,7 +337,7 @@ export default function MeshtasticConfigGenerator() {
 
           <div className={styles.qrPanel} key={configUrl}>
             <QRCode
-              aria-label={`QR code για το προφίλ ${profile.name}, hop limit ${selection.hopLimit}, ακρίβεια θέσης ${precisionLabel}${
+              aria-label={`QR code για το προφίλ ${profile.name}, hop limit ${selection.hopLimit}, επιλεγμένη ακρίβεια θέσης ${selection.positionPrecision} (${precisionLabel})${
                 selection.additionalChannels.length > 0
                   ? `, πρόσθετα κανάλια ${selection.additionalChannels.join(', ')}`
                   : ''
@@ -347,7 +348,7 @@ export default function MeshtasticConfigGenerator() {
               value={configUrl}
             />
           </div>
-          <p className={styles.qrHint}>Σκάναρε με την εφαρμογή Meshtastic</p>
+          <p className={styles.qrHint}>Σκάναρε με το Meshtastic app</p>
 
           <p className={styles.summary}>{selectionSummary}</p>
 
@@ -367,7 +368,7 @@ export default function MeshtasticConfigGenerator() {
               rel="noopener noreferrer"
               target="_blank"
             >
-              Άνοιγμα στο Meshtastic
+              Άνοιγμα στο Meshtastic app
             </a>
             <button
               className={styles.secondaryAction}

@@ -20,9 +20,9 @@ function HomepageHeader() {
             Ένα δίκτυο που το στήνουμε μαζί
           </Heading>
           <p className={styles.heroLead}>
-            Το Meshtastic στην Ελλάδα μεγαλώνει με κάθε νέο κόμβο. Εδώ βρίσκεις
-            ό,τι χρειάζεσαι για να ξεκινήσεις, να δεις τι γίνεται γύρω σου και
-            να γνωρίσεις την κοινότητα.
+            Το m-powered.gr είναι ο ανεξάρτητος ιστότοπος του Meshtastic Greece
+            Community για χρήστες Meshtastic στην Ελλάδα. Βρες οδηγίες, το
+            κοινοτικό προφίλ NarrowSlow και εργαλεία monitoring.
           </p>
           <div className={styles.heroActions}>
             <a className={styles.primaryButton} href="#quick-start">
@@ -40,7 +40,7 @@ function HomepageHeader() {
               href="https://meshview.m-powered.gr/"
               target="_blank"
               rel="noopener noreferrer">
-              Βρες έναν κόμβο στο Meshview
+              Δες πρόσφατα πακέτα στο Meshview
               <span aria-hidden="true">↗</span>
               <span className={styles.visuallyHidden}>
                 (εξωτερικός σύνδεσμος, ανοίγει σε νέα καρτέλα)
@@ -57,7 +57,7 @@ export default function Home(): ReactNode {
   return (
     <Layout
       title="Meshtastic Greece Community"
-      description="Το Meshtastic στην Ελλάδα μεγαλώνει με κάθε νέο κόμβο. Ξεκίνα σε πέντε βήματα, δες το δίκτυο ζωντανά και γνώρισε την κοινότητα.">
+      description="Το Meshtastic Greece Community είναι μια ανεξάρτητη κοινότητα χρηστών Meshtastic στην Ελλάδα. Οδηγοί, προφίλ NarrowSlow και εργαλεία monitoring στο m-powered.gr.">
       <HomepageHeader />
       <main>
         <HomepageFeatures />

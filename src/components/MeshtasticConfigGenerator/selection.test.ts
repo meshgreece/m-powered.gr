@@ -9,13 +9,19 @@ import {
 describe('configuration generator URL selection', () => {
   it('uses the configured defaults when optional parameters are absent', () => {
     expect(
-      parseGeneratorSelection(new URLSearchParams('preset=NarrowSlow')),
+      parseGeneratorSelection(new URLSearchParams()),
     ).toEqual({
       profileId: 'NarrowSlow',
       hopLimit: 4,
-      positionPrecision: 15,
+      positionPrecision: 14,
       additionalChannels: [],
     });
+  });
+
+  it('keeps explicit legacy LongFast selections readable', () => {
+    expect(
+      parseGeneratorSelection(new URLSearchParams('preset=LongFast')).profileId,
+    ).toBe('LongFast');
   });
 
   it('parses all supported generator parameters', () => {
@@ -60,11 +66,32 @@ describe('configuration generator URL selection', () => {
     ).toBe('preset=LongFast&hop=4&precision=18&test=true&bots=true');
   });
 
-  it('keeps the legacy query string when no additional channel is selected', () => {
+  it('creates the community default query string', () => {
     expect(createGeneratorSearchParams(DEFAULT_SELECTION).toString()).toBe(
-      'preset=LongFast&hop=4&precision=15',
+      'preset=NarrowSlow&hop=4&precision=14',
     );
   });
+
+  it('keeps an explicit legacy LongFast query string', () => {
+    expect(
+      createGeneratorSearchParams({
+        ...DEFAULT_SELECTION,
+        profileId: 'LongFast',
+      }).toString(),
+    ).toBe('preset=LongFast&hop=4&precision=14');
+  });
+
+  it.each(['LongFast', 'NarrowSlow'] as const)(
+    'preserves saved precision 15 for %s',
+    (profileId) => {
+      const selection = parseGeneratorSelection(
+        new URLSearchParams(`preset=${profileId}&precision=15`),
+      );
+
+      expect(selection.positionPrecision).toBe(15);
+      expect(createGeneratorSearchParams(selection).get('precision')).toBe('15');
+    },
+  );
 
   it('warns for 182 meters or more precise selections', () => {
     expect(hasPositionPrivacyWarning(16)).toBe(false);

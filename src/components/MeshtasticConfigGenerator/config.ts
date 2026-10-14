@@ -10,9 +10,9 @@ import type {
 } from './types';
 import {HOP_LIMITS, POSITION_PRECISION_VALUES} from './types';
 
-export const DEFAULT_PROFILE: ProfileId = 'LongFast';
+export const DEFAULT_PROFILE: ProfileId = 'NarrowSlow';
 export const DEFAULT_HOP_LIMIT: HopLimit = 4;
-export const DEFAULT_POSITION_PRECISION: PositionPrecision = 15;
+export const DEFAULT_POSITION_PRECISION: PositionPrecision = 14;
 export const POSITION_PRIVACY_WARNING_THRESHOLD = 17;
 
 export const DEFAULT_SELECTION: GeneratorSelection = {
@@ -30,13 +30,13 @@ export const ADDITIONAL_CHANNELS: Record<
     psk: new Uint8Array([2]),
     name: 'Test',
     uplinkEnabled: true,
-    downlinkEnabled: true,
+    downlinkEnabled: false,
   },
   Bots: {
     psk: new Uint8Array([2]),
     name: 'Bots',
     uplinkEnabled: true,
-    downlinkEnabled: true,
+    downlinkEnabled: false,
   },
 };
 
@@ -44,7 +44,7 @@ export const ADDITIONAL_CHANNEL_DESCRIPTIONS: Record<
   AdditionalChannelId,
   string
 > = {
-  Test: 'δοκιμές εμβέλειας και γενικό spam, μακριά από το κύριο κανάλι',
+  Test: 'σύντομες, συνεννοημένες δοκιμές χωρίς να γεμίζει το κύριο κανάλι',
   Bots: 'αυτοματισμοί και bots της κοινότητας',
 };
 
@@ -52,14 +52,14 @@ export const PROFILES: Record<ProfileId, ConfigurationProfile> = {
   LongFast: {
     id: 'LongFast',
     name: 'LongFast',
-    description: 'Η προεπιλογή για όλο το ελληνικό mesh.',
+    description: 'Παλιό προφίλ LongFast, για συμβατότητα με αποθηκευμένες επιλογές.',
     channelSet: {
       settings: [
         {
           psk: new Uint8Array([1]),
           name: 'LongFast',
           uplinkEnabled: true,
-          downlinkEnabled: true,
+          downlinkEnabled: false,
         },
       ],
       loraConfig: {
@@ -76,14 +76,14 @@ export const PROFILES: Record<ProfileId, ConfigurationProfile> = {
   NarrowSlow: {
     id: 'NarrowSlow',
     name: 'NarrowSlow',
-    description: 'Το τρέχον (custom) preset για Αττική, Βοιωτία και Εύβοια.',
+    description: 'Το προφίλ EU_N_868 / NARROW_SLOW της κοινότητας, για νέους και υπάρχοντες κόμβους.',
     channelSet: {
       settings: [
         {
           psk: new Uint8Array([1]),
           name: 'NarrowSlow',
           uplinkEnabled: true,
-          downlinkEnabled: true,
+          downlinkEnabled: false,
         },
       ],
       loraConfig: {

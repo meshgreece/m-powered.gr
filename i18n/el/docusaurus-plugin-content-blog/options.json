@@ -4,7 +4,7 @@
     "description": "The title for the blog used in SEO"
   },
   "description": {
-    "message": "Σύντομες ενημερώσεις του Meshtastic Greece Community για τους οδηγούς, τα εργαλεία και το ελληνικό mesh.",
+    "message": "Σύντομες ενημερώσεις του Meshtastic Greece Community για τους οδηγούς, τα εργαλεία και το δίκτυο της κοινότητας.",
     "description": "The description for the blog used in SEO"
   },
   "sidebar.title": {

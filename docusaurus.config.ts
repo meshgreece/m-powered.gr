@@ -7,7 +7,7 @@ import type * as Preset from '@docusaurus/preset-classic';
 const config: Config = {
   title: 'Meshtastic Greece Community',
   tagline:
-    'Από το firmware μέχρι το πρώτο «γεια», όλα τα βήματα για να μπεις στο ελληνικό mesh.',
+    'Από το firmware μέχρι το πρώτο «γεια», όλα τα βήματα για να μπεις στο δίκτυο της κοινότητάς μας.',
   favicon: 'img/favicon.ico',
 
   // Future flags, see https://docusaurus.io/docs/api/docusaurus-config#future
@@ -48,12 +48,15 @@ const config: Config = {
         blog: {
           blogTitle: 'Ενημερώσεις',
           blogDescription:
-            'Σύντομες ενημερώσεις του Meshtastic Greece Community για τους οδηγούς, τα εργαλεία και το ελληνικό mesh.',
+            'Σύντομες ενημερώσεις του Meshtastic Greece Community για τους οδηγούς, τα εργαλεία και το δίκτυο της κοινότητας.',
           blogSidebarCount: 0,
           postsPerPage: 'ALL',
           showReadingTime: false,
           editUrl: 'https://github.com/meshgreece/m-powered.gr/tree/master/',
           feedOptions: {
+            title: 'Ενημερώσεις | Meshtastic Greece Community',
+            description:
+              'Σύντομες ενημερώσεις του Meshtastic Greece Community για τους οδηγούς, τα εργαλεία και το δίκτυο της κοινότητας.',
             type: ['rss', 'atom'],
             xslt: true,
           },
@@ -73,7 +76,7 @@ const config: Config = {
     navbar: {
       title: 'Meshtastic Greece Community',
       logo: {
-        alt: 'Meshtastic Greece Community m-powered logo',
+        alt: 'Λογότυπο του Meshtastic Greece Community στο m-powered.gr',
         src: 'img/logo.svg',
       },
       items: [
@@ -131,6 +134,10 @@ const config: Config = {
               to: '/docs/get-started',
             },
             {
+              label: 'Ρυθμίσεις δικτύου',
+              to: '/docs/network-settings',
+            },
+            {
               label: 'Προτεινόμενο υλικό',
               to: '/docs/recommended-hardware',
             },
@@ -139,8 +146,8 @@ const config: Config = {
               to: '/docs/personal-node',
             },
             {
-              label: 'Σταθεροί κόμβοι και backbone',
-              to: '/docs/fixed-nodes-backbone',
+              label: 'Σταθεροί κόμβοι',
+              to: '/docs/fixed-nodes',
             },
             {
               label: 'Συχνές ερωτήσεις',
@@ -173,7 +180,7 @@ const config: Config = {
           title: 'Εργαλεία',
           items: [
             {
-              label: 'Χάρτης κόμβων Ελλάδας',
+              label: 'Χάρτης κόμβων στο m-powered.gr',
               href: 'https://map.m-powered.gr/',
             },
             {
@@ -187,7 +194,7 @@ const config: Config = {
           ],
         },
       ],
-      copyright: `Το m-powered.gr είναι ανεξάρτητος ιστότοπος κοινότητας και δεν ανήκει στο Meshtastic project.<br />Copyright © ${new Date().getFullYear()} m-powered.gr. Built with Docusaurus.`,
+      copyright: `Το m-powered.gr είναι ανεξάρτητος ιστότοπος κοινότητας. Δεν ανήκει στο έργο Meshtastic και δεν έχει επίσημη έγκριση ή χορηγία από αυτό.<br />© ${new Date().getFullYear()} m-powered.gr. Δημιουργήθηκε με Docusaurus.`,
     },
     prism: {
       theme: prismThemes.github,

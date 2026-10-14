@@ -7,21 +7,21 @@
     "message": "Κοινότητα",
     "description": "The title of the footer links column with title=Κοινότητα in the footer"
   },
-  "link.title.Περισσότερα": {
-    "message": "Περισσότερα",
-    "description": "The title of the footer links column with title=Περισσότερα in the footer"
+  "link.title.Εργαλεία": {
+    "message": "Εργαλεία",
+    "description": "The title of the footer links column with title=Εργαλεία in the footer"
   },
-  "link.item.label.Ξεκινώντας": {
-    "message": "Ξεκινώντας",
-    "description": "The label of footer link with label=Ξεκινώντας linking to /docs/get-started"
+  "link.item.label.Ξεκίνα εδώ": {
+    "message": "Ξεκίνα εδώ",
+    "description": "The label of footer link with label=Ξεκίνα εδώ linking to /docs/get-started"
   },
   "link.item.label.Telegram": {
     "message": "Telegram",
     "description": "The label of footer link with label=Telegram linking to https://t.me/+_5Z0q7DWM6UwMDJk"
   },
-  "link.item.label.Map": {
-    "message": "Map",
-    "description": "The label of footer link with label=Map linking to https://map.m-powered.gr/"
+  "link.item.label.Χάρτης κόμβων στο m-powered.gr": {
+    "message": "Χάρτης κόμβων στο m-powered.gr",
+    "description": "The label of footer link with label=Χάρτης κόμβων στο m-powered.gr linking to https://map.m-powered.gr/"
   },
   "link.item.label.Meshview": {
     "message": "Meshview",
@@ -32,7 +32,15 @@
     "description": "The label of footer link with label=Malla linking to https://malla.m-powered.gr/"
   },
   "copyright": {
-    "message": "Το m-powered.gr είναι ανεξάρτητος ιστότοπος κοινότητας και δεν ανήκει στο Meshtastic project.<br />Copyright © 2026 m-powered.gr. Built with Docusaurus.",
+    "message": "Το m-powered.gr είναι ανεξάρτητος ιστότοπος κοινότητας. Δεν ανήκει στο έργο Meshtastic και δεν έχει επίσημη έγκριση ή χορηγία από αυτό.<br />© 2026 m-powered.gr. Δημιουργήθηκε με Docusaurus.",
     "description": "The footer copyright"
+  },
+  "link.item.label.Ρυθμίσεις δικτύου": {
+    "message": "Ρυθμίσεις δικτύου",
+    "description": "The label of footer link with label=Ρυθμίσεις δικτύου linking to /docs/network-settings"
+  },
+  "link.item.label.Σταθεροί κόμβοι": {
+    "message": "Σταθεροί κόμβοι",
+    "description": "The label of footer link with label=Σταθεροί κόμβοι linking to /docs/fixed-nodes"
   }
 }
