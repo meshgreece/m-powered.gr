@@ -13,48 +13,6 @@ const RIGHT = 350;
 const TOP = 24;
 const BOTTOM = 62;
 
-/**
- * The resampling step that used to run before every series was plotted. Kept
- * here, and nowhere else, so the claim that justified deleting it stays
- * checkable: it only re-vertexed a polyline that already spanned the band.
- */
-function resampleSeries(values: number[], targetLength: number): number[] {
-  if (!values.length) return [];
-  if (values.length === targetLength) return values;
-  if (values.length === 1) {
-    return Array.from({length: targetLength}, () => values[0]);
-  }
-
-  const sourceLastIndex = values.length - 1;
-
-  return Array.from({length: targetLength}, (_, index) => {
-    const position = (index / Math.max(targetLength - 1, 1)) * sourceLastIndex;
-    const leftIndex = Math.floor(position);
-    const rightIndex = Math.ceil(position);
-
-    if (leftIndex === rightIndex) return values[leftIndex];
-
-    return (
-      values[leftIndex] +
-      (values[rightIndex] - values[leftIndex]) * (position - leftIndex)
-    );
-  });
-}
-
-/** Height of a polyline at an arbitrary x, for comparing two of them. */
-function heightAt(points: Array<[number, number]>, x: number): number {
-  for (let index = 0; index < points.length - 1; index += 1) {
-    const [leftX, leftY] = points[index];
-    const [rightX, rightY] = points[index + 1];
-
-    if (x >= leftX && x <= rightX) {
-      return leftY + (rightY - leftY) * ((x - leftX) / (rightX - leftX || 1));
-    }
-  }
-
-  return points[points.length - 1][1];
-}
-
 describe('series bounds', () => {
   it('returns the range of the values', () => {
     expect(getBounds([2, 9, 5])).toEqual([2, 9]);
@@ -103,33 +61,6 @@ describe('points inside the band', () => {
 
   it('returns nothing for an empty series', () => {
     expect(getPointsInBand([], LEFT, RIGHT, TOP, BOTTOM)).toEqual([]);
-  });
-});
-
-describe('the deleted resampling step', () => {
-  it('did not change the curve that was drawn', () => {
-    const series = Array.from({length: 41}, (_, index) =>
-      Math.round(Math.sin(index / 3) * 50 + 50),
-    );
-    const raw = getPointsInBand(series, LEFT, RIGHT, TOP, BOTTOM);
-    const resampled = getPointsInBand(
-      resampleSeries(series, 24),
-      LEFT,
-      RIGHT,
-      TOP,
-      BOTTOM,
-    );
-
-    let maxDeviation = 0;
-    for (let x = LEFT; x <= RIGHT; x += 0.5) {
-      maxDeviation = Math.max(
-        maxDeviation,
-        Math.abs(heightAt(raw, x) - heightAt(resampled, x)),
-      );
-    }
-
-    // Against a 38px band: the two polylines are the same curve.
-    expect(maxDeviation).toBeLessThan(2);
   });
 });
 

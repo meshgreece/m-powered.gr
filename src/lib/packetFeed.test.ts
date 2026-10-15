@@ -1,4 +1,4 @@
-import {afterEach, describe, expect, it, vi} from 'vitest';
+import {afterEach, beforeEach, describe, expect, it, vi} from 'vitest';
 
 import {
   createPacketFeed,
@@ -15,11 +15,6 @@ function response(data: unknown) {
   };
 }
 
-async function flushPromises() {
-  await Promise.resolve();
-  await Promise.resolve();
-}
-
 afterEach(() => {
   vi.useRealTimers();
   vi.restoreAllMocks();
@@ -34,8 +29,11 @@ describe('packet parsing', () => {
 });
 
 describe('shared packet feed', () => {
-  it('primes silently, then publishes new packets to every listener', async () => {
+  beforeEach(() => {
     vi.useFakeTimers();
+  });
+
+  it('primes silently, then publishes new packets to every listener', async () => {
     const primePacket = {
       import_time_us: 100,
       from_node_id: 5,
@@ -63,7 +61,7 @@ describe('shared packet feed', () => {
 
     const unsubscribeFirst = feed.subscribePackets(firstListener);
     const unsubscribeSecond = feed.subscribePackets(secondListener);
-    await flushPromises();
+    await vi.advanceTimersByTimeAsync(0);
 
     expect(fetcher).toHaveBeenCalledTimes(1);
     expect(firstListener).not.toHaveBeenCalled();
@@ -93,7 +91,6 @@ describe('shared packet feed', () => {
   // would be harmless, but only because the cursor cannot move backwards -- pin
   // it, because nothing else in this file does.
   it('holds the cursor when a quiet poll reports no newer packets', async () => {
-    vi.useFakeTimers();
     const fetcher = vi
       .fn()
       .mockResolvedValueOnce(
@@ -109,7 +106,7 @@ describe('shared packet feed', () => {
     const listener = vi.fn();
 
     const unsubscribe = feed.subscribePackets(listener);
-    await flushPromises();
+    await vi.advanceTimersByTimeAsync(0);
     expect(fetcher.mock.calls[0][0]).toContain('limit=1');
 
     // A cursor behind ours must not drag the feed backwards.
@@ -131,7 +128,6 @@ describe('shared packet feed', () => {
   });
 
   it('does not replay the current batch to a later subscriber', async () => {
-    vi.useFakeTimers();
     const fetcher = vi
       .fn()
       .mockResolvedValueOnce(
@@ -148,7 +144,7 @@ describe('shared packet feed', () => {
     const laterListener = vi.fn();
 
     const unsubscribeFirst = feed.subscribePackets(firstListener);
-    await flushPromises();
+    await vi.advanceTimersByTimeAsync(0);
     await vi.advanceTimersByTimeAsync(3_000);
     const unsubscribeLater = feed.subscribePackets(laterListener);
 
@@ -160,7 +156,6 @@ describe('shared packet feed', () => {
   });
 
   it('re-primes without replaying backlog after visibility resumes', async () => {
-    vi.useFakeTimers();
     let visibilityListener = () => {};
     const visibility = {
       hidden: false,
@@ -190,7 +185,7 @@ describe('shared packet feed', () => {
     const feed = createPacketFeed();
     const listener = vi.fn();
     const unsubscribe = feed.subscribePackets(listener);
-    await flushPromises();
+    await vi.advanceTimersByTimeAsync(0);
 
     visibility.hidden = true;
     visibilityListener();
@@ -199,7 +194,7 @@ describe('shared packet feed', () => {
 
     visibility.hidden = false;
     visibilityListener();
-    await flushPromises();
+    await vi.advanceTimersByTimeAsync(0);
 
     expect(fetcher.mock.calls[1][0]).toContain('limit=1');
     expect(fetcher.mock.calls[1][0]).not.toContain('since=');
@@ -210,7 +205,6 @@ describe('shared packet feed', () => {
   });
 
   it('allows only one request while a fetch is in flight', async () => {
-    vi.useFakeTimers();
     let resolveRequest: (value: ReturnType<typeof response>) => void = () => {};
     const fetcher = vi.fn(
       () =>
@@ -227,7 +221,7 @@ describe('shared packet feed', () => {
     expect(fetcher).toHaveBeenCalledTimes(1);
 
     resolveRequest(response({packets: [], latest_import_time: 100}));
-    await flushPromises();
+    await vi.advanceTimersByTimeAsync(0);
     unsubscribeState();
     unsubscribePackets();
   });
@@ -235,7 +229,6 @@ describe('shared packet feed', () => {
   // The in-flight guard above is what makes a stalled request dangerous: without
   // a deadline it would hold the flag forever and silence every later poll.
   it('gives up on a request that never settles and polls again', async () => {
-    vi.useFakeTimers();
     const fetcher = vi
       .fn()
       .mockImplementationOnce(() => new Promise(() => {}))
@@ -274,7 +267,6 @@ describe('shared packet feed', () => {
   });
 
   it('recovers from a failed prime without publishing history', async () => {
-    vi.useFakeTimers();
     vi.spyOn(console, 'error').mockImplementation(() => {});
     const fetcher = vi
       .fn()
@@ -299,7 +291,7 @@ describe('shared packet feed', () => {
     const feed = createPacketFeed();
     const packetListener = vi.fn();
     const unsubscribe = feed.subscribePackets(packetListener);
-    await flushPromises();
+    await vi.advanceTimersByTimeAsync(0);
 
     expect(feed.getSnapshot().hasError).toBe(true);
     await vi.advanceTimersByTimeAsync(3_000);
@@ -315,7 +307,6 @@ describe('shared packet feed', () => {
   });
 
   it('retains the last activity time while a poll is failing', async () => {
-    vi.useFakeTimers();
     vi.spyOn(console, 'error').mockImplementation(() => {});
     const fetcher = vi
       .fn()
@@ -334,7 +325,7 @@ describe('shared packet feed', () => {
     vi.stubGlobal('fetch', fetcher);
     const feed = createPacketFeed();
     const unsubscribe = feed.subscribeState(() => {});
-    await flushPromises();
+    await vi.advanceTimersByTimeAsync(0);
 
     await vi.advanceTimersByTimeAsync(3_000);
 
@@ -365,22 +356,20 @@ describe('feed status', () => {
     ).toEqual({kind: 'error'});
   });
 
-  it('moves from live to stale to waiting as the last packet ages', () => {
+  it('waits when no packet has arrived', () => {
     expect(getFeedStatus(snapshot(null), nowMs)).toEqual({kind: 'waiting'});
-    expect(getFeedStatus(snapshot(ago(0)), nowMs)).toEqual({kind: 'live', seconds: 0});
-    expect(getFeedStatus(snapshot(ago(59)), nowMs)).toEqual({kind: 'live', seconds: 59});
-    expect(getFeedStatus(snapshot(ago(60)), nowMs)).toEqual({kind: 'stale', minutes: 1});
-    expect(getFeedStatus(snapshot(ago(150)), nowMs)).toEqual({kind: 'stale', minutes: 3});
-    expect(getFeedStatus(snapshot(ago(3_600)), nowMs)).toEqual({kind: 'waiting'});
   });
 
-  it('counts whole elapsed seconds while live', () => {
-    const latest = snapshot(ago(0));
-    expect(getFeedStatus(latest, nowMs)).toEqual({kind: 'live', seconds: 0});
-    expect(getFeedStatus(latest, nowMs + 999)).toEqual({kind: 'live', seconds: 0});
-    expect(getFeedStatus(latest, nowMs + 1_000)).toEqual({kind: 'live', seconds: 1});
-    expect(getFeedStatus(latest, nowMs + 59_999)).toEqual({kind: 'live', seconds: 59});
-    expect(getFeedStatus(latest, nowMs + 60_000)).toEqual({kind: 'stale', minutes: 1});
+  it.each([
+    [0, {kind: 'live', seconds: 0}],
+    [999, {kind: 'live', seconds: 0}],
+    [1_000, {kind: 'live', seconds: 1}],
+    [59_999, {kind: 'live', seconds: 59}],
+    [60_000, {kind: 'stale', minutes: 1}],
+    [150_000, {kind: 'stale', minutes: 3}],
+    [3_600_000, {kind: 'waiting'}],
+  ])('reports status at %i ms since the last packet', (ageMs, expected) => {
+    expect(getFeedStatus(snapshot(ago(0)), nowMs + ageMs)).toEqual(expected);
   });
 
   it('treats future timestamps from clock skew as live now', () => {
