@@ -1,4 +1,5 @@
 import {
+  useCallback,
   useEffect,
   useLayoutEffect,
   useMemo,
@@ -13,21 +14,23 @@ import * as topojson from 'topojson-client';
 import type {GeometryCollection, Topology} from 'topojson-specification';
 
 import {meshviewPacketFeed} from '@site/src/lib/packetFeed';
-import {getMeshviewApiUrl} from '@site/src/lib/meshview';
-import type {MeshviewNode, MeshviewPacket} from '@site/src/lib/meshview';
-import {createCameraGovernor} from './cameraGovernor';
-import type {CameraGovernor} from './cameraGovernor';
+import {fetchJson, getMeshviewApiUrl} from '@site/src/lib/meshview';
+import type {
+  MeshviewNode,
+  MeshviewPacket,
+  PacketsResponse,
+} from '@site/src/lib/meshview';
 import {
   getCameraUpdate,
   getMapCamera,
   getMarkerRadii,
-  getNewestPositionedSender,
-  getPulseEvents,
+  getNewestPositionedPacket,
   getSafeInsets,
   IDENTITY_CAMERA,
   interpolateCamera,
   NARROW_MAP_QUERY,
   projectMeshviewNodes,
+  retainFocusedNode,
 } from './liveMap';
 import type {
   CameraTransform,
@@ -39,6 +42,7 @@ import mapStyles from './styles.module.css';
 
 const DAYS_ACTIVE = 1;
 const NODE_REFRESH_INTERVAL_MS = 60_000;
+const INITIAL_FOCUS_TIMEOUT_MS = 10_000;
 const PAN_DURATION_MS = 950;
 const ZOOM_DURATION_MS = 1_400;
 const DEFAULT_MAP_SIZE = {width: 1080, height: 640};
@@ -113,13 +117,13 @@ export default function HomepageLiveMap({copyRef}: Props) {
   const [mapSize, setMapSize] = useState<MapSize>(DEFAULT_MAP_SIZE);
   const [topology, setTopology] = useState<Topology | null>(null);
   const [rawNodes, setRawNodes] = useState<MeshviewNode[]>([]);
+  const [initialFocusReady, setInitialFocusReady] = useState(false);
+  const [focusRequest, setFocusRequest] = useState(0);
   const [focusedNodeId, setFocusedNodeId] = useState<number | null>(null);
   const [camera, setCamera] = useState<CameraTransform>(IDENTITY_CAMERA);
-  const [pulseRevisions, setPulseRevisions] = useState<
-    Readonly<Record<number, number>>
-  >({});
   const positionedNodeIdsRef = useRef<ReadonlySet<number>>(new Set());
-  const governorRef = useRef<CameraGovernor | null>(null);
+  const latestFocusedTimeRef = useRef(-Infinity);
+  const focusedNodeIdRef = useRef<number | null>(null);
   const cameraRef = useRef<CameraTransform | null>(null);
   const cameraSizeRef = useRef<MapSize | null>(null);
   const prefersReducedMotion = useMediaQuery(REDUCED_MOTION_QUERY);
@@ -196,7 +200,13 @@ export default function HomepageLiveMap({copyRef}: Props) {
         }
 
         const data = (await response.json()) as {nodes?: MeshviewNode[]};
-        setRawNodes(Array.isArray(data.nodes) ? data.nodes : []);
+        setRawNodes((current) =>
+          retainFocusedNode(
+            Array.isArray(data.nodes) ? data.nodes : [],
+            current,
+            focusedNodeIdRef.current,
+          ),
+        );
       } catch (error) {
         if ((error as {name?: string}).name !== 'AbortError') {
           console.error(error);
@@ -243,72 +253,79 @@ export default function HomepageLiveMap({copyRef}: Props) {
     positionedNodeIdsRef.current = new Set(nodes.map((node) => node.nodeId));
   }, [nodes]);
 
-  // Reduced motion: no governor, so no automatic movement and no camera timers.
-  useEffect(() => {
-    if (prefersReducedMotion) {
-      setFocusedNodeId(null);
+  const handlePackets = useCallback((packets: readonly MeshviewPacket[]) => {
+    const newest = getNewestPositionedPacket(
+      packets,
+      positionedNodeIdsRef.current,
+    );
+    if (newest === null || newest.importTimeUs <= latestFocusedTimeRef.current)
       return;
-    }
 
-    const governor = createCameraGovernor(setFocusedNodeId);
-    governorRef.current = governor;
-    return () => {
-      governor.dispose();
-      governorRef.current = null;
-    };
-  }, [prefersReducedMotion]);
+    latestFocusedTimeRef.current = newest.importTimeUs;
+    focusedNodeIdRef.current = newest.nodeId;
+    setFocusedNodeId(newest.nodeId);
+  }, []);
 
-  // Reduced motion gets no pulses at all, rather than a ring that appears and
-  // vanishes without the animation that explains it.
+  useEffect(
+    () => meshviewPacketFeed.subscribePackets(handlePackets),
+    [handlePackets],
+  );
+
   useEffect(() => {
-    function handlePackets(packets: readonly MeshviewPacket[]) {
-      const newestSenderNodeId = getNewestPositionedSender(
-        packets,
-        positionedNodeIdsRef.current,
-      );
+    function onVisibilityChange() {
+      if (!document.hidden) setFocusRequest((request) => request + 1);
+    }
+    document.addEventListener('visibilitychange', onVisibilityChange);
+    return () => document.removeEventListener('visibilitychange', onVisibilityChange);
+  }, []);
 
-      if (newestSenderNodeId !== null) {
-        governorRef.current?.consider(newestSenderNodeId);
+  const hasMapData = nodes.length > 0;
+  useEffect(() => {
+    const controller = new AbortController();
+    // Show the overview if either the node list or initial history stalls.
+    const timeoutId = window.setTimeout(() => {
+      controller.abort();
+      setInitialFocusReady(true);
+    }, INITIAL_FOCUS_TIMEOUT_MS);
+
+    async function loadInitialFocus() {
+      try {
+        // shortcut: scan the latest 1,000 packets; use a server-side location filter if this window becomes insufficient.
+        const data = await fetchJson<PacketsResponse>(
+          getMeshviewApiUrl('packets', {limit: 1000}),
+          controller.signal,
+        );
+        if (!controller.signal.aborted) {
+          handlePackets(Array.isArray(data.packets) ? data.packets : []);
+        }
+      } catch (error) {
+        if ((error as {name?: string}).name !== 'AbortError') {
+          console.error(error);
+        }
+      } finally {
+        window.clearTimeout(timeoutId);
+        if (!controller.signal.aborted) setInitialFocusReady(true);
       }
-
-      if (prefersReducedMotion) return;
-
-      const pulseEvents = getPulseEvents(packets, positionedNodeIdsRef.current);
-      if (pulseEvents.length === 0) return;
-
-      setPulseRevisions((current) => {
-        const next = {...current};
-        for (const {nodeId, revision} of pulseEvents) next[nodeId] = revision;
-        return next;
-      });
     }
 
-    return meshviewPacketFeed.subscribePackets(handlePackets);
-  }, [prefersReducedMotion]);
-
-  // The keyframe owns the pulse's lifetime; this only drops the finished entry.
-  function removePulse(nodeId: number, revision: number) {
-    setPulseRevisions((current) => {
-      if (current[nodeId] !== revision) return current;
-      const next = {...current};
-      delete next[nodeId];
-      return next;
-    });
-  }
+    // Start the loading deadline even while waiting for nodes and topology.
+    if (hasMapData) void loadInitialFocus();
+    return () => {
+      controller.abort();
+      window.clearTimeout(timeoutId);
+    };
+  }, [focusRequest, handlePackets, hasMapData]);
 
   const focusedNode =
     focusedNodeId === null ? undefined : nodesById.get(focusedNodeId);
   const focusX = focusedNode?.x;
   const focusY = focusedNode?.y;
 
-  // Layout effect: the first frame containing the SVG is painted with the
-  // final overview. Node refreshes only reach this through the focused
-  // node's coordinates, so they never move the overview.
+  // Paint the first map frame at its final focus, without an overview flash.
   useLayoutEffect(() => {
-    if (geometry === null) return;
+    if (geometry === null || (!initialFocusReady && focusedNodeId === null))
+      return;
 
-    // A refresh that drops the focused node leaves nothing to point at, so the
-    // camera rests rather than holding a zoom on an empty frame.
     const focus =
       focusX === undefined || focusY === undefined ? null : {x: focusX, y: focusY};
 
@@ -360,7 +377,17 @@ export default function HomepageLiveMap({copyRef}: Props) {
     });
 
     return () => cancelAnimationFrame(frameId);
-  }, [copyRef, focusX, focusY, geometry, isNarrow, mapSize, prefersReducedMotion]);
+  }, [
+    copyRef,
+    focusX,
+    focusY,
+    focusedNodeId,
+    geometry,
+    initialFocusReady,
+    isNarrow,
+    mapSize,
+    prefersReducedMotion,
+  ]);
 
   const markerRadii = getMarkerRadii(camera.scale);
   const viewportTransform = `matrix(${camera.scale}, 0, 0, ${camera.scale}, ${camera.translateX}, ${camera.translateY})`;
@@ -368,7 +395,7 @@ export default function HomepageLiveMap({copyRef}: Props) {
   return (
     <div className={mapStyles.shell}>
       <div className={mapStyles.mapFrame} ref={mapFrameRef}>
-        {geometry !== null && (
+        {geometry !== null && (initialFocusReady || focusedNode !== undefined) && (
           <svg
             aria-hidden="true"
             className={mapStyles.map}
@@ -390,20 +417,15 @@ export default function HomepageLiveMap({copyRef}: Props) {
                   }
                 />
               ))}
-              {Object.entries(pulseRevisions).map(([nodeId, revision]) => {
-                const node = nodesById.get(Number(nodeId));
-                if (node === undefined) return null;
-                return (
-                  <circle
-                    className={`${mapStyles.pulse} ${channelClass(node.channel)}`}
-                    cx={node.x}
-                    cy={node.y}
-                    key={`${nodeId}-${revision}`}
-                    onAnimationEnd={() => removePulse(Number(nodeId), revision)}
-                    r={markerRadii.focusedNode}
-                  />
-                );
-              })}
+              {focusedNode !== undefined && !prefersReducedMotion && (
+                <circle
+                  className={`${mapStyles.pulse} ${channelClass(focusedNode.channel)}`}
+                  cx={focusedNode.x}
+                  cy={focusedNode.y}
+                  key={focusedNode.nodeId}
+                  r={markerRadii.focusedNode}
+                />
+              )}
             </g>
           </svg>
         )}

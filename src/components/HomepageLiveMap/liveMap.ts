@@ -78,33 +78,33 @@ export function projectMeshviewNodes(
   return projected;
 }
 
-export function getPulseEvents(
-  packets: readonly MeshviewPacket[],
-  positionedNodeIds: ReadonlySet<number>,
-): {nodeId: number; revision: number}[] {
-  const revisions = new Map<number, number>();
+export function retainFocusedNode(
+  nodes: MeshviewNode[],
+  previousNodes: readonly MeshviewNode[],
+  focusedNodeId: number | null,
+): MeshviewNode[] {
+  if (focusedNodeId === null) return nodes;
 
-  for (const packet of packets) {
-    const nodeId = getPacketSenderNodeId(packet);
-    const packetTime = getPacketImportTimeUs(packet);
-    if (
-      nodeId !== null &&
-      positionedNodeIds.has(nodeId) &&
-      packetTime !== null
-    ) {
-      revisions.set(nodeId, Math.max(revisions.get(nodeId) ?? 0, packetTime));
-    }
+  const replacement = nodes.find((node) => Number(node.node_id) === focusedNodeId);
+  if (
+    replacement &&
+    normalizeMeshviewCoordinate(replacement.last_lat, 90) !== null &&
+    normalizeMeshviewCoordinate(replacement.last_long, 180) !== null
+  ) {
+    return nodes;
   }
 
-  return [...revisions].map(([nodeId, revision]) => ({nodeId, revision}));
+  const previous = previousNodes.find((node) => Number(node.node_id) === focusedNodeId);
+  return previous
+    ? [...nodes.filter((node) => Number(node.node_id) !== focusedNodeId), previous]
+    : nodes;
 }
 
-export function getNewestPositionedSender(
+export function getNewestPositionedPacket(
   packets: readonly MeshviewPacket[],
   positionedNodeIds: ReadonlySet<number>,
-): number | null {
-  let newestNodeId: number | null = null;
-  let newestImportTimeUs = -Infinity;
+): {nodeId: number; importTimeUs: number} | null {
+  let newest: {nodeId: number; importTimeUs: number} | null = null;
 
   for (const packet of packets) {
     const nodeId = getPacketSenderNodeId(packet);
@@ -113,14 +113,13 @@ export function getNewestPositionedSender(
       nodeId !== null &&
       importTimeUs !== null &&
       positionedNodeIds.has(nodeId) &&
-      importTimeUs > newestImportTimeUs
+      (newest === null || importTimeUs > newest.importTimeUs)
     ) {
-      newestNodeId = nodeId;
-      newestImportTimeUs = importTimeUs;
+      newest = {nodeId, importTimeUs};
     }
   }
 
-  return newestNodeId;
+  return newest;
 }
 
 export function getCameraTransform(

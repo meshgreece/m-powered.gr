@@ -16,10 +16,10 @@ import {
   NARROW_MAP_QUERY,
   interpolateCamera,
   getMarkerRadii,
-  getNewestPositionedSender,
-  getPulseEvents,
+  getNewestPositionedPacket,
   OVERVIEW_CENTRE_X,
   projectMeshviewNodes,
+  retainFocusedNode,
 } from './liveMap';
 
 /**
@@ -92,49 +92,64 @@ describe('Meshview node coordinates', () => {
   });
 });
 
-describe('packet-driven pulses', () => {
-  it('uses the newest packet to retrigger each positioned sender', () => {
-    expect(
-      getPulseEvents(
-        [
-          {from_node_id: 10, import_time_us: 100},
-          {from_node_id: 10, import_time_us: 104},
-          {from_node_id: 20, import_time_us: 102},
-          {from_node_id: 30, import_time_us: 108},
-        ],
-        new Set([10, 20]),
-      ),
-    ).toEqual([
-      {nodeId: 10, revision: 104},
-      {nodeId: 20, revision: 102},
-    ]);
+describe('focused node retention', () => {
+  const focused = {node_id: 10, last_lat: 379682816, last_long: 236224512};
+  const other = {node_id: 20, last_lat: 406400000, last_long: 229400000};
+
+  it('retains the last valid location when a refresh omits the focused node', () => {
+    expect(retainFocusedNode([other], [focused, other], 10)).toEqual([other, focused]);
   });
 
-  it('selects the newest positioned sender and ignores unusable packets', () => {
+  it('retains the last valid location when a refresh loses its coordinates', () => {
+    expect(retainFocusedNode([{...focused, last_lat: null}, other], [focused, other], 10))
+      .toEqual([other, focused]);
+  });
+
+  it('accepts a valid location update for the focused node', () => {
+    const updated = {...focused, last_lat: 379700000};
+    expect(retainFocusedNode([updated, other], [focused, other], 10))
+      .toEqual([updated, other]);
+  });
+
+  it('keeps ordinary refreshes unchanged when there is no focus', () => {
+    expect(retainFocusedNode([other], [focused, other], null)).toEqual([other]);
+  });
+});
+
+describe('latest positioned packet', () => {
+  it('selects the newest located sender and retains its timestamp', () => {
     expect(
-      getNewestPositionedSender(
+      getNewestPositionedPacket(
         [
           {from_node_id: 10, import_time_us: 100},
           {from_node_id: 30, import_time_us: 110},
           {from_node_id: 20, import_time_us: '108'},
           {from_node_id: 10, import_time_us: 106},
           {from_node_id: 'invalid', import_time_us: 120},
+          {from_node_id: 20, import_time_us: 'invalid'},
         ],
         new Set([10, 20]),
       ),
-    ).toBe(20);
+    ).toEqual({nodeId: 20, importTimeUs: 108});
   });
 
   it('keeps packet ordering stable when timestamps tie', () => {
     expect(
-      getNewestPositionedSender(
+      getNewestPositionedPacket(
         [
           {from_node_id: 10, import_time_us: 100},
           {from_node_id: 20, import_time_us: 100},
         ],
         new Set([10, 20]),
       ),
-    ).toBe(10);
+    ).toEqual({nodeId: 10, importTimeUs: 100});
+  });
+
+  it('returns no focus for an empty history or unlocated senders', () => {
+    expect(getNewestPositionedPacket([], new Set([10]))).toBeNull();
+    expect(getNewestPositionedPacket([
+      {from_node_id: 20, import_time_us: 110},
+    ], new Set([10]))).toBeNull();
   });
 });
 
@@ -441,7 +456,7 @@ describe('land-based overview', () => {
     expect(refreshed).toEqual(focused);
   });
 
-  it('rests when a refresh drops the focused node', () => {
+  it('uses the overview when no focused location is available', () => {
     const dropped = cameraFor(1, nodeSets[0], desktop, desktopBounds);
     expect(dropped).toEqual(getOverviewCamera(desktopBounds, desktop, false));
   });
