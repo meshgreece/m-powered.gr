@@ -33,6 +33,7 @@ export type MeshviewNode = {
   last_lat?: number | string | null;
   last_long?: number | string | null;
   last_seen_us?: number | string | null;
+  is_mqtt_gateway?: boolean | null;
 };
 
 export type NodesResponse = {

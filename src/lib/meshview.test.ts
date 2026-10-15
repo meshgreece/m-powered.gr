@@ -16,8 +16,8 @@ import packetsFixture from './__fixtures__/packets-parnitha-24h.json';
 
 const packets = packetsFixture.packets as MeshviewPacket[];
 
-// The series /stats returned for the same node at the same moment
-// (stats-parnitha-24h.json, anchored on 2026-09-19 11:00 UTC).
+// Captured /stats series for node 3461419339, anchored on
+// 2026-09-19 11:00 UTC, alongside the packet fixture.
 const STATS_DERIVED_SERIES = [
   2, 4, 0, 1, 0, 3, 0, 1, 0, 2, 0, 3, 1, 2, 0, 1, 0, 3, 2, 1, 0, 1, 0, 3,
 ];

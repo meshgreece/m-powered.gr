@@ -7,7 +7,6 @@ import type {MeshviewNode, MeshviewPacket} from '../../lib/meshview';
 
 export type ProjectedNode = {
   nodeId: number;
-  name: string;
   x: number;
   y: number;
   channel: 'LongFast' | 'NarrowSlow' | 'Unknown';
@@ -65,7 +64,6 @@ export function projectMeshviewNodes(
 
     projected.push({
       nodeId,
-      name: node.long_name || node.short_name || `!${nodeId.toString(16)}`,
       x: point[0],
       y: point[1],
       channel:

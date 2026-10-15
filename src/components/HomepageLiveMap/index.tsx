@@ -18,6 +18,7 @@ import {fetchJson, getMeshviewApiUrl} from '@site/src/lib/meshview';
 import type {
   MeshviewNode,
   MeshviewPacket,
+  NodesResponse,
   PacketsResponse,
 } from '@site/src/lib/meshview';
 import {
@@ -187,19 +188,10 @@ export default function HomepageLiveMap({copyRef}: Props) {
       if (document.hidden) return;
 
       try {
-        const response = await fetch(
+        const data = await fetchJson<NodesResponse>(
           getMeshviewApiUrl('nodes', {days_active: DAYS_ACTIVE}),
-          {
-            cache: 'no-store',
-            headers: {accept: 'application/json'},
-            signal: abortController.signal,
-          },
+          abortController.signal,
         );
-        if (!response.ok) {
-          throw new Error(`Nodes request failed with status ${response.status}`);
-        }
-
-        const data = (await response.json()) as {nodes?: MeshviewNode[]};
         setRawNodes((current) =>
           retainFocusedNode(
             Array.isArray(data.nodes) ? data.nodes : [],

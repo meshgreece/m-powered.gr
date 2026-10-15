@@ -52,8 +52,6 @@ export default function MeshtasticConfigGenerator() {
   );
 
   useEffect(() => {
-    if (!ExecutionEnvironment.canUseDOM) return;
-
     setSelection(
       parseGeneratorSelection(new URLSearchParams(window.location.search)),
     );
@@ -61,7 +59,7 @@ export default function MeshtasticConfigGenerator() {
   }, []);
 
   useEffect(() => {
-    if (!ExecutionEnvironment.canUseDOM || !isInitialized) return;
+    if (!isInitialized) return;
 
     const params = createGeneratorSearchParams(selection);
     window.history.replaceState(
@@ -72,25 +70,13 @@ export default function MeshtasticConfigGenerator() {
   }, [isInitialized, selection]);
 
   const profile = PROFILES[selection.profileId];
-  const options = useMemo(
-    () => ({
-      hopLimit: selection.hopLimit,
-      positionPrecision: selection.positionPrecision,
-      additionalChannels: selection.additionalChannels,
-    }),
-    [
-      selection.additionalChannels,
-      selection.hopLimit,
-      selection.positionPrecision,
-    ],
-  );
   const configUrl = useMemo(
-    () => createConfigUrl(profile, options),
-    [options, profile],
+    () => createConfigUrl(profile, selection),
+    [profile, selection],
   );
   const configJson = useMemo(
-    () => createConfigJson(profile, options),
-    [options, profile],
+    () => createConfigJson(profile, selection),
+    [profile, selection],
   );
   const shareableUrl = useMemo(() => {
     if (!ExecutionEnvironment.canUseDOM || !isInitialized) return '';

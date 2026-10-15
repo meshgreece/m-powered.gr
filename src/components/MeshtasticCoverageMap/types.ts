@@ -15,14 +15,6 @@ export const COVERAGE_STATES = [
   'None',
 ] as const satisfies readonly CoverageState[];
 
-/** Only the Meshview `/api/nodes` fields this map reads. */
-export type MeshviewNode = {
-  last_lat: number | null;
-  last_long: number | null;
-  channel: string | null;
-  is_mqtt_gateway: boolean | null;
-};
-
 export type NutsUnitProperties = {
   /** NUTS 2024 level 3 identifier, e.g. `EL522`. */
   id: string;
@@ -55,9 +47,5 @@ export type Coverage = {
   unitsWithNodes: number;
   positionlessByPreset: Record<PresetChannel, number>;
   positionlessTotal: number;
-  /**
-   * Positioned nodes too far from any unit to assign (open sea, Turkish
-   * coast). Counted, never placed.
-   */
-  outsideCount: number;
+
 };

@@ -9,7 +9,6 @@
   --status-stale: #a86100;
   --status-map-gradient: linear-gradient(180deg, #2c2d3c 0%, #202431 100%);
   --status-map-ring-fill: rgba(47, 128, 237, 0.18);
-  --status-map-ring-stroke: rgba(255, 255, 255, 0.26);
   --status-map-marker-fill: #58a6ff;
   --status-map-marker-stroke: #202431;
   --status-label-bg: rgba(255, 255, 255, 0.94);
@@ -647,7 +646,6 @@
   --status-stale: #f0b429;
   --status-map-gradient: linear-gradient(180deg, #2c2d3c 0%, #202431 100%);
   --status-map-ring-fill: rgba(88, 166, 255, 0.12);
-  --status-map-ring-stroke: rgba(255, 255, 255, 0.24);
   --status-map-marker-fill: #9ecbff;
   --status-map-marker-stroke: #202431;
   --status-label-bg: rgba(23, 27, 35, 0.88);

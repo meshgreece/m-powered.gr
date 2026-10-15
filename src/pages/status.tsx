@@ -61,7 +61,7 @@ type CoreNodeReference = {
   temporary?: boolean;
 };
 
-type NodeCardData = CoreNodeReference & {
+type NodeCardData = CoreNodeReference & TelemetryData & {
   name: string;
   shortName: string;
   role: string;
@@ -73,13 +73,7 @@ type NodeCardData = CoreNodeReference & {
   /** No packets in the last 24h, i.e. the node is down. */
   isStale: boolean;
   packets24h: number;
-  battery: number | null;
-  voltage: number | null;
   activity24h: number[];
-  batterySeries: number[];
-  voltageSeries: number[];
-  airUtilTxSeries: number[];
-  channelUtilizationSeries: number[];
   isLoading: boolean;
 };
 
@@ -480,11 +474,12 @@ function Combined24hPlot({
   const peakActivity = Math.max(...activity, 1);
   const usableWidth = plotRight - plotLeft;
   const barWidth = usableWidth / activity.length - 1.8;
-  const batteryLastPoint = batteryPoints[batteryPoints.length - 1];
-  const voltageLastPoint = voltagePoints[voltagePoints.length - 1];
-  const airUtilTxLastPoint = airUtilTxPoints[airUtilTxPoints.length - 1];
-  const channelUtilizationLastPoint =
-    channelUtilizationPoints[channelUtilizationPoints.length - 1];
+  const plottedSeries = [
+    {id: 'battery', points: batteryPoints},
+    {id: 'voltage', points: voltagePoints},
+    {id: 'air-util-tx', points: airUtilTxPoints},
+    {id: 'channel-utilization', points: channelUtilizationPoints},
+  ].filter(({points}) => points.length > 0);
 
   return (
     <svg className={styles.combinedPlot} viewBox={"0 0 " + width + " " + height} aria-hidden="true">
@@ -550,70 +545,27 @@ function Combined24hPlot({
           />
         );
       })}
-      {hasBattery ? (
+      {plottedSeries.map(({id, points}) => (
         <path
           className={styles.line}
-          d={getLinePath(batteryPoints)}
-          data-series="battery"
+          d={getLinePath(points)}
+          data-series={id}
+          key={id}
         />
-      ) : null}
-      {hasVoltage ? (
-        <path
-          className={styles.line}
-          d={getLinePath(voltagePoints)}
-          data-series="voltage"
-        />
-      ) : null}
-      {hasAirUtilTx ? (
-        <path
-          className={styles.line}
-          d={getLinePath(airUtilTxPoints)}
-          data-series="air-util-tx"
-        />
-      ) : null}
-      {hasChannelUtilization ? (
-        <path
-          className={styles.line}
-          d={getLinePath(channelUtilizationPoints)}
-          data-series="channel-utilization"
-        />
-      ) : null}
-      {hasBattery && batteryLastPoint ? (
-        <circle
-          className={styles.point}
-          cx={batteryLastPoint[0]}
-          cy={batteryLastPoint[1]}
-          r="3.5"
-          data-series="battery"
-        />
-      ) : null}
-      {hasVoltage && voltageLastPoint ? (
-        <circle
-          className={styles.point}
-          cx={voltageLastPoint[0]}
-          cy={voltageLastPoint[1]}
-          r="3.5"
-          data-series="voltage"
-        />
-      ) : null}
-      {hasAirUtilTx && airUtilTxLastPoint ? (
-        <circle
-          className={styles.point}
-          cx={airUtilTxLastPoint[0]}
-          cy={airUtilTxLastPoint[1]}
-          r="3.5"
-          data-series="air-util-tx"
-        />
-      ) : null}
-      {hasChannelUtilization && channelUtilizationLastPoint ? (
-        <circle
-          className={styles.point}
-          cx={channelUtilizationLastPoint[0]}
-          cy={channelUtilizationLastPoint[1]}
-          r="3.5"
-          data-series="channel-utilization"
-        />
-      ) : null}
+      ))}
+      {plottedSeries.map(({id, points}) => {
+        const [cx, cy] = points[points.length - 1];
+        return (
+          <circle
+            className={styles.point}
+            cx={cx}
+            cy={cy}
+            r="3.5"
+            data-series={id}
+            key={id}
+          />
+        );
+      })}
       <text className={styles.plotXAxisLabel} x={plotLeft} y={xAxisLabelY}>
         24ω πριν
       </text>
@@ -966,7 +918,7 @@ function useCoreNodeStatus() {
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [lastUpdated, setLastUpdated] = useState<number | null>(null);
   const [nextRefreshAt, setNextRefreshAt] = useState<number | null>(null);
-  const latestNodesRef = useRef<NodeCardData[]>(createInitialNodeCards());
+  const latestNodesRef = useRef<NodeCardData[]>(nodes);
   const nodeRecordsRef = useRef<{
     records: Map<string, MeshviewNode>;
     fetchedAtMs: number;

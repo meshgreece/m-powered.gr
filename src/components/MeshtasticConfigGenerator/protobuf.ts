@@ -1,32 +1,23 @@
 import {
   create,
-  fromBinary,
   toBinary,
-  toJson,
   toJsonString,
 } from '@bufbuild/protobuf';
-import {base64Decode, base64Encode} from '@bufbuild/protobuf/wire';
+import {base64Encode} from '@bufbuild/protobuf/wire';
 import {AppOnly} from '@meshtastic/protobufs';
 
 import {
   ADDITIONAL_CHANNELS,
-  DEFAULT_HOP_LIMIT,
-  DEFAULT_POSITION_PRECISION,
+  DEFAULT_SELECTION,
 } from './config';
 import {ADDITIONAL_CHANNEL_IDS} from './types';
 import type {ConfigurationProfile, GeneratorOptions} from './types';
 
 const CONFIG_URL_PREFIX = 'https://meshtastic.org/e/#';
 
-const DEFAULT_OPTIONS: GeneratorOptions = {
-  hopLimit: DEFAULT_HOP_LIMIT,
-  positionPrecision: DEFAULT_POSITION_PRECISION,
-  additionalChannels: [],
-};
-
 export function createChannelSet(
   profile: ConfigurationProfile,
-  options: GeneratorOptions = DEFAULT_OPTIONS,
+  options: GeneratorOptions = DEFAULT_SELECTION,
 ) {
   const profileSettings = profile.channelSet.settings?.map((setting, index) => {
     if (index !== 0) return setting;
@@ -82,12 +73,4 @@ export function createConfigJson(
       prettySpaces: 2,
     },
   );
-}
-
-export function decodeConfigPayload(payload: string) {
-  return fromBinary(AppOnly.ChannelSetSchema, base64Decode(payload));
-}
-
-export function configToJson(config: AppOnly.ChannelSet) {
-  return toJson(AppOnly.ChannelSetSchema, config);
 }

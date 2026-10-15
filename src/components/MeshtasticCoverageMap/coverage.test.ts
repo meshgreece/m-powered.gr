@@ -12,7 +12,8 @@ import {
   toPresetChannel,
 } from './coverage';
 import snapshot from './nodes-snapshot.json';
-import type {MeshviewNode, NutsUnitFeature} from './types';
+import type {MeshviewNode} from '../../lib/meshview';
+import type {NutsUnitFeature} from './types';
 
 const topology = JSON.parse(
   readFileSync(
@@ -82,6 +83,46 @@ describe('reading channels', () => {
   });
 });
 
+describe('Meshview coordinate validation', () => {
+  const node: MeshviewNode = {
+    channel: 'NarrowSlow',
+    last_lat: 379682816,
+    last_long: 236224512,
+  };
+
+  it('places numeric-string coordinates', () => {
+    const coverage = buildCoverage(index, [{
+      ...node,
+      last_lat: '379682816',
+      last_long: '236224512',
+    }]);
+    expect(coverage.placedByPreset.NarrowSlow).toBe(1);
+    expect(coverage.positionlessTotal).toBe(0);
+  });
+
+  it.each([
+    {last_lat: undefined},
+    {last_long: undefined},
+    {last_lat: 910000000},
+    {last_long: 1810000000},
+    {last_lat: 'invalid'},
+  ])('counts missing or invalid coordinates %j as positionless', (coordinates) => {
+    const coverage = buildCoverage(index, [{...node, ...coordinates}]);
+    expect(coverage.placedTotal).toBe(0);
+    expect(coverage.positionlessByPreset.NarrowSlow).toBe(1);
+  });
+
+  it('leaves valid outside-Greece coordinates out of both totals', () => {
+    const coverage = buildCoverage(index, [{
+      ...node,
+      last_lat: 384000000,
+      last_long: 272000000,
+    }]);
+    expect(coverage.placedTotal).toBe(0);
+    expect(coverage.positionlessTotal).toBe(0);
+  });
+});
+
 describe('coverage over the 24 Aug 2026 snapshot', () => {
   const coverage = buildCoverage(index, nodes);
 
@@ -89,7 +130,6 @@ describe('coverage over the 24 Aug 2026 snapshot', () => {
     expect(nodes).toHaveLength(129);
     expect(coverage.placedTotal).toBe(87);
     expect(coverage.placedByPreset).toEqual({LongFast: 60, NarrowSlow: 27});
-    expect(coverage.outsideCount).toBe(0);
   });
 
   it('counts the nodes that never share a position', () => {

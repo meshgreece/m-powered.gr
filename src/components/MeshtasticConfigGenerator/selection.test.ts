@@ -49,6 +49,14 @@ describe('configuration generator URL selection', () => {
     ).toEqual(DEFAULT_SELECTION);
   });
 
+  it.each(['constructor', '__proto__', 'toString', 'hasOwnProperty'])(
+    'rejects inherited profile name %s without losing valid overrides',
+    (profileId) => {
+      expect(parseGeneratorSelection(new URLSearchParams(`preset=${profileId}&hop=5`)))
+        .toEqual({...DEFAULT_SELECTION, hopLimit: 5});
+    },
+  );
+
   it('rejects precision values that the Android channel editor does not expose', () => {
     expect(
       parseGeneratorSelection(new URLSearchParams('precision=20')),

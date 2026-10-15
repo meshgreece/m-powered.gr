@@ -42,18 +42,6 @@
   --ifm-hero-text-color: #ffffff;
 }
 
-.hero--primary .button--secondary {
-  --ifm-button-background-color: #58a6ff;
-  --ifm-button-border-color: #58a6ff;
-  --ifm-button-color: #2c2d3c;
-  font-weight: 600;
-}
-
-.hero--primary .button--secondary:hover {
-  --ifm-button-background-color: #7dbbff;
-  --ifm-button-border-color: #7dbbff;
-}
-
 /* Header reduction sequence; the mobile sidebar takes over at 996px. */
 @media (max-width: 1300px) {
   .navbar__title {

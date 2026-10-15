@@ -76,14 +76,12 @@ describe('Meshview node coordinates', () => {
     expect(nodes).toEqual([
       {
         nodeId: 1,
-        name: 'Athens',
         x: 23.6224512,
         y: 37.9682816,
         channel: 'LongFast',
       },
       {
         nodeId: 3,
-        name: '!3',
         x: 23.6224512,
         y: 37.9682816,
         channel: 'Unknown',

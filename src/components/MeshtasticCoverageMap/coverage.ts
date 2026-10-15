@@ -1,10 +1,11 @@
 import {geoContains, geoDistance} from 'd3-geo';
+import {normalizeMeshviewCoordinate} from '../../lib/meshview';
+import type {MeshviewNode} from '../../lib/meshview';
 
 import {getUnitName} from './labels';
 import type {
   Coverage,
   CoverageState,
-  MeshviewNode,
   NutsUnitFeature,
   PresetChannel,
   UnitCoverage,
@@ -107,28 +108,22 @@ export function buildCoverage(
   );
   const placedByPreset = createEmptyPresetCounts();
   const positionlessByPreset = createEmptyPresetCounts();
-  let outsideCount = 0;
 
   for (const node of nodes) {
     const preset = toPresetChannel(node.channel);
     if (preset === null) continue;
 
-    if (node.last_lat === null || node.last_long === null) {
+    const latitude = normalizeMeshviewCoordinate(node.last_lat, 90);
+    const longitude = normalizeMeshviewCoordinate(node.last_long, 180);
+    if (latitude === null || longitude === null) {
       positionlessByPreset[preset] += 1;
       continue;
     }
 
-    // Meshview stores coordinates as 1e-7 degree integers.
-    const unitId = locateUnitId(index, [
-      node.last_long / 1e7,
-      node.last_lat / 1e7,
-    ]);
+    const unitId = locateUnitId(index, [longitude, latitude]);
     const tally = unitId === null ? undefined : tallies.get(unitId);
 
-    if (tally === undefined) {
-      outsideCount += 1;
-      continue;
-    }
+    if (tally === undefined) continue;
 
     if (preset === 'LongFast') tally.longFast += 1;
     else tally.narrowSlow += 1;
@@ -172,6 +167,5 @@ export function buildCoverage(
     positionlessByPreset,
     positionlessTotal:
       positionlessByPreset.LongFast + positionlessByPreset.NarrowSlow,
-    outsideCount,
   };
 }

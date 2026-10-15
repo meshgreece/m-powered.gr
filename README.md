@@ -1,41 +1,37 @@
-# Website
+# m-powered.gr
 
-This website is built using [Docusaurus](https://docusaurus.io/), a modern static website generator.
+The Meshtastic Greece Community website, built with Docusaurus.
 
-## Installation
+## Local development
 
-```bash
-yarn
-```
-
-## Local Development
+Use Node.js 22 (the version used by CI) and npm.
 
 ```bash
-yarn start
+npm ci
+npm start
 ```
 
-This command starts a local development server and opens up a browser window. Most changes are reflected live without having to restart the server.
-
-## Build
+## Verification and preview
 
 ```bash
-yarn build
+npm test
+npm run typecheck
+npm run build
+npm run serve
 ```
 
-This command generates static content into the `build` directory and can be served using any static contents hosting service.
+The production build is written to `build/`. Meshview restricts browser origins
+through its CORS policy, so live data may be unavailable in a localhost preview.
 
 ## Deployment
 
-Using SSH:
+[The GitHub Actions workflow](.github/workflows/deploy.yml) runs tests, typechecks
+and builds the site on pushes to `master`, then deploys the build artifact to
+GitHub Pages. It can also be started manually with `workflow_dispatch`.
 
-```bash
-USE_SSH=true yarn deploy
-```
+## Maintenance
 
-Not using SSH:
-
-```bash
-GIT_USER=<Your GitHub username> yarn deploy
-```
-
-If you are using GitHub pages for hosting, this command is a convenient way to build the website and push to the `gh-pages` branch.
+- `npm run protobuf:update -- <exact-version>` installs the specified Meshtastic
+  protobuf version and runs tests, typecheck and build.
+- `npm run nuts:update` regenerates `static/data/greece-nuts3.topo.json` from the
+  Eurostat NUTS 2024 topology.

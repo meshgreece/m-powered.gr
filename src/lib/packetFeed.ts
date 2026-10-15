@@ -4,6 +4,7 @@
 // here and cannot resolve @site.
 
 import {
+  fetchJson,
   getLatestImportTimeUs,
   getMeshviewApiUrl,
   parseImportTimeUs,
@@ -93,19 +94,10 @@ export function createPacketFeed() {
         params.since = requestCursor;
       }
 
-      const response = await fetch(getMeshviewApiUrl('packets', params), {
-        cache: 'no-store',
-        headers: {accept: 'application/json'},
-        signal: requestController.signal,
-      });
-
-      if (!response.ok) {
-        throw new Error(
-          `Meshview request failed with status ${response.status}`,
-        );
-      }
-
-      const data = (await response.json()) as PacketsResponse;
+      const data = await fetchJson<PacketsResponse>(
+        getMeshviewApiUrl('packets', params),
+        requestController.signal,
+      );
       if (requestId !== requestGeneration) return;
 
       const packets = Array.isArray(data.packets) ? data.packets : [];

@@ -102,7 +102,7 @@ export const PROFILES: Record<ProfileId, ConfigurationProfile> = {
 };
 
 export function isProfileId(value: string | null): value is ProfileId {
-  return value !== null && value in PROFILES;
+  return value !== null && Object.hasOwn(PROFILES, value);
 }
 
 export function isHopLimit(value: number): value is HopLimit {

@@ -1,14 +1,23 @@
 import {describe, expect, it} from 'vitest';
+import {fromBinary, toJson} from '@bufbuild/protobuf';
+import {base64Decode} from '@bufbuild/protobuf/wire';
+import {AppOnly} from '@meshtastic/protobufs';
 
 import {PROFILES} from './config';
 import {
-  configToJson,
   createChannelSet,
   createConfigJson,
   createConfigUrl,
-  decodeConfigPayload,
 } from './protobuf';
 import {HOP_LIMITS, POSITION_PRECISION_VALUES} from './types';
+
+function decodeConfigPayload(payload: string) {
+  return fromBinary(AppOnly.ChannelSetSchema, base64Decode(payload));
+}
+
+function configToJson(config: AppOnly.ChannelSet) {
+  return toJson(AppOnly.ChannelSetSchema, config);
+}
 
 const LEGACY_PAYLOADS = {
   LongFast: 'ChESAQEaCExvbmdGYXN0KAEwARIPCAEQADgDQANIAWgByAYB',

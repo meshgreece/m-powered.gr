@@ -1,11 +1,12 @@
-import {useEffect, useMemo, useState} from 'react';
+import {useEffect, useState} from 'react';
 import Link from '@docusaurus/Link';
 import useBaseUrl from '@docusaurus/useBaseUrl';
 import {geoMercator, geoPath} from 'd3-geo';
 import * as topojson from 'topojson-client';
 import type {GeometryCollection, Topology} from 'topojson-specification';
 
-import {MESHVIEW_BASE_URL, getMeshviewApiUrl} from '@site/src/lib/meshview';
+import {MESHVIEW_BASE_URL, fetchJson, getMeshviewApiUrl} from '@site/src/lib/meshview';
+import type {MeshviewNode, NodesResponse} from '@site/src/lib/meshview';
 
 import {buildCoverage, createUnitIndex} from './coverage';
 import styles from './styles.module.css';
@@ -13,7 +14,6 @@ import {COVERAGE_STATES} from './types';
 import type {
   Coverage,
   CoverageState,
-  MeshviewNode,
   NutsUnitFeature,
   NutsUnitProperties,
   UnitCoverage,
@@ -120,23 +120,20 @@ export default function MeshtasticCoverageMap() {
 
     const load = async () => {
       try {
-        const [topologyResponse, nodesResponse] = await Promise.all([
+        const [topologyResponse, {nodes}] = await Promise.all([
           fetch(topologyUrl, {headers: {accept: 'application/json'}}),
-          fetch(getMeshviewApiUrl('nodes', {days_active: DAYS_ACTIVE}), {
-            headers: {accept: 'application/json'},
-          }),
+          fetchJson<NodesResponse>(
+            getMeshviewApiUrl('nodes', {days_active: DAYS_ACTIVE}),
+          ),
         ]);
 
-        if (!topologyResponse.ok || !nodesResponse.ok) {
+        if (!topologyResponse.ok) {
           throw new Error(
-            `Coverage request failed with status ${topologyResponse.status}/${nodesResponse.status}`,
+            `Topology request failed with status ${topologyResponse.status}`,
           );
         }
 
         const topology = (await topologyResponse.json()) as Topology;
-        const {nodes} = (await nodesResponse.json()) as {
-          nodes?: MeshviewNode[];
-        };
 
         if (!isMounted) return;
 
@@ -154,28 +151,15 @@ export default function MeshtasticCoverageMap() {
     };
   }, [topologyUrl]);
 
-  const selectedUnit = useMemo(
-    () =>
-      data === null || selectedUnitId === null
-        ? null
-        : (data.coverage.unitsById[selectedUnitId] ?? null),
-    [data, selectedUnitId],
-  );
-  const activeUnit = useMemo(
-    () =>
-      data === null || activeUnitId === null
-        ? null
-        : (data.coverage.unitsById[activeUnitId] ?? null),
-    [data, activeUnitId],
-  );
-  const activeCentroid = useMemo(
-    () =>
-      data === null || activeUnitId === null
-        ? null
-        : (data.geometry.units.find((unit) => unit.id === activeUnitId)
-            ?.centroid ?? null),
-    [data, activeUnitId],
-  );
+  const selectedUnit = selectedUnitId === null
+    ? null
+    : data?.coverage.unitsById[selectedUnitId] ?? null;
+  const activeUnit = activeUnitId === null
+    ? null
+    : data?.coverage.unitsById[activeUnitId] ?? null;
+  const activeCentroid = activeUnitId === null
+    ? null
+    : data?.geometry.units.find((unit) => unit.id === activeUnitId)?.centroid ?? null;
 
   function toggleState(state: CoverageState) {
     setHiddenStates((current) =>
