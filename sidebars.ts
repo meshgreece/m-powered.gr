@@ -67,7 +67,7 @@ const sidebars: SidebarsConfig = {
         {
           type: 'doc',
           id: 'mqtt',
-          label: 'MQTT και uplinks',
+          label: 'MQTT και gateways',
         },
         {
           type: 'doc',
