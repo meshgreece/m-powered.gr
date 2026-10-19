@@ -5,8 +5,12 @@ import QRCode from 'react-qr-code';
 
 import {
   ADDITIONAL_CHANNEL_DESCRIPTIONS,
+  DEFAULT_ADVANCED_SETTINGS,
+  DEFAULT_EXPORT_SETTINGS,
   DEFAULT_SELECTION,
   hasPositionPrivacyWarning,
+  isAdvancedCustomized,
+  isFirmwareVersion,
   isHopLimit,
   isPositionPrecision,
   PROFILES,
@@ -23,12 +27,54 @@ import {
 import styles from './styles.module.css';
 import {
   ADDITIONAL_CHANNEL_IDS,
+  FIRMWARE_VERSIONS,
   HOP_LIMITS,
   POSITION_PRECISION_VALUES,
 } from './types';
-import type {AdditionalChannelId, GeneratorSelection, ProfileId} from './types';
+import type {
+  AdditionalChannelFlags,
+  AdditionalChannelId,
+  AdvancedSettings,
+  ChannelFlags,
+  ExportSettings,
+  GeneratorSelection,
+  ProfileId,
+} from './types';
 
 const COVERAGE_MAP_URL = '/docs/coverage-map';
+const MQTT_RECOMMENDATIONS_URL = '/docs/mqtt#προτεινόμενες-τιμές';
+
+function Checkbox({
+  checked,
+  description,
+  name,
+  onChange,
+}: {
+  checked: boolean;
+  description?: string;
+  name: string;
+  onChange: (checked: boolean) => void;
+}) {
+  return (
+    <label className={styles.channelOption}>
+      <input
+        checked={checked}
+        className={styles.checkbox}
+        onChange={(event) => onChange(event.target.checked)}
+        type="checkbox"
+      />
+      <span className={styles.channelText}>
+        <span className={styles.channelName}>{name}</span>
+        {description && (
+          <span className={styles.channelDescription}>
+            {': '}
+            {description}
+          </span>
+        )}
+      </span>
+    </label>
+  );
+}
 
 function SelectChevron() {
   return (
@@ -47,6 +93,9 @@ export default function MeshtasticConfigGenerator() {
   const [selection, setSelection] =
     useState<GeneratorSelection>(DEFAULT_SELECTION);
   const [isInitialized, setIsInitialized] = useState(false);
+  const [exportSettings, setExportSettings] = useState<ExportSettings>(
+    DEFAULT_EXPORT_SETTINGS,
+  );
   const [copyStatus, setCopyStatus] = useState<'idle' | 'success' | 'error'>(
     'idle',
   );
@@ -70,13 +119,14 @@ export default function MeshtasticConfigGenerator() {
   }, [isInitialized, selection]);
 
   const profile = PROFILES[selection.profileId];
+  const {firmware, advanced} = exportSettings;
   const configUrl = useMemo(
-    () => createConfigUrl(profile, selection),
-    [profile, selection],
+    () => createConfigUrl(profile, selection, exportSettings),
+    [profile, selection, exportSettings],
   );
   const configJson = useMemo(
-    () => createConfigJson(profile, selection),
-    [profile, selection],
+    () => createConfigJson(profile, selection, exportSettings),
+    [profile, selection, exportSettings],
   );
   const shareableUrl = useMemo(() => {
     if (!ExecutionEnvironment.canUseDOM || !isInitialized) return '';
@@ -91,17 +141,57 @@ export default function MeshtasticConfigGenerator() {
     selection.positionPrecision === 0
       ? 'χωρίς κοινοποίηση θέσης'
       : `ρύθμιση θέσης: ${selection.positionPrecision} (${precisionLabel})`;
+  const isCustomized = isAdvancedCustomized(
+    advanced,
+    selection.additionalChannels,
+  );
   const selectionSummary = [
+    ...(selection.profileId === 'LongFast' ? [] : [`firmware ${firmware}`]),
     `hop limit ${selection.hopLimit}`,
     positionSummary,
     ...(selection.additionalChannels.length > 0
       ? [selection.additionalChannels.join(' + ')]
       : []),
+    ...(isCustomized ? ['προσαρμοσμένες ρυθμίσεις για προχωρημένους'] : []),
   ].join(' · ');
 
   function updateSelection(update: Partial<GeneratorSelection>) {
     setSelection((current) => ({...current, ...update}));
     setCopyStatus('idle');
+  }
+
+  function updateExportSettings(update: Partial<ExportSettings>) {
+    setExportSettings((current) => ({...current, ...update}));
+    setCopyStatus('idle');
+  }
+
+  function updateAdvanced(
+    update: (current: AdvancedSettings) => Partial<AdvancedSettings>,
+  ) {
+    setExportSettings((current) => ({
+      ...current,
+      advanced: {...current.advanced, ...update(current.advanced)},
+    }));
+    setCopyStatus('idle');
+  }
+
+  function updatePrimaryFlag(flag: keyof ChannelFlags, checked: boolean) {
+    updateAdvanced((current) => ({
+      primary: {...current.primary, [flag]: checked},
+    }));
+  }
+
+  function updateAdditionalFlag(
+    channelId: AdditionalChannelId,
+    flag: keyof AdditionalChannelFlags,
+    checked: boolean,
+  ) {
+    updateAdvanced((current) => ({
+      additional: {
+        ...current.additional,
+        [channelId]: {...current.additional[channelId], [flag]: checked},
+      },
+    }));
   }
 
   function toggleAdditionalChannel(
@@ -154,11 +244,12 @@ export default function MeshtasticConfigGenerator() {
                 id="configuration-profile"
                 className={styles.select}
                 value={selection.profileId}
-                onChange={(event) =>
+                onChange={(event) => {
                   updateSelection({
                     profileId: event.target.value as ProfileId,
-                  })
-                }
+                  });
+                  updateExportSettings({advanced: DEFAULT_ADVANCED_SETTINGS});
+                }}
               >
                 {Object.values(PROFILES).map((option) => (
                   <option key={option.id} value={option.id}>
@@ -191,6 +282,47 @@ export default function MeshtasticConfigGenerator() {
                 </span>
               </div>
             )}
+          </div>
+
+          <div className={`${styles.row} ${styles.rowCompact}`}>
+            <label className={styles.label} htmlFor="configuration-firmware">
+              Έκδοση firmware
+            </label>
+            <div className={`${styles.selectWrapper} ${styles.selectNarrow}`}>
+              <select
+                aria-describedby="configuration-firmware-hint configuration-firmware-badge"
+                id="configuration-firmware"
+                className={styles.select}
+                value={firmware}
+                onChange={(event) => {
+                  if (isFirmwareVersion(event.target.value)) {
+                    updateExportSettings({firmware: event.target.value});
+                  }
+                }}
+              >
+                {FIRMWARE_VERSIONS.map((version) => (
+                  <option key={version} value={version}>
+                    {version}
+                  </option>
+                ))}
+              </select>
+              <SelectChevron />
+            </div>
+            <p className={styles.hint} id="configuration-firmware-hint">
+              {selection.profileId === 'LongFast' ? (
+                'Το LongFast είναι ίδιο και στις δύο εκδόσεις.'
+              ) : firmware === '2.8' ? (
+                <>
+                  Για 2.8.1 ή νεότερο: region <code>EU_N_868</code> με preset{' '}
+                  <code>NARROW_SLOW</code>.
+                </>
+              ) : (
+                <>
+                  Για 2.7: ισοδύναμες custom ρυθμίσεις στο <code>EU_868</code>, γιατί
+                  το 2.7 δεν γνωρίζει το <code>EU_N_868</code>.
+                </>
+              )}
+            </p>
           </div>
 
           <div className={`${styles.row} ${styles.rowCompact}`}>
@@ -304,7 +436,7 @@ export default function MeshtasticConfigGenerator() {
                     <span className={styles.channelText}>
                       <span className={styles.channelName}>{channelId}</span>
                       <span className={styles.channelDescription}>
-                        {' — '}
+                        {': '}
                         {ADDITIONAL_CHANNEL_DESCRIPTIONS[channelId]}
                       </span>
                     </span>
@@ -312,6 +444,93 @@ export default function MeshtasticConfigGenerator() {
                 ))}
               </div>
             </fieldset>
+          </div>
+
+          <div className={styles.row}>
+            <details className={styles.advanced}>
+              <summary>Ρυθμίσεις για προχωρημένους</summary>
+              <p className={styles.hint}>
+                Οι προεπιλογές είναι οι προτεινόμενες τιμές για το κοινοτικό δίκτυο
+                και δεν αποθηκεύονται στον σύνδεσμο αυτής της σελίδας. Δες{' '}
+                <Link to={MQTT_RECOMMENDATIONS_URL}>
+                  γιατί προτείνουμε αυτές τις τιμές
+                </Link>
+                .
+              </p>
+              <fieldset className={styles.channels}>
+                <legend className={styles.label}>MQTT</legend>
+                <div className={styles.channelOptions}>
+                  <Checkbox
+                    checked={advanced.configOkToMqtt}
+                    name="OK to MQTT"
+                    onChange={(checked) =>
+                      updateAdvanced(() => ({configOkToMqtt: checked}))
+                    }
+                  />
+                  <Checkbox
+                    checked={advanced.ignoreMqtt}
+                    name="Ignore MQTT"
+                    onChange={(checked) =>
+                      updateAdvanced(() => ({ignoreMqtt: checked}))
+                    }
+                  />
+                </div>
+              </fieldset>
+              <fieldset className={styles.channels}>
+                <legend className={styles.label}>
+                  Κανάλι {profile.channelSet.settings?.[0]?.name}
+                </legend>
+                <div className={styles.channelOptions}>
+                  <Checkbox
+                    checked={advanced.primary.uplinkEnabled}
+                    name="Uplink"
+                    onChange={(checked) =>
+                      updatePrimaryFlag('uplinkEnabled', checked)
+                    }
+                  />
+                  <Checkbox
+                    checked={advanced.primary.downlinkEnabled}
+                    name="Downlink"
+                    onChange={(checked) =>
+                      updatePrimaryFlag('downlinkEnabled', checked)
+                    }
+                  />
+                </div>
+              </fieldset>
+              {selection.additionalChannels.map((channelId) => (
+                <fieldset className={styles.channels} key={channelId}>
+                  <legend className={styles.label}>Κανάλι {channelId}</legend>
+                  <div className={styles.channelOptions}>
+                    <Checkbox
+                      checked={advanced.additional[channelId].uplinkEnabled}
+                      name="Uplink"
+                      onChange={(checked) =>
+                        updateAdditionalFlag(channelId, 'uplinkEnabled', checked)
+                      }
+                    />
+                    <Checkbox
+                      checked={advanced.additional[channelId].downlinkEnabled}
+                      name="Downlink"
+                      onChange={(checked) =>
+                        updateAdditionalFlag(
+                          channelId,
+                          'downlinkEnabled',
+                          checked,
+                        )
+                      }
+                    />
+                    <Checkbox
+                      checked={advanced.additional[channelId].isMuted}
+                      description="χωρίς ειδοποιήσεις· το κανάλι συνεχίζει να λειτουργεί"
+                      name="Σίγαση"
+                      onChange={(checked) =>
+                        updateAdditionalFlag(channelId, 'isMuted', checked)
+                      }
+                    />
+                  </div>
+                </fieldset>
+              ))}
+            </details>
           </div>
         </div>
 
@@ -321,13 +540,32 @@ export default function MeshtasticConfigGenerator() {
             <span className={styles.resultProfile}>{profile.name}</span>
           </div>
 
+          <p
+            className={styles.firmwareBadge}
+            id="configuration-firmware-badge"
+            role="note"
+          >
+            <strong>
+              {selection.profileId === 'LongFast'
+                ? 'Για firmware 2.7 και 2.8.1 ή νεότερο'
+                : firmware === '2.8'
+                  ? 'Για firmware 2.8.1 ή νεότερο'
+                  : 'Για firmware 2.7'}
+            </strong>{' '}
+            {selection.profileId === 'LongFast'
+              ? 'Όχι για το 2.8.0, που ανακλήθηκε.'
+              : firmware === '2.8'
+                ? 'Όχι για το 2.8.0, που ανακλήθηκε. Για κόμβο με 2.7, επίλεξε 2.7.'
+                : 'Όχι για κόμβο με 2.8.1· εκεί επίλεξε 2.8. Μετά την αναβάθμιση σε 2.8.1, εφάρμοσε ξανά το προφίλ για 2.8.'}
+          </p>
+
           <div className={styles.qrPanel} key={configUrl}>
             <QRCode
-              aria-label={`QR code για το προφίλ ${profile.name}, hop limit ${selection.hopLimit}, επιλεγμένη ακρίβεια θέσης ${selection.positionPrecision} (${precisionLabel})${
+              aria-label={`QR code για το προφίλ ${profile.name}, firmware ${firmware}, hop limit ${selection.hopLimit}, επιλεγμένη ακρίβεια θέσης ${selection.positionPrecision} (${precisionLabel})${
                 selection.additionalChannels.length > 0
                   ? `, πρόσθετα κανάλια ${selection.additionalChannels.join(', ')}`
                   : ''
-              }`}
+              }${isCustomized ? ', προσαρμοσμένες ρυθμίσεις για προχωρημένους' : ''}`}
               bgColor="transparent"
               fgColor="currentColor"
               level="M"
@@ -337,6 +575,11 @@ export default function MeshtasticConfigGenerator() {
           <p className={styles.qrHint}>Σκάναρε με το Meshtastic app</p>
 
           <p className={styles.summary}>{selectionSummary}</p>
+
+          <p className={styles.mqttTopic}>
+            MQTT root topic: <code>{profile.mqttRootTopic}</code>. Ορίζεται
+            χωριστά στο MQTT module, μόνο για gateway.
+          </p>
 
           <a
             className={styles.url}

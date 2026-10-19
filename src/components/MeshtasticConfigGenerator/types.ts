@@ -31,9 +31,37 @@ export type GeneratorSelection = GeneratorOptions & {
   profileId: ProfileId;
 };
 
+export const FIRMWARE_VERSIONS = ['2.8', '2.7'] as const;
+
+export type FirmwareVersion = (typeof FIRMWARE_VERSIONS)[number];
+
+export type ChannelFlags = {
+  uplinkEnabled: boolean;
+  downlinkEnabled: boolean;
+};
+
+export type AdditionalChannelFlags = ChannelFlags & {isMuted: boolean};
+
+export type AdvancedSettings = {
+  configOkToMqtt: boolean;
+  ignoreMqtt: boolean;
+  primary: ChannelFlags;
+  additional: Record<AdditionalChannelId, AdditionalChannelFlags>;
+};
+
+export type ExportSettings = {
+  firmware: FirmwareVersion;
+  advanced: AdvancedSettings;
+};
+
+type LoRaConfigInit = NonNullable<NonNullable<ChannelSetInit>['loraConfig']>;
+
 export type ConfigurationProfile = {
   id: ProfileId;
   name: string;
   description: string;
+  mqttRootTopic: string;
   channelSet: NonNullable<ChannelSetInit>;
+  // Replaces channelSet.loraConfig for that firmware.
+  firmwareLoraConfig?: Partial<Record<FirmwareVersion, LoRaConfigInit>>;
 };

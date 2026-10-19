@@ -8,17 +8,24 @@ import {AppOnly} from '@meshtastic/protobufs';
 
 import {
   ADDITIONAL_CHANNELS,
+  DEFAULT_EXPORT_SETTINGS,
   DEFAULT_SELECTION,
 } from './config';
 import {ADDITIONAL_CHANNEL_IDS} from './types';
-import type {ConfigurationProfile, GeneratorOptions} from './types';
+import type {
+  ConfigurationProfile,
+  ExportSettings,
+  GeneratorOptions,
+} from './types';
 
 const CONFIG_URL_PREFIX = 'https://meshtastic.org/e/#';
 
 export function createChannelSet(
   profile: ConfigurationProfile,
   options: GeneratorOptions = DEFAULT_SELECTION,
+  exportSettings: ExportSettings = DEFAULT_EXPORT_SETTINGS,
 ) {
+  const {advanced} = exportSettings;
   const profileSettings = profile.channelSet.settings?.map((setting, index) => {
     if (index !== 0) return setting;
 
@@ -26,11 +33,12 @@ export function createChannelSet(
       options.positionPrecision === 0 &&
       setting.moduleSettings === undefined
     ) {
-      return setting;
+      return {...setting, ...advanced.primary};
     }
 
     return {
       ...setting,
+      ...advanced.primary,
       moduleSettings: {
         ...setting.moduleSettings,
         positionPrecision: options.positionPrecision,
@@ -39,14 +47,24 @@ export function createChannelSet(
   });
   const additionalSettings = ADDITIONAL_CHANNEL_IDS.filter((channelId) =>
     options.additionalChannels.includes(channelId),
-  ).map((channelId) => ({...ADDITIONAL_CHANNELS[channelId]}));
+  ).map((channelId) => {
+    const {isMuted, ...flags} = advanced.additional[channelId];
+    return {
+      ...ADDITIONAL_CHANNELS[channelId],
+      ...flags,
+      ...(isMuted && {moduleSettings: {isMuted}}),
+    };
+  });
 
   return create(AppOnly.ChannelSetSchema, {
     ...profile.channelSet,
     settings: [...(profileSettings ?? []), ...additionalSettings],
     loraConfig: {
-      ...profile.channelSet.loraConfig,
+      ...(profile.firmwareLoraConfig?.[exportSettings.firmware] ??
+        profile.channelSet.loraConfig),
       hopLimit: options.hopLimit,
+      configOkToMqtt: advanced.configOkToMqtt,
+      ignoreMqtt: advanced.ignoreMqtt,
     },
   });
 }
@@ -54,10 +72,11 @@ export function createChannelSet(
 export function createConfigUrl(
   profile: ConfigurationProfile,
   options?: GeneratorOptions,
+  exportSettings?: ExportSettings,
 ): string {
   const bytes = toBinary(
     AppOnly.ChannelSetSchema,
-    createChannelSet(profile, options),
+    createChannelSet(profile, options, exportSettings),
   );
   return `${CONFIG_URL_PREFIX}${base64Encode(bytes, 'url')}`;
 }
@@ -65,10 +84,11 @@ export function createConfigUrl(
 export function createConfigJson(
   profile: ConfigurationProfile,
   options?: GeneratorOptions,
+  exportSettings?: ExportSettings,
 ): string {
   return toJsonString(
     AppOnly.ChannelSetSchema,
-    createChannelSet(profile, options),
+    createChannelSet(profile, options, exportSettings),
     {
       prettySpaces: 2,
     },

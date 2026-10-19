@@ -24,6 +24,17 @@ describe('configuration generator URL selection', () => {
     ).toBe('LongFast');
   });
 
+  it('ignores firmware query parameters', () => {
+    const selection = parseGeneratorSelection(
+      new URLSearchParams('preset=NarrowSlow&fw=2.7'),
+    );
+
+    expect(selection).toEqual(
+      parseGeneratorSelection(new URLSearchParams('preset=NarrowSlow')),
+    );
+    expect(createGeneratorSearchParams(selection).has('fw')).toBe(false);
+  });
+
   it('parses all supported generator parameters', () => {
     expect(
       parseGeneratorSelection(
