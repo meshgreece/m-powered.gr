@@ -7,6 +7,28 @@ const sidebars: SidebarsConfig = {
   tutorialSidebar: [
     {
       type: 'category',
+      label: 'Εισαγωγή',
+      collapsed: false,
+      items: [
+        {
+          type: 'doc',
+          id: 'what-is-meshtastic',
+          label: 'Τι είναι το Meshtastic',
+        },
+        {
+          type: 'doc',
+          id: 'how-messages-travel',
+          label: 'Πώς ταξιδεύει ένα μήνυμα',
+        },
+        {
+          type: 'doc',
+          id: 'radio-basics',
+          label: 'Ραδιοσυχνότητες και LoRa',
+        },
+      ],
+    },
+    {
+      type: 'category',
       label: 'Ξεκίνα',
       collapsed: false,
       items: [

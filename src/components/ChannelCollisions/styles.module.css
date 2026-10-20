@@ -1,0 +1,441 @@
+.root {
+  --cc-blue: #0b62d6;
+  --cc-green: #1a7f37;
+  --cc-red: #cf222e;
+  --cc-amber: #9a6700;
+  --cc-bg: var(--ifm-background-surface-color);
+  --cc-muted: var(--ifm-color-emphasis-600);
+  --cc-surface: var(--ifm-color-emphasis-100);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin: 0 0 var(--ifm-leading);
+  padding: 16px;
+  border: 1px solid var(--ifm-color-emphasis-300);
+  border-radius: 8px;
+  background: var(--cc-bg);
+  color: var(--ifm-font-color-base);
+  container-type: inline-size;
+}
+
+:global([data-theme='dark']) .root {
+  --cc-blue: #58a6ff;
+  --cc-green: #3fb950;
+  --cc-red: #ff7b72;
+  --cc-amber: #e3b341;
+}
+
+.root :focus-visible {
+  outline: 2px solid var(--cc-blue);
+  outline-offset: 2px;
+}
+
+.tabs {
+  display: flex;
+  gap: 4px;
+  border-bottom: 1px solid var(--ifm-color-emphasis-300);
+}
+
+.tab {
+  flex: 1 1 0;
+  max-width: max-content;
+  min-height: 44px;
+  margin-bottom: -1px;
+  padding: 6px 12px;
+  border: none;
+  border-bottom: 3px solid transparent;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  font-size: 0.9375rem;
+  line-height: 1.25;
+  text-wrap: balance;
+  cursor: pointer;
+}
+
+.tabSelected {
+  border-bottom-color: var(--cc-blue);
+  font-weight: 700;
+}
+
+.panel {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.map {
+  position: relative;
+  width: 100%;
+  max-width: 440px;
+  margin: 0 auto;
+}
+
+.mapSvg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.ground {
+  stroke: var(--cc-muted);
+  stroke-width: 1.5;
+}
+
+.hill {
+  fill: var(--cc-muted);
+  fill-opacity: 0.3;
+  stroke: var(--cc-muted);
+  stroke-width: 1.5;
+}
+
+.mast {
+  stroke: var(--cc-muted);
+  stroke-width: 2;
+}
+
+.link,
+.hearLine {
+  stroke: var(--cc-muted);
+  transition: stroke 0.2s;
+}
+
+.link {
+  stroke-width: 2.5;
+}
+
+.hearLine {
+  stroke-width: 2;
+  stroke-dasharray: 5 4;
+}
+
+.link.linkActive,
+.hearLine.linkActive {
+  stroke: var(--cc-blue);
+}
+
+.none {
+  color: var(--cc-muted);
+}
+
+.tx {
+  color: var(--cc-blue);
+}
+
+.wait {
+  color: var(--cc-amber);
+}
+
+.rx {
+  color: var(--cc-green);
+}
+
+.clash {
+  color: var(--cc-red);
+}
+
+.nodeBase {
+  fill: var(--cc-bg);
+}
+
+.node {
+  fill: currentColor;
+  fill-opacity: 0.14;
+  stroke: currentColor;
+  stroke-width: 2.5;
+  transition: color 0.2s;
+}
+
+.badge {
+  fill: currentColor;
+  stroke: var(--cc-bg);
+  stroke-width: 1.5;
+}
+
+.iconStroke {
+  fill: none;
+  stroke: var(--cc-bg);
+}
+
+.iconFill {
+  fill: var(--cc-bg);
+}
+
+.mapId,
+.mapSub {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  line-height: 1;
+  pointer-events: none;
+}
+
+.mapId {
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.mapSub {
+  font-size: 0.75rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.lanes {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.laneRow {
+  display: grid;
+  grid-template-columns: 24px minmax(0, 1fr);
+  gap: 8px;
+  align-items: center;
+}
+
+.laneName {
+  font-size: 0.875rem;
+  font-weight: 700;
+  text-align: center;
+}
+
+.lane {
+  position: relative;
+  height: 32px;
+  border-radius: 4px;
+  background: var(--cc-surface);
+}
+
+.bar {
+  position: absolute;
+  box-sizing: border-box;
+  border-radius: 3px;
+}
+
+.full {
+  top: 4px;
+  height: 24px;
+}
+
+.top {
+  top: 3px;
+  height: 12px;
+}
+
+.bot {
+  top: 17px;
+  height: 12px;
+}
+
+.barTx {
+  background: var(--cc-blue);
+}
+
+.barRx {
+  background: var(--cc-green);
+}
+
+.barWait {
+  border: 2px dashed var(--cc-amber);
+}
+
+.barInc {
+  border: 2px solid var(--cc-blue);
+}
+
+.barClash {
+  border: 2px solid var(--cc-red);
+  background: repeating-linear-gradient(135deg, var(--cc-red) 0 2.5px, transparent 2.5px 6px);
+}
+
+.mark {
+  position: absolute;
+  top: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  border: 1.5px solid var(--cc-bg);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.markOk {
+  background: var(--cc-green);
+}
+
+.markX {
+  background: var(--cc-red);
+}
+
+.markIcon {
+  fill: none;
+  stroke: var(--cc-bg);
+}
+
+.playhead {
+  position: absolute;
+  top: -3px;
+  bottom: -3px;
+  width: 2px;
+  margin-left: -1px;
+  background: var(--ifm-font-color-base);
+}
+
+.ticks {
+  position: relative;
+  height: 18px;
+  color: var(--cc-muted);
+  font-size: 0.75rem;
+}
+
+.ticks span {
+  position: absolute;
+  transform: translateX(-50%);
+  white-space: nowrap;
+}
+
+.ticks span:first-child {
+  transform: none;
+}
+
+.ticks span:last-child {
+  transform: translateX(-100%);
+}
+
+.scrubber {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) 3.5em;
+  gap: 10px;
+  align-items: center;
+  font-size: 0.875rem;
+}
+
+.scrubber input {
+  width: 100%;
+  min-height: 44px;
+  margin: 0;
+  accent-color: var(--cc-blue);
+}
+
+.scrubValue {
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 18px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 0.8125rem;
+}
+
+.legend li {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0;
+}
+
+.swatch {
+  box-sizing: border-box;
+  width: 24px;
+  height: 14px;
+  border-radius: 3px;
+}
+
+.legendClash {
+  fill: none;
+  stroke: var(--cc-red);
+}
+
+.legendRx {
+  fill: none;
+  stroke: var(--cc-green);
+}
+
+.caption {
+  min-height: 3em;
+  margin: 0;
+  padding: 12px 14px;
+  border-radius: 6px;
+  background: var(--cc-surface);
+  line-height: 1.5;
+  text-wrap: pretty;
+}
+
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.controls :global(.button) {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  font-size: 0.9375rem;
+}
+
+.dutyCycle {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-top: 16px;
+  border-top: 1px solid var(--ifm-color-emphasis-300);
+}
+
+.dutyCycle p {
+  margin: 0;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  text-wrap: pretty;
+}
+
+.dutyCycle .dutyLead {
+  font-size: 0.9375rem;
+  font-weight: 600;
+}
+
+.dutyBar {
+  display: flex;
+  height: 20px;
+  overflow: hidden;
+  border: 1.5px solid var(--cc-muted);
+  border-radius: 4px;
+}
+
+.dutyFill {
+  width: 10%;
+  border-right: 1.5px solid var(--cc-bg);
+  background: var(--cc-blue);
+}
+
+.summary {
+  font-size: 0.9375rem;
+  line-height: 1.6;
+}
+
+@container (max-width: 400px) {
+  .tab {
+    padding: 6px 8px;
+  }
+
+  .legend {
+    gap: 8px 14px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .root *,
+  .root *::before,
+  .root *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}

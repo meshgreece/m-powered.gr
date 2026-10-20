@@ -1,0 +1,235 @@
+.root {
+  --fs-blue: #0b62d6;
+  --fs-green: #1a7f37;
+  --fs-red: #cf222e;
+  --fs-amber: #9a6700;
+  --fs-bg: var(--ifm-background-surface-color);
+  --fs-muted: var(--ifm-color-emphasis-600);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin: 0 0 var(--ifm-leading);
+  padding: 20px 16px;
+  border: 1px solid var(--ifm-color-emphasis-300);
+  border-radius: 8px;
+  background: var(--fs-bg);
+  color: var(--ifm-font-color-base);
+  container-type: inline-size;
+}
+
+:global([data-theme='dark']) .root {
+  --fs-blue: #58a6ff;
+  --fs-green: #3fb950;
+  --fs-red: #ff7b72;
+  --fs-amber: #e3b341;
+}
+
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.controls :global(.button) {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  font-size: 0.9375rem;
+}
+
+.controls :global(.button)[aria-disabled='true'] {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+.hopLimit {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-right: 8px;
+  font-weight: 600;
+}
+
+.hopLimit select {
+  min-height: 44px;
+  padding: 0 8px;
+  border: 1px solid var(--fs-muted);
+  border-radius: 6px;
+  background: var(--fs-bg);
+  color: inherit;
+  font: inherit;
+}
+
+.board {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.narrow {
+  display: none;
+  max-width: 300px;
+  margin: 0 auto;
+}
+
+@container (max-width: 560px) {
+  .wide {
+    display: none;
+  }
+
+  .narrow {
+    display: block;
+  }
+}
+
+.idle {
+  color: var(--fs-muted);
+}
+
+.origin {
+  color: var(--ifm-font-color-base);
+}
+
+.waiting {
+  color: var(--fs-amber);
+}
+
+.transmitting {
+  color: var(--fs-blue);
+}
+
+.received {
+  color: var(--fs-green);
+}
+
+.silenced {
+  color: var(--fs-red);
+}
+
+.range {
+  fill: currentColor;
+  fill-opacity: 0.07;
+  stroke: currentColor;
+  stroke-width: 1.5;
+  stroke-dasharray: 6 5;
+}
+
+.hearLine {
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-opacity: 0.5;
+}
+
+.duplicate {
+  fill: none;
+  stroke: var(--fs-muted);
+  stroke-width: 1.5;
+  stroke-dasharray: 3 3;
+}
+
+.nodeBase {
+  fill: var(--fs-bg);
+}
+
+.node {
+  fill: currentColor;
+  fill-opacity: 0.14;
+  stroke: currentColor;
+  stroke-width: 2.5;
+  transition: color 0.3s;
+}
+
+.badge {
+  fill: currentColor;
+  stroke: var(--fs-bg);
+  stroke-width: 1.5;
+}
+
+.iconStroke {
+  fill: none;
+  stroke: var(--fs-bg);
+}
+
+.iconFill {
+  fill: var(--fs-bg);
+}
+
+.nodeId {
+  fill: var(--ifm-font-color-base);
+  font-size: 18px;
+  font-weight: 700;
+  text-anchor: middle;
+}
+
+.hopText {
+  fill: var(--ifm-font-color-base);
+  font-size: 14px;
+  text-anchor: middle;
+}
+
+.txHop,
+.ack {
+  font-size: 14px;
+  font-weight: 700;
+  text-anchor: middle;
+}
+
+.txHop {
+  fill: var(--fs-blue);
+}
+
+.ack {
+  fill: var(--fs-green);
+}
+
+.waitBar {
+  fill: var(--fs-amber);
+}
+
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 18px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 0.8125rem;
+}
+
+.legend li {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0;
+}
+
+.legendIdle {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+}
+
+.caption {
+  min-height: 3em;
+  margin: 0;
+  padding: 12px 14px;
+  border-radius: 6px;
+  background: var(--ifm-color-emphasis-100);
+  line-height: 1.5;
+}
+
+.summary {
+  font-size: 0.9375rem;
+  line-height: 1.6;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .root *,
+  .root *::before,
+  .root *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}
