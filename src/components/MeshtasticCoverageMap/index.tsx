@@ -8,7 +8,7 @@ import type {GeometryCollection, Topology} from 'topojson-specification';
 import {MESHVIEW_BASE_URL, fetchJson, getMeshviewApiUrl} from '@site/src/lib/meshview';
 import type {MeshviewNode, NodesResponse} from '@site/src/lib/meshview';
 
-import {buildCoverage, createUnitIndex, getSuggestedPreset} from './coverage';
+import {buildCoverage, createUnitIndex} from './coverage';
 import styles from './styles.module.css';
 import {COVERAGE_STATES} from './types';
 import type {
@@ -154,9 +154,6 @@ export default function MeshtasticCoverageMap() {
   const selectedUnit = selectedUnitId === null
     ? null
     : data?.coverage.unitsById[selectedUnitId] ?? null;
-  const suggestedPreset = selectedUnit === null
-    ? null
-    : getSuggestedPreset(selectedUnit);
   const activeUnit = activeUnitId === null
     ? null
     : data?.coverage.unitsById[activeUnitId] ?? null;
@@ -350,9 +347,21 @@ export default function MeshtasticCoverageMap() {
                 />
                 <Link
                   className={styles.cta}
-                  to={`${GENERATOR_URL}?preset=${suggestedPreset}`}
+                  to={`${GENERATOR_URL}?preset=LongFast`}
                 >
-                  Προφίλ ρυθμίσεων {suggestedPreset} →
+                  Προφίλ LongFast →
+                </Link>
+                <Link
+                  className={styles.cta}
+                  to={`${GENERATOR_URL}?preset=NarrowSlow`}
+                >
+                  Προφίλ NarrowSlow →
+                </Link>
+                <Link
+                  className={styles.cta}
+                  to="/docs/network-settings#ποιο-preset-να-επιλέξεις"
+                >
+                  Ποιο preset να επιλέξεις →
                 </Link>
               </>
             )}

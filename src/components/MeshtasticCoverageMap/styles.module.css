@@ -285,7 +285,7 @@
 }
 
 .cta {
-  display: inline-block;
+  display: block;
   margin-top: 0.9rem;
   font-size: 0.84rem;
   font-weight: 600;

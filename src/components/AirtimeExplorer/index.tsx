@@ -80,7 +80,7 @@ export default function AirtimeExplorer() {
             type="button"
             className={clsx('button button--secondary button--sm', styles.communityButton)}
             onClick={() => update(COMMUNITY_SETTING)}>
-            Ρυθμίσεις του δικτύου μας
+            Ρυθμίσεις NarrowSlow
           </button>
         </div>
       </div>
@@ -99,7 +99,7 @@ export default function AirtimeExplorer() {
                   strokeLinejoin="round"
                 />
               </svg>
-              Το δίκτυό μας
+              NarrowSlow
             </p>
           )}
         </div>

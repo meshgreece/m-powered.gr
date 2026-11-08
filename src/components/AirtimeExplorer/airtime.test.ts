@@ -39,7 +39,7 @@ describe('LoRa airtime model', () => {
       'Μικρότερο SF ή φαρδύτερο BW: πιο γρήγορα, αλλά με μικρότερη εμβέλεια.',
     );
     expect(changeCaption({sf: 9, bwKhz: 62.5}, {sf: 8, bwKhz: 62.5})).toBe(
-      'SF 8 και 62,5 kHz: οι ρυθμίσεις του δικτύου μας.',
+      'SF 8 και 62,5 kHz: το preset NarrowSlow.',
     );
   });
 

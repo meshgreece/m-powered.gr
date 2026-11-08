@@ -41,7 +41,7 @@ export function isCommunitySetting({sf, bwKhz}: LoraSetting): boolean {
 }
 
 export function changeCaption(previous: LoraSetting, next: LoraSetting): string {
-  if (isCommunitySetting(next)) return 'SF 8 και 62,5 kHz: οι ρυθμίσεις του δικτύου μας.';
+  if (isCommunitySetting(next)) return 'SF 8 και 62,5 kHz: το preset NarrowSlow.';
   return airtimeMs(next) > airtimeMs(previous)
     ? 'Μεγαλύτερο SF ή στενότερο BW: πιο μακριά, αλλά η συχνότητα μένει κατειλημμένη περισσότερο.'
     : 'Μικρότερο SF ή φαρδύτερο BW: πιο γρήγορα, αλλά με μικρότερη εμβέλεια.';
