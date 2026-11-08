@@ -8,7 +8,7 @@ import type {GeometryCollection, Topology} from 'topojson-specification';
 import {MESHVIEW_BASE_URL, fetchJson, getMeshviewApiUrl} from '@site/src/lib/meshview';
 import type {MeshviewNode, NodesResponse} from '@site/src/lib/meshview';
 
-import {buildCoverage, createUnitIndex} from './coverage';
+import {buildCoverage, createUnitIndex, getSuggestedPreset} from './coverage';
 import styles from './styles.module.css';
 import {COVERAGE_STATES} from './types';
 import type {
@@ -154,6 +154,9 @@ export default function MeshtasticCoverageMap() {
   const selectedUnit = selectedUnitId === null
     ? null
     : data?.coverage.unitsById[selectedUnitId] ?? null;
+  const suggestedPreset = selectedUnit === null
+    ? null
+    : getSuggestedPreset(selectedUnit);
   const activeUnit = activeUnitId === null
     ? null
     : data?.coverage.unitsById[activeUnitId] ?? null;
@@ -247,7 +250,7 @@ export default function MeshtasticCoverageMap() {
                 >
                   <span className={styles.tooltipName}>{activeUnit.name}</span>
                   <span className={styles.tooltipCounts}>
-                    LongFast {activeUnit.longFast} · NarrowSlow{' '}
+                    LongFast {activeUnit.longFast}, NarrowSlow{' '}
                     {activeUnit.narrowSlow}
                   </span>
                 </div>
@@ -315,8 +318,8 @@ export default function MeshtasticCoverageMap() {
                 <div className={styles.positionless}>
                   <p className={styles.detailTitle}>Χωρίς κοινοποίηση θέσης</p>
                   <p className={styles.footnote}>
-                    Στις καταγραφές λείπουν οι συντεταγμένες· αυτό δεν δηλώνει
-                    αν ο χρήστης απενεργοποίησε την κοινοποίηση.
+                    Οι καταγραφές δεν έχουν συντεταγμένες. Αυτό δεν σημαίνει
+                    ότι ο χρήστης απενεργοποίησε την κοινοποίηση.
                   </p>
                   <CountList
                     rows={[
@@ -347,9 +350,9 @@ export default function MeshtasticCoverageMap() {
                 />
                 <Link
                   className={styles.cta}
-                  to={`${GENERATOR_URL}?preset=NarrowSlow`}
+                  to={`${GENERATOR_URL}?preset=${suggestedPreset}`}
                 >
-                  Προφίλ ρυθμίσεων NarrowSlow →
+                  Προφίλ ρυθμίσεων {suggestedPreset} →
                 </Link>
               </>
             )}
@@ -358,14 +361,13 @@ export default function MeshtasticCoverageMap() {
       </div>
 
       <p className={styles.footnote}>
-        Το χρώμα δείχνει το επικρατέστερο preset στις πρόσφατες καταγραφές
-        κόμβων με θέση μέσω MQTT τις τελευταίες 14 ημέρες. Η ένδειξη προκύπτει
-        από τα καταγεγραμμένα ονόματα καναλιών LongFast και NarrowSlow· δεν
-        επαληθεύει όλες τις ρυθμίσεις LoRa ή ένα πλήρες προφίλ ρυθμίσεων.
-        Μπορεί να περιλαμβάνει
+        Το χρώμα δείχνει ποιο preset επικρατεί στους κόμβους με θέση που
+        καταγράφηκαν μέσω MQTT τις τελευταίες 14 ημέρες. Η ένδειξη βασίζεται
+        στα ονόματα καναλιών LongFast και NarrowSlow. Δεν επαληθεύει όλες τις
+        ρυθμίσεις LoRa ή ένα πλήρες προφίλ ρυθμίσεων. Μπορεί να περιλαμβάνει
         παλιές ή άσχετες με την κοινότητα ρυθμίσεις. Κόμβοι χωρίς θέση δεν
-        τοποθετούνται στον χάρτη· όσοι δεν έχουν πρόσφατο uplink μπορεί να
-        απουσιάζουν. Λίγοι κόμβοι μπορούν να αλλάξουν το αποτέλεσμα.
+        τοποθετούνται στον χάρτη. Μπορεί επίσης να λείπουν κόμβοι χωρίς πρόσφατο
+        uplink. Λίγοι κόμβοι μπορούν να αλλάξουν το αποτέλεσμα.
         Οι καταγραφές δεν αποδεικνύουν RF κάλυψη ή παράδοση μηνυμάτων.
       </p>
 

@@ -8,6 +8,7 @@ import {
   buildCoverage,
   classifyUnit,
   createUnitIndex,
+  getSuggestedPreset,
   locateUnitId,
   toPresetChannel,
 } from './coverage';
@@ -73,6 +74,21 @@ describe('classifying a unit', () => {
   it('has no state to report without positioned nodes', () => {
     expect(classifyUnit(0, 0)).toBe('None');
   });
+});
+
+describe('suggesting a profile from regional records', () => {
+  it.each([
+    {longFast: 0, narrowSlow: 0, expected: 'LongFast'},
+    {longFast: 8, narrowSlow: 0, expected: 'LongFast'},
+    {longFast: 0, narrowSlow: 5, expected: 'NarrowSlow'},
+    {longFast: 3, narrowSlow: 2, expected: 'NarrowSlow'},
+    {longFast: 20, narrowSlow: 1, expected: 'NarrowSlow'},
+  ])(
+    'suggests $expected with $longFast LF and $narrowSlow NarrowSlow nodes',
+    ({expected, ...unit}) => {
+      expect(getSuggestedPreset(unit)).toBe(expected);
+    },
+  );
 });
 
 describe('reading channels', () => {

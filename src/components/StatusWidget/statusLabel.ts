@@ -52,5 +52,5 @@ export function getStatusAccessibleName(label: string): string {
     {status: label},
   );
   const separator = /[.…]$/.test(label) ? ' ' : '. ';
-  return `${name}${separator}Η ένδειξη βασίζεται στην πρόσφατη κίνηση και στα σφάλματα του live feed πακέτων του Meshview· δεν ελέγχει κάθε κόμβο ή RF διαδρομή.`;
+  return `${name}${separator}Η ένδειξη βασίζεται στην πρόσφατη κίνηση και στα σφάλματα του live feed πακέτων του Meshview. Δεν ελέγχει κάθε κόμβο ή RF διαδρομή.`;
 }

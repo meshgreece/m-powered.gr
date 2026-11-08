@@ -11,18 +11,21 @@ describe('configuration generator URL selection', () => {
     expect(
       parseGeneratorSelection(new URLSearchParams()),
     ).toEqual({
-      profileId: 'NarrowSlow',
+      profileId: 'LongFast',
       hopLimit: 4,
       positionPrecision: 14,
       additionalChannels: [],
     });
   });
 
-  it('keeps explicit legacy LongFast selections readable', () => {
-    expect(
-      parseGeneratorSelection(new URLSearchParams('preset=LongFast')).profileId,
-    ).toBe('LongFast');
-  });
+  it.each(['LongFast', 'NarrowSlow'] as const)(
+    'preserves an explicit %s selection',
+    (profileId) => {
+      expect(
+        parseGeneratorSelection(new URLSearchParams(`preset=${profileId}`)).profileId,
+      ).toBe(profileId);
+    },
+  );
 
   it('ignores firmware query parameters', () => {
     const selection = parseGeneratorSelection(
@@ -85,19 +88,19 @@ describe('configuration generator URL selection', () => {
     ).toBe('preset=LongFast&hop=4&precision=18&test=true&bots=true');
   });
 
-  it('creates the community default query string', () => {
+  it('shares LongFast when starting without a selected local mesh', () => {
     expect(createGeneratorSearchParams(DEFAULT_SELECTION).toString()).toBe(
-      'preset=NarrowSlow&hop=4&precision=14',
+      'preset=LongFast&hop=4&precision=14',
     );
   });
 
-  it('keeps an explicit legacy LongFast query string', () => {
+  it('keeps an explicit NarrowSlow query string despite the LongFast default', () => {
     expect(
       createGeneratorSearchParams({
         ...DEFAULT_SELECTION,
-        profileId: 'LongFast',
+        profileId: 'NarrowSlow',
       }).toString(),
-    ).toBe('preset=LongFast&hop=4&precision=14');
+    ).toBe('preset=NarrowSlow&hop=4&precision=14');
   });
 
   it.each(['LongFast', 'NarrowSlow'] as const)(

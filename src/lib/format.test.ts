@@ -76,8 +76,8 @@ describe('telemetry values', () => {
   });
 
   it('shows battery and voltage together', () => {
-    expect(formatPowerValue({battery: 95, voltage: 4.122})).toBe('95% · 4.12V');
-    expect(formatPowerValue({battery: null, voltage: 4.122})).toBe('— · 4.12V');
+    expect(formatPowerValue({battery: 95, voltage: 4.122})).toBe('95%, 4.12V');
+    expect(formatPowerValue({battery: null, voltage: 4.122})).toBe('—, 4.12V');
     expect(formatPowerValue({battery: null, voltage: null})).toBe(
       'Χωρίς δεδομένα',
     );

@@ -21,8 +21,8 @@ function HomepageHeader() {
           </Heading>
           <p className={styles.heroLead}>
             Το m-powered.gr είναι ο ανεξάρτητος ιστότοπος του Meshtastic Greece
-            Community για χρήστες Meshtastic στην Ελλάδα. Βρες οδηγίες, το
-            κοινοτικό προφίλ NarrowSlow και εργαλεία monitoring.
+            Community για χρήστες Meshtastic στην Ελλάδα. Βρες οδηγίες,
+            προφίλ ρυθμίσεων και εργαλεία monitoring.
           </p>
           <div className={styles.heroActions}>
             <a className={styles.primaryButton} href="#quick-start">
@@ -57,7 +57,7 @@ export default function Home(): ReactNode {
   return (
     <Layout
       title="Meshtastic Greece Community"
-      description="Το Meshtastic Greece Community είναι μια ανεξάρτητη κοινότητα χρηστών Meshtastic στην Ελλάδα. Οδηγοί, προφίλ NarrowSlow και εργαλεία monitoring στο m-powered.gr.">
+      description="Το Meshtastic Greece Community είναι μια ανεξάρτητη κοινότητα χρηστών Meshtastic στην Ελλάδα. Οδηγοί και εργαλεία monitoring στο m-powered.gr, με προφίλ LongFast και NarrowSlow.">
       <HomepageHeader />
       <main>
         <HomepageFeatures />

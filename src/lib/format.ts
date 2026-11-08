@@ -107,5 +107,5 @@ export function formatPowerValue(power: {
   const batteryValue = power.battery !== null ? `${power.battery}%` : '—';
   const voltageValue =
     power.voltage !== null ? `${power.voltage.toFixed(2)}V` : '—';
-  return `${batteryValue} · ${voltageValue}`;
+  return `${batteryValue}, ${voltageValue}`;
 }

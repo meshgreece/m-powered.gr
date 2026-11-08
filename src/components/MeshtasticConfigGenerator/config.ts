@@ -18,7 +18,7 @@ import {
   POSITION_PRECISION_VALUES,
 } from './types';
 
-export const DEFAULT_PROFILE: ProfileId = 'NarrowSlow';
+export const DEFAULT_PROFILE: ProfileId = 'LongFast';
 export const DEFAULT_HOP_LIMIT: HopLimit = 4;
 export const DEFAULT_POSITION_PRECISION: PositionPrecision = 14;
 export const POSITION_PRIVACY_WARNING_THRESHOLD = 17;
@@ -94,7 +94,7 @@ export const PROFILES: Record<ProfileId, ConfigurationProfile> = {
   LongFast: {
     id: 'LongFast',
     name: 'LongFast',
-    description: 'Παλιό προφίλ LongFast, για συμβατότητα με αποθηκευμένες επιλογές.',
+    description: 'Για περιοχές με LongFast ή για νέο mesh χωρίς γνωστούς κοντινούς κόμβους.',
     mqttRootTopic: 'msh/EU_868/GR',
     channelSet: {
       settings: [
@@ -116,7 +116,7 @@ export const PROFILES: Record<ProfileId, ConfigurationProfile> = {
   NarrowSlow: {
     id: 'NarrowSlow',
     name: 'NarrowSlow',
-    description: 'Το προφίλ EU_N_868 / NARROW_SLOW της κοινότητας, για νέους και υπάρχοντες κόμβους.',
+    description: 'Για να συνδεθείς με κόμβους NarrowSlow, κυρίως στην Αττική και σε γύρω περιοχές.',
     mqttRootTopic: 'msh/EU_N_868/GR',
     channelSet: {
       settings: [

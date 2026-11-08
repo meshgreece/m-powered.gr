@@ -48,7 +48,7 @@ describe('status label', () => {
     'joins %j to its explanation with one sentence boundary',
     (status, sentence) => {
       expect(getStatusAccessibleName(getStatusLabel(status))).toBe(
-        `Κατάσταση δικτύου: ${sentence} Η ένδειξη βασίζεται στην πρόσφατη κίνηση και στα σφάλματα του live feed πακέτων του Meshview· δεν ελέγχει κάθε κόμβο ή RF διαδρομή.`,
+        `Κατάσταση δικτύου: ${sentence} Η ένδειξη βασίζεται στην πρόσφατη κίνηση και στα σφάλματα του live feed πακέτων του Meshview. Δεν ελέγχει κάθε κόμβο ή RF διαδρομή.`,
       );
     },
   );

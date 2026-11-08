@@ -15,11 +15,11 @@ const quickStartSteps = [
     label: 'Άνοιξε τον Meshtastic Web Flasher',
   },
   {
-    title: 'Εφάρμοσε το NarrowSlow',
+    title: 'Διάλεξε το preset',
     description:
-      'Εφάρμοσε το κοινοτικό προφίλ και επίλεξε συνήθως CLIENT ή CLIENT_MUTE. Για ρόλο υποδομής χρειάζεται συνεννόηση.',
-    to: '/docs/configuration-generator?preset=NarrowSlow',
-    label: 'Άνοιξε το προφίλ',
+      'Δες ποιο preset χρησιμοποιεί το mesh της περιοχής σου και εφάρμοσε το αντίστοιχο προφίλ. Επίλεξε συνήθως CLIENT ή CLIENT_MUTE.',
+    to: '/docs/network-settings#ποιο-preset-να-επιλέξεις',
+    label: 'Δες ποιο preset να επιλέξεις',
   },
   {
     title: 'Στείλε ένα «γεια»',

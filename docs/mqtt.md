@@ -44,10 +44,11 @@ description: Ο MQTT broker του m-powered.gr, η διαφορά μεταξύ 
 | Username — `username` | `meshdev` |
 | Password — `password` | `large4cats` |
 | Root topic — `root`, για NarrowSlow | `msh/EU_N_868/GR` |
+| Root topic — `root`, για LongFast | `msh/EU_868/GR` |
 
-Για παλιό gateway με LongFast, το root topic είναι `msh/EU_868/GR`. Το root είναι πρόθεμα των MQTT topics· δεν αλλάζει το region ή το preset LoRa. Για το τρέχον κοινοτικό δίκτυο χρησιμοποίησε το [προφίλ ρυθμίσεων NarrowSlow](./configuration-generator?preset=NarrowSlow) για την έκδοση firmware της συσκευής σου.
+Το root είναι πρόθεμα των MQTT topics και δεν αλλάζει το region ή το preset LoRa. Βάλε την τιμή που αντιστοιχεί στο προφίλ σου. Δες [ποιο preset να επιλέξεις](./network-settings#ποιο-preset-να-επιλέξεις) και εφάρμοσε το αντίστοιχο [προφίλ ρυθμίσεων](./configuration-generator) για την έκδοση firmware της συσκευής σου.
 
-Στα κανάλια που θα προωθεί το gateway, κράτησε τις [προτεινόμενες τιμές](#προτεινόμενες-τιμές) για uplink και downlink. Ο ρόλος της συσκευής είναι ξεχωριστή επιλογή από το MQTT module· δες τη [σύγκριση ρόλων](./network-settings#ποιον-ρόλο-να-επιλέξεις).
+Στα κανάλια που θα προωθεί το gateway, κράτησε τις [προτεινόμενες τιμές](#προτεινόμενες-τιμές) για uplink και downlink. Ο ρόλος της συσκευής είναι ξεχωριστή επιλογή από το MQTT module. Δες τη [σύγκριση ρόλων](./network-settings#ποιον-ρόλο-να-επιλέξεις).
 
 ## Τι κάνει ο δικός μας broker
 

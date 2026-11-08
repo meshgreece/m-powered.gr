@@ -96,6 +96,12 @@ function createEmptyPresetCounts(): Record<PresetChannel, number> {
   return {LongFast: 0, NarrowSlow: 0};
 }
 
+export function getSuggestedPreset(
+  unit: Pick<UnitCoverage, 'narrowSlow'>,
+): PresetChannel {
+  return unit.narrowSlow > 0 ? 'NarrowSlow' : 'LongFast';
+}
+
 export function buildCoverage(
   index: UnitIndex,
   nodes: readonly MeshviewNode[],

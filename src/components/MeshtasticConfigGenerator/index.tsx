@@ -153,7 +153,7 @@ export default function MeshtasticConfigGenerator() {
       ? [selection.additionalChannels.join(' + ')]
       : []),
     ...(isCustomized ? ['προσαρμοσμένες ρυθμίσεις για προχωρημένους'] : []),
-  ].join(' · ');
+  ].join(', ');
 
   function updateSelection(update: Partial<GeneratorSelection>) {
     setSelection((current) => ({...current, ...update}));
@@ -352,8 +352,8 @@ export default function MeshtasticConfigGenerator() {
               {selection.hopLimit === 3
                 ? 'Η προεπιλογή του Meshtastic.'
                 : selection.hopLimit === 4
-                  ? 'Η αρχική επιλογή της γεννήτριας· περισσότερα hops επιτρέπουν περισσότερες αναμεταδόσεις.'
-                  : 'Μόνο όπου χρειάζεται· αυξάνει τον φόρτο του mesh.'}
+                  ? 'Η αρχική επιλογή της γεννήτριας. Περισσότερα hops επιτρέπουν περισσότερες αναμεταδόσεις.'
+                  : 'Χρησιμοποίησέ το μόνο όπου χρειάζεται, γιατί αυξάνει τον φόρτο του mesh.'}
             </p>
           </div>
 
@@ -521,7 +521,7 @@ export default function MeshtasticConfigGenerator() {
                     />
                     <Checkbox
                       checked={advanced.additional[channelId].isMuted}
-                      description="χωρίς ειδοποιήσεις· το κανάλι συνεχίζει να λειτουργεί"
+                      description="χωρίς ειδοποιήσεις. Το κανάλι συνεχίζει να λειτουργεί"
                       name="Σίγαση"
                       onChange={(checked) =>
                         updateAdditionalFlag(channelId, 'isMuted', checked)
@@ -556,7 +556,7 @@ export default function MeshtasticConfigGenerator() {
               ? 'Όχι για το 2.8.0, που ανακλήθηκε.'
               : firmware === '2.8'
                 ? 'Όχι για το 2.8.0, που ανακλήθηκε. Για κόμβο με 2.7, επίλεξε 2.7.'
-                : 'Όχι για κόμβο με 2.8.1· εκεί επίλεξε 2.8. Μετά την αναβάθμιση σε 2.8.1, εφάρμοσε ξανά το προφίλ για 2.8.'}
+                : 'Όχι για κόμβο με 2.8.1. Εκεί επίλεξε 2.8. Μετά την αναβάθμιση σε 2.8.1, εφάρμοσε ξανά το προφίλ για 2.8.'}
           </p>
 
           <div className={styles.qrPanel} key={configUrl}>
