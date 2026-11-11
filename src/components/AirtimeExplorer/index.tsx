@@ -1,6 +1,7 @@
-import {useId, useState} from 'react';
+import {useState} from 'react';
 import type {CSSProperties} from 'react';
 import clsx from 'clsx';
+import {MetricTile, SegmentedControl, StepCaption, WidgetFrame, formatNumber} from '@site/src/components/teaching';
 
 import {
   BANDWIDTHS_KHZ,
@@ -9,7 +10,6 @@ import {
   airtimeMs,
   changeCaption,
   dataRateBps,
-  formatNumber,
   isCommunitySetting,
   linkBudgetDb,
 } from './airtime';
@@ -21,10 +21,12 @@ const BUDGET_MIN_DB = 140;
 const BUDGET_MAX_DB = 162;
 const AIRTIME_TICKS_S = Array.from({length: AIRTIME_SCALE_MS / 1000 + 1}, (_, s) => s);
 
+const SF_OPTIONS = SPREADING_FACTORS.map((sf) => ({value: sf, label: String(sf)}));
+const BW_OPTIONS = BANDWIDTHS_KHZ.map((bwKhz) => ({value: bwKhz, label: `${formatNumber(bwKhz)} kHz`}));
+
 const fill = (fraction: number) => ({'--fill': fraction}) as CSSProperties;
 
 export default function AirtimeExplorer() {
-  const baseId = useId();
   const [setting, setSetting] = useState<LoraSetting>(COMMUNITY_SETTING);
   const [caption, setCaption] = useState(changeCaption(COMMUNITY_SETTING, COMMUNITY_SETTING));
 
@@ -38,48 +40,24 @@ export default function AirtimeExplorer() {
   const budget = linkBudgetDb(setting);
 
   return (
-    <figure className={styles.root}>
+    <WidgetFrame
+      note="Για να επικοινωνήσουν, όλοι οι κόμβοι πρέπει να έχουν τις ίδιες ρυθμίσεις. Οι συνδυασμοί εδώ είναι παραδείγματα. Μην τους εφαρμόσεις στη συσκευή σου.">
       <div className={styles.settings}>
-        <fieldset className={styles.group}>
-          <legend className={styles.legend}>Spreading factor (SF)</legend>
-          <div className={styles.segments}>
-            {SPREADING_FACTORS.map((sf) => (
-              <label key={sf} className={styles.segment}>
-                <input
-                  type="radio"
-                  name={`${baseId}-sf`}
-                  className={styles.radio}
-                  checked={setting.sf === sf}
-                  onChange={() => update({...setting, sf})}
-                />
-                <span className={clsx(styles.segmentText, styles.numeric)}>{sf}</span>
-              </label>
-            ))}
-          </div>
-        </fieldset>
-        <fieldset className={styles.group}>
-          <legend className={styles.legend}>Bandwidth (BW)</legend>
-          <div className={styles.segments}>
-            {BANDWIDTHS_KHZ.map((bwKhz) => (
-              <label key={bwKhz} className={styles.segment}>
-                <input
-                  type="radio"
-                  name={`${baseId}-bw`}
-                  className={styles.radio}
-                  checked={setting.bwKhz === bwKhz}
-                  onChange={() => update({...setting, bwKhz})}
-                />
-                <span className={styles.segmentText}>{formatNumber(bwKhz)} kHz</span>
-              </label>
-            ))}
-          </div>
-        </fieldset>
+        <SegmentedControl
+          legend="Spreading factor (SF)"
+          options={SF_OPTIONS}
+          value={setting.sf}
+          onChange={(sf) => update({...setting, sf})}
+        />
+        <SegmentedControl
+          legend="Bandwidth (BW)"
+          options={BW_OPTIONS}
+          value={setting.bwKhz}
+          onChange={(bwKhz) => update({...setting, bwKhz})}
+        />
         <div className={styles.fixedRow}>
           <p className={styles.fixed}>Coding rate 4/6</p>
-          <button
-            type="button"
-            className={clsx('button button--secondary button--sm', styles.communityButton)}
-            onClick={() => update(COMMUNITY_SETTING)}>
+          <button type="button" className={styles.communityButton} onClick={() => update(COMMUNITY_SETTING)}>
             Ρυθμίσεις NarrowSlow
           </button>
         </div>
@@ -104,13 +82,9 @@ export default function AirtimeExplorer() {
           )}
         </div>
 
-        <dl className={styles.outputs}>
-          <div className={styles.output}>
-            <dt className={styles.label}>Χρόνος στον αέρα</dt>
-            <dd className={styles.value}>
-              {formatNumber(Math.round(airtime))} <span className={styles.unit}>ms</span>
-            </dd>
-            <dd className={styles.meter} aria-hidden="true">
+        <div className={styles.outputs}>
+          <MetricTile label="Airtime" value={formatNumber(Math.round(airtime))} unit="ms">
+            <div className={styles.meter} aria-hidden="true">
               <div className={styles.track}>
                 <div className={clsx(styles.fill, styles.fillAirtime)} style={fill(airtime / AIRTIME_SCALE_MS)} />
               </div>
@@ -119,20 +93,11 @@ export default function AirtimeExplorer() {
                   <span key={s} style={{left: `${((s * 1000) / AIRTIME_SCALE_MS) * 100}%`}}>{`${s} s`}</span>
                 ))}
               </div>
-            </dd>
-          </div>
-          <div className={styles.output}>
-            <dt className={styles.label}>Ρυθμός δεδομένων</dt>
-            <dd className={styles.value}>
-              {formatNumber(Math.round(dataRateBps(setting)))} <span className={styles.unit}>bit/s</span>
-            </dd>
-          </div>
-          <div className={styles.output}>
-            <dt className={styles.label}>Link budget</dt>
-            <dd className={styles.value}>
-              {formatNumber(budget)} <span className={styles.unit}>dB</span>
-            </dd>
-            <dd className={styles.meter} aria-hidden="true">
+            </div>
+          </MetricTile>
+          <MetricTile label="Ρυθμός δεδομένων" value={formatNumber(Math.round(dataRateBps(setting)))} unit="bit/s" />
+          <MetricTile label="Link budget" value={formatNumber(budget)} unit="dB">
+            <div className={styles.meter} aria-hidden="true">
               <div className={styles.track}>
                 <div
                   className={clsx(styles.fill, styles.fillBudget)}
@@ -143,19 +108,12 @@ export default function AirtimeExplorer() {
                 <span>{BUDGET_MIN_DB} dB</span>
                 <span>{BUDGET_MAX_DB} dB</span>
               </div>
-            </dd>
-          </div>
-        </dl>
+            </div>
+          </MetricTile>
+        </div>
 
-        <p className={styles.caption} aria-live="polite">
-          {caption}
-        </p>
+        <StepCaption>{caption}</StepCaption>
       </div>
-
-      <figcaption className={styles.summary}>
-        Για να επικοινωνήσουν, όλοι οι κόμβοι πρέπει να έχουν τις ίδιες ρυθμίσεις.
-        Οι συνδυασμοί εδώ είναι παραδείγματα. Μην τους εφαρμόσεις στη συσκευή σου.
-      </figcaption>
-    </figure>
+    </WidgetFrame>
   );
 }

@@ -57,10 +57,8 @@ export const SCENARIOS: readonly Scenario[] = [
 
 export const IDLE_CAPTION = 'Πάτησε «Παίξε» για να δεις τι συμβαίνει στη συχνότητα.';
 
-export const DUTY_CYCLE_LINES = [
-  'Κάθε κόμβος μπορεί να εκπέμπει έως 6 λεπτά την ώρα (10%).',
-  'Τα 6 λεπτά είναι το όριο για κάθε κόμβο. Η συχνότητα όμως είναι κοινή: κάθε εκπομπή του κόμβου σου την καταλαμβάνει για όλους.',
-] as const;
+export const DUTY_CYCLE_NOTE =
+  'Η συχνότητα όμως είναι κοινή: κάθε εκπομπή του κόμβου σου την καταλαμβάνει για όλους.';
 
 export function overlaps(scenario: Scenario): Interval[] {
   const result: Interval[] = [];

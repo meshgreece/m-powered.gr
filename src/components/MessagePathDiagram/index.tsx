@@ -1,5 +1,6 @@
 import type {CSSProperties} from 'react';
 import clsx from 'clsx';
+import {PlayControls, StepCaption, StepDots, WidgetFrame} from '@site/src/components/teaching';
 import {useReducedMotion} from '@site/src/lib/useReducedMotion';
 import {useStepPlayer} from '@site/src/lib/useStepPlayer';
 
@@ -242,22 +243,17 @@ function NarrowDiagram({activeLink, delivered}: DiagramProps) {
 
 export default function MessagePathDiagram() {
   const reducedMotion = useReducedMotion();
-  const {step, done, play, next, reset} = useStepPlayer(PATH_STEPS.length, STEP_MS, reducedMotion);
+  const {step, done, playing, play, pause, next, reset} = useStepPlayer(PATH_STEPS.length, STEP_MS, reducedMotion);
   const {activeLink, caption} = PATH_STEPS[step];
 
   return (
-    <figure className={styles.root}>
+    <WidgetFrame note="Το μήνυμα πηγαίνει από το κινητό στον κόμβο σου μέσω Bluetooth, μετά από κόμβο σε κόμβο με LoRa, και τέλος στο κινητό του παραλήπτη, χωρίς internet.">
       <WideDiagram activeLink={activeLink} delivered={done} />
       <NarrowDiagram activeLink={activeLink} delivered={done} />
-      <div className={styles.controls}>
-        <button type="button" className="button button--primary button--sm" onClick={play}>Στείλε μήνυμα</button>
-        <button type="button" className="button button--secondary button--sm" onClick={() => !done && next()} aria-disabled={done}>Επόμενο βήμα</button>
-        <button type="button" className="button button--secondary button--sm" onClick={reset}>Από την αρχή</button>
-      </div>
-      <p className={styles.caption} aria-live="polite">{caption}</p>
-      <figcaption className={styles.summary}>
-        Το μήνυμα πηγαίνει από το κινητό στον κόμβο σου μέσω Bluetooth, μετά από κόμβο σε κόμβο με LoRa, και τέλος στο κινητό του παραλήπτη, χωρίς internet.
-      </figcaption>
-    </figure>
+      <PlayControls playing={playing} done={done} onPlay={play} onPause={pause} onReset={reset} onNext={next}>
+        <StepDots step={step} count={PATH_STEPS.length} />
+      </PlayControls>
+      <StepCaption number={step + 1}>{caption}</StepCaption>
+    </WidgetFrame>
   );
 }

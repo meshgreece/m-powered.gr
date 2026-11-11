@@ -22,12 +22,14 @@ export function useStepPlayer(
   const play = useCallback(() => {
     if (reducedMotion) {
       setPlaying(false);
-      setStep(last);
+      setStep(step >= last ? 0 : last);
       return;
     }
     if (step >= last) setStep(0);
     setPlaying(true);
   }, [reducedMotion, step, last]);
+
+  const pause = useCallback(() => setPlaying(false), []);
 
   const next = useCallback(() => {
     setPlaying(false);
@@ -39,5 +41,5 @@ export function useStepPlayer(
     setStep(0);
   }, []);
 
-  return {step, done: step >= last, play, next, reset};
+  return {step, done: step >= last, playing, play, pause, next, reset};
 }

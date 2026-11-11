@@ -47,8 +47,3 @@ export function changeCaption(previous: LoraSetting, next: LoraSetting): string 
     : 'Μικρότερο SF ή φαρδύτερο BW: πιο γρήγορα, αλλά με μικρότερη εμβέλεια.';
 }
 
-const numberFormat = new Intl.NumberFormat('el-GR', {maximumFractionDigits: 1, useGrouping: false});
-
-export function formatNumber(value: number): string {
-  return numberFormat.format(value);
-}

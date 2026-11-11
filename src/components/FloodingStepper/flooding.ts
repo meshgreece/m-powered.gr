@@ -76,7 +76,6 @@ export function simulateFlood(hopLimit: number): FloodStep[] {
   const readyAt = new Map<NodeId, number>();
   const steps: FloodStep[] = [];
   let acked = false;
-  let wasted = false;
   let transmissions = 0;
 
   const push = (transmitter: NodeId | null, transmittedHop: number | null, duplicates: NodeId[], caption: string) =>
@@ -90,14 +89,12 @@ export function simulateFlood(hopLimit: number): FloodStep[] {
   while (transmitter) {
     const {far, near} = RANGE[transmitter];
     const duplicates: NodeId[] = [];
-    let newcomers = 0;
 
     for (const id of [...far, ...near]) {
       const node = nodes[id];
       if (id === ORIGIN) {
         acked = true;
       } else if (node.state === 'idle') {
-        newcomers += 1;
         if (hop > 0) {
           const isFar = far.includes(id);
           nodes[id] = {state: 'waiting', hop, wait: isFar ? 'short' : 'long'};
@@ -114,7 +111,6 @@ export function simulateFlood(hopLimit: number): FloodStep[] {
     }
 
     transmissions += 1;
-    if (newcomers === 0) wasted = true;
     const restingState: NodeState = transmitter === ORIGIN ? 'origin' : 'received';
     nodes[transmitter] = {...nodes[transmitter], state: 'transmitting'};
     push(transmitter, hop, duplicates, transmitCaption(transmitter, hop));
@@ -133,6 +129,43 @@ export function simulateFlood(hopLimit: number): FloodStep[] {
   }
 
   const unreached = NODE_IDS.filter((id) => nodes[id].state === 'idle');
+  const wasted = floodOutcome(steps) === 'wasted';
   push(null, null, [], finalCaption(hopLimit, unreached, wasted, transmissions));
   return steps;
+}
+
+// One entry per unordered pair in RANGE; weak when either end lists the other as far.
+export const FLOOD_LINKS: readonly {a: NodeId; b: NodeId; weak: boolean}[] = NODE_IDS.flatMap((a) =>
+  [...RANGE[a].far, ...RANGE[a].near]
+    .filter((b) => a < b)
+    .map((b) => ({a, b, weak: RANGE[a].far.includes(b) || RANGE[b].far.includes(a)})),
+);
+
+export function transmissionsUpTo(steps: FloodStep[], index: number): number {
+  return steps.slice(0, index + 1).filter((s) => s.transmitter !== null).length;
+}
+
+export function reachedCount(step: FloodStep): number {
+  return NODE_IDS.filter((id) => step.nodes[id].state !== 'idle').length;
+}
+
+export type FloodOutcome = 'all' | 'unreached' | 'wasted';
+
+export function floodOutcome(steps: FloodStep[]): FloodOutcome {
+  if (reachedCount(steps.at(-1)!) < NODE_IDS.length) return 'unreached';
+  const wasted = steps.some(
+    (s, i) => s.transmitter !== null && reachedCount(s) === reachedCount(steps[i - 1]),
+  );
+  return wasted ? 'wasted' : 'all';
+}
+
+export function floodTakeaway(outcome: FloodOutcome, hopLimit: number): string {
+  switch (outcome) {
+    case 'all':
+      return `με hop limit ${hopLimit} το μήνυμα έφτασε σε όλους. Κάθε επανάληψη καταλαμβάνει τη συχνότητα, γι' αυτό λιγότερες επαναλήψεις σημαίνουν λιγότερες συγκρούσεις.`;
+    case 'unreached':
+      return `με hop limit ${hopLimit} το μήνυμα σταμάτησε πριν φτάσει σε όλους. Το hop limit πρέπει να καλύπτει όσα hops απέχει ο πιο μακρινός κόμβος.`;
+    case 'wasted':
+      return `με hop limit ${hopLimit} το μήνυμα έφτασε σε όλους, αλλά με περισσότερες εκπομπές από όσες χρειάζονται. Σε μεγάλο δίκτυο, ένα υψηλό hop limit πολλαπλασιάζει τον χρόνο που η συχνότητα μένει κατειλημμένη.`;
+  }
 }

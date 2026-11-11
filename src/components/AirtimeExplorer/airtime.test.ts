@@ -4,7 +4,6 @@ import {
   airtimeMs,
   changeCaption,
   dataRateBps,
-  formatNumber,
   linkBudgetDb,
 } from './airtime';
 
@@ -41,11 +40,5 @@ describe('LoRa airtime model', () => {
     expect(changeCaption({sf: 9, bwKhz: 62.5}, {sf: 8, bwKhz: 62.5})).toBe(
       'SF 8 και 62,5 kHz: το preset NarrowSlow.',
     );
-  });
-
-  it('formats numbers with a Greek decimal comma and no grouping', () => {
-    expect(formatNumber(151.5)).toBe('151,5');
-    expect(formatNumber(62.5)).toBe('62,5');
-    expect(formatNumber(2279)).toBe('2279');
   });
 });

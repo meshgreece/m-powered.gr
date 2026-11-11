@@ -1,6 +1,13 @@
 import {describe, expect, it} from 'vitest';
 
-import {simulateFlood} from './flooding';
+import {
+  FLOOD_LINKS,
+  floodOutcome,
+  floodTakeaway,
+  reachedCount,
+  simulateFlood,
+  transmissionsUpTo,
+} from './flooding';
 
 const transmitters = (hopLimit: number) =>
   simulateFlood(hopLimit).map((step) => step.transmitter);
@@ -76,5 +83,36 @@ describe('managed flooding simulation', () => {
     expect(four[6]).toBe(
       'Ο H επανέλαβε το μήνυμα χωρίς να το ακούσει κανείς νέος. Μεγαλύτερο hop limit από όσο χρειάζεται σπαταλά airtime.',
     );
+  });
+});
+
+describe('flooding helpers', () => {
+  it('lists every link once and marks the weak ones', () => {
+    expect(FLOOD_LINKS).toHaveLength(10);
+    const weak = FLOOD_LINKS.filter((l) => l.weak).map((l) => `${l.a}–${l.b}`).sort();
+    expect(weak).toEqual(['A–C', 'C–D', 'D–F', 'F–H']);
+  });
+
+  it('counts transmissions up to a step', () => {
+    expect(transmissionsUpTo(simulateFlood(3), 3)).toBe(3);
+    expect(transmissionsUpTo(simulateFlood(3), 5)).toBe(4);
+    expect(transmissionsUpTo(simulateFlood(7), 6)).toBe(5);
+  });
+
+  it('counts reached nodes', () => {
+    expect(reachedCount(simulateFlood(3)[3])).toBe(7);
+    expect(reachedCount(simulateFlood(3).at(-1)!)).toBe(8);
+  });
+
+  it('classifies the outcome', () => {
+    expect([1, 2, 3, 4, 7].map((n) => floodOutcome(simulateFlood(n)))).toEqual([
+      'unreached', 'unreached', 'all', 'wasted', 'wasted',
+    ]);
+  });
+
+  it('writes the takeaway', () => {
+    expect(floodTakeaway('all', 3)).toMatch(/^με hop limit 3 το μήνυμα έφτασε σε όλους\./);
+    expect(floodTakeaway('unreached', 2)).toMatch(/^με hop limit 2 το μήνυμα σταμάτησε/);
+    expect(floodTakeaway('wasted', 7)).toMatch(/^με hop limit 7 το μήνυμα έφτασε σε όλους, αλλά με περισσότερες εκπομπές/);
   });
 });
