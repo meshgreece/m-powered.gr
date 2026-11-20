@@ -4,7 +4,7 @@ import Link from '@docusaurus/Link';
 import Heading from '@theme/Heading';
 import styles from './styles.module.css';
 
-const TELEGRAM_URL = 'https://t.me/+_5Z0q7DWM6UwMDJk';
+const TELEGRAM_URL = 'https://t.me/+F3EjmkRNR8swZjhk';
 
 const quickStartSteps = [
   {

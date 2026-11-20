@@ -151,7 +151,7 @@ const config: Config = {
           items: [
             {
               label: 'Telegram',
-              href: 'https://t.me/+_5Z0q7DWM6UwMDJk',
+              href: 'https://t.me/+F3EjmkRNR8swZjhk',
             },
             {
               label: 'GitHub',
