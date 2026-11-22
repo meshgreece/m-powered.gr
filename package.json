@@ -7,11 +7,12 @@
     "start": "docusaurus start",
     "build": "docusaurus build",
     "swizzle": "docusaurus swizzle",
-    "deploy": "docusaurus deploy",
     "clear": "docusaurus clear",
     "protobuf:update": "node scripts/update-protobuf.mjs",
     "nuts:update": "node scripts/build-greece-nuts3.mjs",
     "serve": "docusaurus serve",
+    "cf:dev": "wrangler dev",
+    "cf:deploy": "wrangler deploy",
     "write-translations": "docusaurus write-translations",
     "write-heading-ids": "docusaurus write-heading-ids",
     "test": "vitest run",
@@ -40,7 +41,8 @@
     "@types/topojson-client": "^3.1.5",
     "@types/topojson-specification": "^1.0.5",
     "typescript": "~5.6.2",
-    "vitest": "4.1.10"
+    "vitest": "4.1.10",
+    "wrangler": "^4.166.0"
   },
   "browserslist": {
     "production": [
